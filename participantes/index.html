@@ -4,144 +4,628 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Street 3x3 — Torneo</title>
+
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#B6FF00">
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js">
-</script>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+
 <style>
-:root{--lime:#B6FF00;--bg:#080A08;--card:#121512;--line:#303630;--muted:#9ba19b}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% 0,#283000,#080A08 38%);color:#fff;font-family:Arial,sans-serif}
-.wrap{max-width:1200px;margin:auto;padding:0 18px}header{position:sticky;top:0;z-index:5;background:#080a08ee;border-bottom:1px solid #303630}
-.top{min-height:72px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;align-items:center;gap:10px;font-weight:900}.brand img{width:48px;height:48px;object-fit:contain}.brand b{color:var(--lime)}
-.live{background:var(--lime);color:#000;padding:7px 10px;border-radius:99px;font-size:11px;font-weight:900}
-nav{display:flex;gap:8px;overflow:auto;padding:8px 0 12px}.nav{background:#151815;color:#fff;border:1px solid #363c36;border-radius:9px;padding:10px 14px;font-weight:900;white-space:nowrap}.nav.active,.nav:hover{background:var(--lime);color:#000;border-color:var(--lime)}
-.hero{padding:42px 0 25px}.heroGrid{display:grid;grid-template-columns:1.4fr .6fr;gap:18px}.card{background:linear-gradient(145deg,#151915,#0f120f);border:1px solid var(--line);border-radius:18px;padding:28px}
-.kicker{color:var(--lime);font-size:13px;font-weight:900;letter-spacing:2px}.hero h1{font-size:clamp(40px,7vw,78px);line-height:.9;letter-spacing:-4px;margin:12px 0}.hero h1 span{color:var(--lime)}.hero p{color:#c7ccc7;line-height:1.5;max-width:650px}
-.stat{font-size:48px;color:var(--lime);font-weight:1000}.muted{color:var(--muted);font-size:12px}.section{display:none;padding:25px 0 55px}.section.active{display:block}.title{margin-bottom:18px}.title h2{font-size:34px;margin:0}.title p{color:var(--muted)}
-.group{margin:22px 0}.group h3{color:var(--lime)}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.match{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:15px}.meta{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-bottom:12px}.row{display:flex;justify-content:space-between;padding:5px 0;font-weight:800}.score{color:var(--lime);font-size:19px}.empty{text-align:center;padding:28px;border:1px dashed var(--line);border-radius:13px;color:var(--muted)}
-.tableWrap{overflow:auto;border:1px solid var(--line);border-radius:13px}.table{width:100%;border-collapse:collapse;min-width:650px}.table th,.table td{padding:12px;border-bottom:1px solid #252a25;text-align:center}.table th{color:var(--lime);font-size:11px}.table td:nth-child(2){text-align:left;font-weight:800}.pos{color:var(--lime);font-weight:900}
-.bracket{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.round{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:13px}.round h3{text-align:center;color:var(--lime);font-size:13px}.game{background:#1a1e1a;border-radius:9px;padding:11px;margin:10px 0}.champ{border-color:var(--lime)}
-.sponsors{padding:20px 0 45px}.sponsorGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.sponsor{height:80px;border:1px dashed #414741;border-radius:11px;display:flex;align-items:center;justify-content:center;color:#6e756e;font-size:11px;font-weight:900}
-footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-size:12px}
-@media(max-width:850px){.heroGrid{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}.bracket{grid-template-columns:1fr 1fr}.sponsorGrid{grid-template-columns:1fr 1fr}}
-@media(max-width:560px){.cards,.bracket{grid-template-columns:1fr}.hero h1{letter-spacing:-2px}.card{padding:22px}}
-
-.playerCard{cursor:pointer;transition:.18s transform,.18s border-color}.playerCard:hover{transform:translateY(-2px);border-color:var(--lime)}
-.playerModal{position:fixed;inset:0;background:#000b;display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
-.playerModal.hidden{display:none}
-.playerModalBox{width:min(520px,100%);background:#111511;border:1px solid var(--lime);border-radius:18px;padding:26px;position:relative}
-.playerModalClose{position:absolute;right:15px;top:12px;background:transparent;border:0;color:#fff;font-size:25px}
-.avgGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
-.avgBox{background:#1a1e1a;border:1px solid var(--line);border-radius:12px;padding:15px;text-align:center}
-.avgBox b{display:block;font-size:28px;color:var(--lime);margin-top:5px}
-.badge{display:inline-block;background:var(--lime);color:#000;padding:5px 9px;border-radius:99px;font-size:11px;font-weight:900}
-.statusBadge{display:inline-block;padding:5px 9px;border-radius:99px;font-size:10px;font-weight:900}
-.statusUpcoming{background:#303530;color:#fff}.statusLive{background:var(--lime);color:#000}.statusFinal{background:#1d261d;color:#baff72}
-@media(max-width:560px){.avgGrid{grid-template-columns:1fr 1fr}.playerModalBox{padding:22px}}
-
-@media(max-width:560px){
-nav{gap:6px;padding-bottom:10px}.nav{padding:10px 12px;font-size:11px}
-.hero{padding-top:25px}.hero h1{font-size:48px}
-.card{padding:18px}.cards{grid-template-columns:1fr}
-.table{min-width:560px}.table th,.table td{padding:9px 7px;font-size:11px}
-.match{padding:16px}.score{font-size:22px}
+:root{
+  --lime:#B6FF00;
+  --bg:#080A08;
+  --card:#121512;
+  --line:#303630;
+  --muted:#9ba19b
 }
 
-.homeGrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
-.homeBlock{background:linear-gradient(145deg,#151915,#0f120f);border:1px solid var(--line);border-radius:18px;padding:22px}
-.homeBlock.full{grid-column:1/-1}
-.liveGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.livePlaceholder{background:#101310;border:1px dashed #3b413b;border-radius:12px;padding:18px;min-height:150px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;color:var(--muted)}
-.homeTitle{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
-.homeTitle h3{margin:0;font-size:18px}
-.homeTitle span{color:var(--lime);font-size:11px;font-weight:900;letter-spacing:1px}
-.leaderGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.leaderCard{background:#1a1e1a;border:1px solid var(--line);border-radius:12px;padding:15px}
-.leaderCard .group{margin:0 0 7px;color:var(--lime);font-size:11px;font-weight:900}
-.leaderCard strong{display:block;font-size:17px;margin-bottom:4px}
-.leaderCard small{color:var(--muted)}
-.topMini{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.topMiniCard{background:#1a1e1a;border:1px solid var(--line);border-radius:12px;padding:15px}
-.topMiniCard .kicker{font-size:10px;letter-spacing:1px}
-.topMiniCard strong{display:block;font-size:17px;margin:8px 0 4px}
-.topMiniCard b{color:var(--lime);font-size:24px}
-.homeMatch{background:#1a1e1a;border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px}
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:radial-gradient(circle at 50% 0,#283000,#080A08 38%);
+  color:#fff;
+  font-family:Arial,sans-serif
+}
+
+.wrap{max-width:1200px;margin:auto;padding:0 18px}
+
+header{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:#080a08ee;
+  border-bottom:1px solid #303630
+}
+
+.top{
+  min-height:72px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:900
+}
+
+.brand img{
+  width:48px;
+  height:48px;
+  object-fit:contain
+}
+
+.brand b{color:var(--lime)}
+
+.live{
+  background:var(--lime);
+  color:#000;
+  padding:7px 10px;
+  border-radius:99px;
+  font-size:11px;
+  font-weight:900
+}
+
+nav{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  padding:8px 0 12px;
+  -webkit-overflow-scrolling:touch
+}
+
+.nav{
+  background:#151815;
+  color:#fff;
+  border:1px solid #363c36;
+  border-radius:9px;
+  padding:10px 14px;
+  font-weight:900;
+  white-space:nowrap;
+  cursor:pointer
+}
+
+.nav.active,.nav:hover{
+  background:var(--lime);
+  color:#000;
+  border-color:var(--lime)
+}
+
+.hero{padding:42px 0 25px}
+
+.heroGrid{
+  display:grid;
+  grid-template-columns:1.4fr .6fr;
+  gap:18px
+}
+
+.card,.homeBlock{
+  background:linear-gradient(145deg,#151915,#0f120f);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:28px
+}
+
+.kicker{
+  color:var(--lime);
+  font-size:13px;
+  font-weight:900;
+  letter-spacing:2px
+}
+
+.hero h1{
+  font-size:clamp(40px,7vw,78px);
+  line-height:.9;
+  letter-spacing:-4px;
+  margin:12px 0
+}
+
+.hero h1 span{color:var(--lime)}
+
+.hero p{
+  color:#c7ccc7;
+  line-height:1.5;
+  max-width:650px
+}
+
+.stat{
+  font-size:48px;
+  color:var(--lime);
+  font-weight:1000
+}
+
+.muted{
+  color:var(--muted);
+  font-size:12px
+}
+
+.section{
+  display:none;
+  padding:25px 0 55px
+}
+
+.section.active{display:block}
+
+.title{margin-bottom:18px}
+
+.title h2{
+  font-size:34px;
+  margin:0
+}
+
+.title p{color:var(--muted)}
+
+.group{margin:22px 0}
+
+.group h3{color:var(--lime)}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px
+}
+
+.match{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:15px
+}
+
+.meta{
+  display:flex;
+  justify-content:space-between;
+  color:var(--muted);
+  font-size:11px;
+  margin-bottom:12px
+}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  padding:5px 0;
+  font-weight:800
+}
+
+.score{
+  color:var(--lime);
+  font-size:19px
+}
+
+.empty{
+  text-align:center;
+  padding:28px;
+  border:1px dashed var(--line);
+  border-radius:13px;
+  color:var(--muted)
+}
+
+.tableWrap{
+  overflow:auto;
+  border:1px solid var(--line);
+  border-radius:13px
+}
+
+.table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:650px
+}
+
+.table th,.table td{
+  padding:12px;
+  border-bottom:1px solid #252a25;
+  text-align:center
+}
+
+.table th{
+  color:var(--lime);
+  font-size:11px
+}
+
+.table td:nth-child(2){
+  text-align:left;
+  font-weight:800
+}
+
+.pos{
+  color:var(--lime);
+  font-weight:900
+}
+
+.bracket{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px
+}
+
+.round{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:13px
+}
+
+.round h3{
+  text-align:center;
+  color:var(--lime);
+  font-size:13px
+}
+
+.game{
+  background:#1a1e1a;
+  border-radius:9px;
+  padding:11px;
+  margin:10px 0
+}
+
+.champ{border-color:var(--lime)}
+
+.sponsors{
+  padding:20px 0 45px
+}
+
+.sponsorGrid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px
+}
+
+.sponsor{
+  height:80px;
+  border:1px dashed #414741;
+  border-radius:11px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#6e756e;
+  font-size:11px;
+  font-weight:900
+}
+
+footer{
+  border-top:1px solid var(--line);
+  padding:25px 0;
+  color:var(--muted);
+  font-size:12px
+}
+
+/* HOME */
+
+.homeGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+  margin-top:18px;
+  align-items:start
+}
+
+.homeBlock{
+  min-width:0
+}
+
+.homeBlock.full{
+  grid-column:1/-1
+}
+
+.homeTitle{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:14px
+}
+
+.homeTitle h3{
+  margin:0;
+  font-size:18px
+}
+
+.homeTitle span{
+  color:var(--lime);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:1px
+}
+
+.liveGrid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px
+}
+
+.livePlaceholder{
+  background:#101310;
+  border:1px dashed #3b413b;
+  border-radius:12px;
+  padding:18px;
+  min-height:150px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  color:var(--muted)
+}
+
+.homeMatch{
+  background:#1a1e1a;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:14px;
+  margin-bottom:10px
+}
+
 .homeMatch:last-child{margin-bottom:0}
-.homeMatch .teams{display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:900}
-.homeMatch .teams span:nth-child(2){color:var(--lime);font-size:12px}
-.dashboardLink{display:inline-block;margin-top:13px;color:var(--lime);font-size:11px;font-weight:900;text-decoration:none}
-@media(max-width:850px){
-.homeGrid{grid-template-columns:1fr}
-.liveGrid{grid-template-columns:1fr}
-.homeBlock.full{grid-column:auto}
-.leaderGrid{grid-template-columns:1fr 1fr}
+
+.homeMatch .teams{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  font-weight:900
 }
-@media(max-width:560px){
-.homeGrid{gap:12px;margin-top:12px}
-.homeBlock{padding:17px}
-.leaderGrid{grid-template-columns:1fr}
-.topMini{grid-template-columns:1fr}
-.heroGrid{gap:12px}
+
+.homeMatch .teams span{
+  min-width:0
 }
-.qualifies{background:rgba(182,255,0,.07)}.qualifies td:first-child{border-left:3px solid var(--lime)}.filterTabs{display:flex;flex-wrap:wrap}.filterTabs .nav{font-size:11px}.championHero{text-align:center;border-color:var(--lime);background:radial-gradient(circle at 50% 0,#394500,#121512 60%)}
 
-/* DASHBOARD INICIO — distribución sin huecos */
-.homeGrid{align-items:start}
-.homeBlock.full{grid-column:auto}
-.homeBlock.championHero{grid-column:1/-1}
-.homeBlock{min-width:0}
-.homeMatch .teams span{min-width:0}
-.homeMatch .teams span:first-child,.homeMatch .teams span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tournamentProgress{height:9px;background:#252a25;border-radius:99px;overflow:hidden;margin-top:12px}
-.tournamentProgress>div{height:100%;background:var(--lime);border-radius:99px;transition:width .3s}
-.tournamentStats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
-.tournamentStat{background:#1a1e1a;border:1px solid var(--line);border-radius:11px;padding:12px;text-align:center}
-.tournamentStat b{display:block;color:var(--lime);font-size:22px;margin-bottom:3px}
-@media(max-width:850px){.homeBlock.championHero{grid-column:auto}}
+.homeMatch .teams span:first-child,
+.homeMatch .teams span:last-child{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap
+}
 
+.homeMatch .teams span:nth-child(2){
+  color:var(--lime);
+  font-size:12px;
+  flex-shrink:0
+}
 
-/* APP — tutorial bilingüe */
-.appModal{position:fixed;inset:0;background:#000c;display:flex;align-items:center;justify-content:center;padding:18px;z-index:80}
-.appModal.hidden{display:none}
-.appBox{width:min(760px,100%);max-height:90vh;overflow:auto;background:linear-gradient(145deg,#151915,#0d100d);border:1px solid var(--lime);border-radius:18px;padding:26px;position:relative;box-shadow:0 0 45px #000}
-.appClose{position:absolute;right:14px;top:12px;width:38px;height:38px;border:1px solid #fff;background:#111511;color:#fff;border-radius:9px;font-size:24px;cursor:pointer}
-.appBox h2{margin:0 45px 5px 0;font-size:30px}
-.appSubtitle{color:var(--muted);margin-bottom:22px}
-.appGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.appStep{background:#1a1e1a;border:1px solid var(--line);border-radius:13px;padding:18px}
-.appStep h3{margin:0 0 10px;color:var(--lime);font-size:17px}
-.appStep p{margin:7px 0;color:#d8ddd8;line-height:1.45}
-.appStep b{color:#fff}
-.appTip{margin-top:14px;padding:14px;border:1px dashed #596059;border-radius:12px;color:#c7ccc7;line-height:1.45}
-.appTip strong{color:var(--lime)}
-@media(max-width:650px){.appGrid{grid-template-columns:1fr}.appBox{padding:21px}.appBox h2{font-size:25px}}
+.dashboardLink{
+  display:inline-block;
+  margin-top:13px;
+  color:var(--lime);
+  font-size:11px;
+  font-weight:900;
+  text-decoration:none
+}
+
+.leaderGrid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px
+}
+
+.leaderCard{
+  background:#1a1e1a;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:15px
+}
+
+.leaderCard .group{
+  margin:0 0 7px;
+  color:var(--lime);
+  font-size:11px;
+  font-weight:900
+}
+
+.leaderCard strong{
+  display:block;
+  font-size:17px;
+  margin-bottom:4px
+}
+
+.leaderCard small{color:var(--muted)}
+
+.topMini{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px
+}
+
+.topMiniCard{
+  background:#1a1e1a;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:15px
+}
+
+.topMiniCard .kicker{
+  font-size:10px;
+  letter-spacing:1px
+}
+
+.topMiniCard strong{
+  display:block;
+  font-size:17px;
+  margin:8px 0 4px
+}
+
+.topMiniCard b{
+  color:var(--lime);
+  font-size:24px
+}
+
+.tournamentProgress{
+  height:9px;
+  background:#252a25;
+  border-radius:99px;
+  overflow:hidden;
+  margin-top:12px
+}
+
+.tournamentProgress>div{
+  height:100%;
+  background:var(--lime);
+  border-radius:99px;
+  transition:width .3s
+}
+
+.tournamentStats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:14px
+}
+
+.tournamentStat{
+  background:#1a1e1a;
+  border:1px solid var(--line);
+  border-radius:11px;
+  padding:12px;
+  text-align:center
+}
+
+.tournamentStat b{
+  display:block;
+  color:var(--lime);
+  font-size:22px;
+  margin-bottom:3px
+}
+
+/* CAMPEÓN */
+
+.championHero{
+  text-align:center;
+  border-color:var(--lime);
+  background:radial-gradient(circle at 50% 0,#394500,#121512 60%)
+}
+
+/* PLAYER */
+
+.playerCard{
+  cursor:pointer;
+  transition:.18s transform,.18s border-color
+}
+
+.playerCard:hover{
+  transform:translateY(-2px);
+  border-color:var(--lime)
+}
+
+.playerModal{
+  position:fixed;
+  inset:0;
+  background:#000b;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:200
+}
+
+.playerModal.hidden{display:none}
+
+.playerModalBox{
+  width:min(520px,100%);
+  background:#111511;
+  border:1px solid var(--lime);
+  border-radius:18px;
+  padding:26px;
+  position:relative
+}
+
+.playerModalClose{
+  position:absolute;
+  right:15px;
+  top:12px;
+  background:transparent;
+  border:0;
+  color:#fff;
+  font-size:25px;
+  cursor:pointer
+}
+
+.avgGrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:18px
+}
+
+.avgBox{
+  background:#1a1e1a;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:15px;
+  text-align:center
+}
+
+.avgBox b{
+  display:block;
+  font-size:28px;
+  color:var(--lime);
+  margin-top:5px
+}
+
+.badge{
+  display:inline-block;
+  background:var(--lime);
+  color:#000;
+  padding:5px 9px;
+  border-radius:99px;
+  font-size:11px;
+  font-weight:900
+}
+
+.statusBadge{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:99px;
+  font-size:10px;
+  font-weight:900
+}
+
+.statusUpcoming{
+  background:#303530;
+  color:#fff
+}
+
+.statusLive{
+  background:var(--lime);
+  color:#000
+}
+
+.statusFinal{
+  background:#1d261d;
+  color:#baff72
+}
+
 /* CUENTA REGRESIVA */
+
 .countdown{
   margin-top:18px;
   background:linear-gradient(145deg,#151915,#0f120f);
   border:1px solid var(--lime);
   border-radius:18px;
   padding:22px;
-  text-align:center;
+  text-align:center
 }
 
 .countdown .kicker{
   color:var(--lime);
   font-size:11px;
   font-weight:900;
-  letter-spacing:2px;
+  letter-spacing:2px
 }
 
 .countdown h2{
   margin:7px 0 4px;
-  font-size:24px;
+  font-size:24px
 }
 
 .countdown .subtitle{
   color:var(--muted);
   font-size:12px;
-  margin-bottom:16px;
+  margin-bottom:16px
 }
 
 .countdownGrid{
@@ -149,21 +633,21 @@ nav{gap:6px;padding-bottom:10px}.nav{padding:10px 12px;font-size:11px}
   grid-template-columns:repeat(4,1fr);
   gap:10px;
   max-width:620px;
-  margin:auto;
+  margin:auto
 }
 
 .countdownBox{
   background:#1a1e1a;
   border:1px solid var(--line);
   border-radius:12px;
-  padding:13px 8px;
+  padding:13px 8px
 }
 
 .countdownBox b{
   display:block;
   color:var(--lime);
   font-size:32px;
-  line-height:1;
+  line-height:1
 }
 
 .countdownBox span{
@@ -172,113 +656,339 @@ nav{gap:6px;padding-bottom:10px}.nav{padding:10px 12px;font-size:11px}
   font-size:9px;
   font-weight:900;
   letter-spacing:1px;
-  margin-top:6px;
+  margin-top:6px
 }
 
-/* MENU EN CELULAR */
+/* APP */
+
+.appModal{
+  position:fixed;
+  inset:0;
+  background:#000c;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  z-index:300
+}
+
+.appModal.hidden{display:none}
+
+.appBox{
+  width:min(760px,100%);
+  max-height:90vh;
+  overflow:auto;
+  background:linear-gradient(145deg,#151915,#0d100d);
+  border:1px solid var(--lime);
+  border-radius:18px;
+  padding:26px;
+  position:relative;
+  box-shadow:0 0 45px #000
+}
+
+.appClose{
+  position:absolute;
+  right:14px;
+  top:12px;
+  width:38px;
+  height:38px;
+  border:1px solid #fff;
+  background:#111511;
+  color:#fff;
+  border-radius:9px;
+  font-size:24px;
+  cursor:pointer
+}
+
+.appBox h2{
+  margin:0 45px 5px 0;
+  font-size:30px
+}
+
+.appSubtitle{
+  color:var(--muted);
+  margin-bottom:22px
+}
+
+.appGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px
+}
+
+.appStep{
+  background:#1a1e1a;
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:18px
+}
+
+.appStep h3{
+  margin:0 0 10px;
+  color:var(--lime);
+  font-size:17px
+}
+
+.appStep p{
+  margin:7px 0;
+  color:#d8ddd8;
+  line-height:1.45
+}
+
+.appTip{
+  margin-top:14px;
+  padding:14px;
+  border:1px dashed #596059;
+  border-radius:12px;
+  color:#c7ccc7;
+  line-height:1.45
+}
+
+.appTip strong{color:var(--lime)}
+
+.qualifies{
+  background:rgba(182,255,0,.07)
+}
+
+.qualifies td:first-child{
+  border-left:3px solid var(--lime)
+}
+
+.filterTabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px
+}
+
+.filterTabs .nav{font-size:11px}
+
+/* RESPONSIVE */
+
+@media(max-width:850px){
+  .heroGrid{grid-template-columns:1fr}
+  .cards{grid-template-columns:1fr 1fr}
+  .bracket{grid-template-columns:1fr 1fr}
+  .sponsorGrid{grid-template-columns:1fr 1fr}
+  .homeGrid{grid-template-columns:1fr}
+  .homeBlock.full{grid-column:auto}
+  .liveGrid{grid-template-columns:1fr}
+  .leaderGrid{grid-template-columns:1fr 1fr}
+}
+
 @media(max-width:560px){
   nav{
-    display:flex;
-    flex-wrap:nowrap;
-    overflow-x:auto;
-    overflow-y:hidden;
     gap:6px;
-    padding-bottom:10px;
-    -webkit-overflow-scrolling:touch;
+    padding-bottom:10px
   }
 
-  nav .nav{
-    flex:0 0 auto;
+  .nav{
     padding:10px 12px;
     font-size:11px;
+    flex:0 0 auto
+  }
+
+  .hero{
+    padding-top:25px
+  }
+
+  .hero h1{
+    font-size:48px;
+    letter-spacing:-2px
+  }
+
+  .card,.homeBlock{
+    padding:18px
+  }
+
+  .cards,.bracket{
+    grid-template-columns:1fr
+  }
+
+  .table{
+    min-width:560px
+  }
+
+  .table th,.table td{
+    padding:9px 7px;
+    font-size:11px
+  }
+
+  .match{padding:16px}
+
+  .score{font-size:22px}
+
+  .avgGrid{
+    grid-template-columns:1fr 1fr
+  }
+
+  .playerModalBox{
+    padding:22px
+  }
+
+  .leaderGrid,
+  .topMini{
+    grid-template-columns:1fr
+  }
+
+  .homeGrid{
+    gap:12px;
+    margin-top:12px
   }
 
   .countdown{
-    padding:18px 12px;
+    padding:18px 12px
   }
 
   .countdown h2{
-    font-size:21px;
+    font-size:21px
   }
 
   .countdownGrid{
-    gap:6px;
+    gap:6px
   }
 
   .countdownBox{
-    padding:11px 5px;
+    padding:11px 5px
   }
 
   .countdownBox b{
-    font-size:25px;
+    font-size:25px
+  }
+
+  .appGrid{
+    grid-template-columns:1fr
+  }
+
+  .appBox{
+    padding:21px
+  }
+
+  .appBox h2{
+    font-size:25px
   }
 }
 </style>
 </head>
+
 <body>
-<header><div class="wrap"><div class="top"><div class="brand"><img src="../logo.png" alt="Street 3x3"><div><b>STREET</b> 3x3<br><span class="muted">TORNEO OFICIAL</span></div></div><div class="live">● EN VIVO</div></div>
+
+<header>
+<div class="wrap">
+
+<div class="top">
+
+<div class="brand">
+<img src="../logo.png" alt="Street 3x3">
+<div>
+<b>STREET</b> 3x3<br>
+<span class="muted">TORNEO OFICIAL</span>
+</div>
+</div>
+
+<div class="live">● EN VIVO</div>
+
+</div>
+
 <nav>
-<button class="nav active" data-tab="inicio">INICIO</button><button class="nav" type="button" onclick="openAppModal()">📱 APP</button><button class="nav" data-tab="jugadores">JUGADORES</button><button class="nav" data-tab="estadisticas">ESTADÍSTICAS</button><button class="nav" data-tab="fixture">FIXTURE</button><button class="nav" data-tab="resultados">RESULTADOS</button><button class="nav" data-tab="tablas">TABLAS</button><button class="nav" data-tab="playoffs">PLAYOFFS</button>
-</nav></div></header>
+
+<button class="nav active" data-tab="inicio">INICIO</button>
+
+<button class="nav" type="button" onclick="openAppModal()">📱 APP</button>
+
+<button class="nav" data-tab="jugadores">JUGADORES</button>
+<button class="nav" data-tab="estadisticas">ESTADÍSTICAS</button>
+<button class="nav" data-tab="fixture">FIXTURE</button>
+<button class="nav" data-tab="resultados">RESULTADOS</button>
+<button class="nav" data-tab="tablas">TABLAS</button>
+<button class="nav" data-tab="playoffs">PLAYOFFS</button>
+
+</nav>
+
+</div>
+</header>
+
 <main class="wrap">
+
 <section id="inicio" class="section active hero">
 
 <div class="heroGrid">
+
 <div class="card">
+
 <div class="kicker">STREET 3x3</div>
-<h1>TODO EL TORNEO.<br><span>EN UN SOLO LUGAR.</span></h1>
-<p>Resultados, posiciones, jugadores y estadísticas actualizadas en tiempo real.</p>
+
+<h1>
+TODO EL TORNEO.<br>
+<span>EN UN SOLO LUGAR.</span>
+</h1>
+
+<p>
+Resultados, posiciones, jugadores y estadísticas actualizadas en tiempo real.
+</p>
+
 <div class="muted" id="status">Conectando...</div>
+
 <div class="muted" id="clockStatus" style="margin-top:6px"></div>
+
 </div>
 
 <div class="card">
+
 <div class="muted">EQUIPOS INSCRIPTOS</div>
+
 <div class="stat" id="teamCount">—</div>
+
 <div class="muted">4 grupos · 4 equipos</div>
+
 <br>
+
 <div class="muted">PARTIDOS</div>
+
 <div class="stat" id="matchCount">—</div>
+
 </div>
+
 </div>
+
+<!-- CUENTA REGRESIVA -->
 
 <div class="countdown">
 
-  <div class="kicker">
-    STREET 3x3 · CUENTA REGRESIVA
-  </div>
+<div class="kicker">
+STREET 3x3 · CUENTA REGRESIVA
+</div>
 
-  <h2 id="countdownTitle">
-    FALTAN PARA EL EVENTO
-  </h2>
+<h2 id="countdownTitle">
+FALTAN PARA EL EVENTO
+</h2>
 
-  <div class="subtitle">
-    7 DE NOVIEMBRE · FECHA DE INICIO
-  </div>
+<div class="subtitle">
+7 DE NOVIEMBRE · FECHA DE INICIO
+</div>
 
-  <div class="countdownGrid">
+<div class="countdownGrid">
 
-    <div class="countdownBox">
-      <b id="countdownDays">00</b>
-      <span>DÍAS</span>
-    </div>
+<div class="countdownBox">
+<b id="countdownDays">00</b>
+<span>DÍAS</span>
+</div>
 
-    <div class="countdownBox">
-      <b id="countdownHours">00</b>
-      <span>HORAS</span>
-    </div>
+<div class="countdownBox">
+<b id="countdownHours">00</b>
+<span>HORAS</span>
+</div>
 
-    <div class="countdownBox">
-      <b id="countdownMinutes">00</b>
-      <span>MINUTOS</span>
-    </div>
+<div class="countdownBox">
+<b id="countdownMinutes">00</b>
+<span>MINUTOS</span>
+</div>
 
-    <div class="countdownBox">
-      <b id="countdownSeconds">00</b>
-      <span>SEGUNDOS</span>
-    </div>
+<div class="countdownBox">
+<b id="countdownSeconds">00</b>
+<span>SEGUNDOS</span>
+</div>
 
-  </div>
+</div>
 
 </div>
 
@@ -288,11 +998,8 @@ nav{gap:6px;padding-bottom:10px}.nav{padding:10px 12px;font-size:11px}
 <div id="homePlayerToWatch"></div>
 <div id="liveCenterContent"></div>
 <div id="nextMatchesContent"></div>
-
 <div id="recentResultsContent"></div>
-
 <div id="groupLeadersContent"></div>
-
 <div id="topStatsContent"></div>
 <div id="tournamentStatusContent"></div>
 <div id="championContent"></div>
@@ -300,472 +1007,1086 @@ nav{gap:6px;padding-bottom:10px}.nav{padding:10px 12px;font-size:11px}
 </div>
 
 </section>
+
 <section id="jugadores" class="section">
+
 <div class="title">
 <h2>Jugadores</h2>
 <p>Todos los participantes del torneo.</p>
 </div>
+
 <div id="playersContent"></div>
+
 </section>
 
 <section id="estadisticas" class="section">
+
 <div class="title">
 <h2>Estadísticas</h2>
 <p>Los líderes del torneo en cada categoría.</p>
 </div>
+
 <div id="statsContent"></div>
+
 </section>
 
-<section id="fixture" class="section"><div class="title"><h2>Fixture</h2><p>Todos los cruces de la fase de grupos.</p></div><div id="fixtureContent"></div></section>
-<section id="resultados" class="section"><div class="title"><h2>Resultados</h2><p>Marcadores cargados por la organización.</p></div><div id="resultsContent"></div></section>
-<section id="tablas" class="section"><div class="title"><h2>Tablas</h2><p>Posiciones calculadas automáticamente.</p></div><div id="tablesContent"></div></section>
-<section id="playoffs" class="section"><div class="title"><h2>Playoffs</h2><p>El camino hacia el campeonato.</p></div><div id="playoffContent"></div></section>
-<section class="sponsors"><div style="display:flex;justify-content:space-between;align-items:center"><h3>Patrocinadores</h3><span class="muted">Tu marca puede estar acá</span></div><div class="sponsorGrid"><div class="sponsor">SPONSOR 01</div><div class="sponsor">SPONSOR 02</div><div class="sponsor">SPONSOR 03</div><div class="sponsor">SPONSOR 04</div></div></section>
+<section id="fixture" class="section">
+
+<div class="title">
+<h2>Fixture</h2>
+<p>Todos los cruces de la fase de grupos.</p>
+</div>
+
+<div id="fixtureContent"></div>
+
+</section>
+
+<section id="resultados" class="section">
+
+<div class="title">
+<h2>Resultados</h2>
+<p>Marcadores cargados por la organización.</p>
+</div>
+
+<div id="resultsContent"></div>
+
+</section>
+
+<section id="tablas" class="section">
+
+<div class="title">
+<h2>Tablas</h2>
+<p>Posiciones calculadas automáticamente.</p>
+</div>
+
+<div id="tablesContent"></div>
+
+</section>
+
+<section id="playoffs" class="section">
+
+<div class="title">
+<h2>Playoffs</h2>
+<p>El camino hacia el campeonato.</p>
+</div>
+
+<div id="playoffContent"></div>
+
+</section>
+
+<section class="sponsors">
+
+<div style="display:flex;justify-content:space-between;align-items:center">
+<h3>Patrocinadores</h3>
+<span class="muted">Tu marca puede estar acá</span>
+</div>
+
+<div class="sponsorGrid">
+<div class="sponsor">SPONSOR 01</div>
+<div class="sponsor">SPONSOR 02</div>
+<div class="sponsor">SPONSOR 03</div>
+<div class="sponsor">SPONSOR 04</div>
+</div>
+
+</section>
+
 </main>
-<footer><div class="wrap"><b style="color:#fff">STREET 3x3</b> · Información oficial del torneo · Actualización en tiempo real</div></footer>
+
+<footer>
+
+<div class="wrap">
+<b style="color:#fff">STREET 3x3</b>
+· Información oficial del torneo · Actualización en tiempo real
+</div>
+
+</footer>
+
+
+<!-- APP -->
+
+<div id="appModal" class="appModal hidden" onclick="closeAppModal(event)">
+
+<div class="appBox">
+
+<button class="appClose" type="button" onclick="closeAppModal()">×</button>
+
+<div class="kicker">STREET 3x3</div>
+
+<h2>📱 INSTALAR LA APP / INSTALL THE APP</h2>
+
+<div class="appSubtitle">
+Agregá Street 3x3 a la pantalla de inicio para acceder como una aplicación.
+</div>
+
+<div class="appGrid">
+
+<div class="appStep">
+
+<h3>🤖 ANDROID · CHROME</h3>
+
+<p><b>1.</b> Abrí Street 3x3 en Chrome.</p>
+<p><b>2.</b> Tocá <b>⋮</b> arriba a la derecha.</p>
+<p><b>3.</b> Elegí <b>“Agregar a pantalla de inicio”</b> o <b>“Instalar aplicación”</b>.</p>
+<p><b>4.</b> Tocá <b>“Agregar”</b> o <b>“Instalar”</b>.</p>
+
+</div>
+
+<div class="appStep">
+
+<h3>🍎 IPHONE · SAFARI</h3>
+
+<p><b>1.</b> Abrí Street 3x3 en Safari.</p>
+<p><b>2.</b> Tocá <b>Compartir</b>.</p>
+<p><b>3.</b> Elegí <b>“Agregar a pantalla de inicio”</b>.</p>
+<p><b>4.</b> Tocá <b>“Agregar”</b>.</p>
+
+</div>
+
+</div>
+
+<div class="appTip">
+<strong>💡 IMPORTANTE:</strong>
+Si ya la instalaste antes, eliminá la versión anterior y volvé a instalarla para que tome los cambios.
+</div>
+
+</div>
+</div>
+
+
+<!-- PLAYER MODAL -->
+
+<div id="playerModal"
+     class="playerModal hidden"
+     onclick="closePlayerModal(event)">
+
+<div class="playerModalBox">
+
+<button
+class="playerModalClose"
+onclick="closePlayerModal()">×</button>
+
+<div id="playerModalContent"></div>
+
+</div>
+
+</div>
+
+
 <script>
-const config={apiKey:"AIzaSyDYfJ4qQSVqBWLBu5DziwtkWWXB4ycnSSw",authDomain:"street-3x3.firebaseapp.com",databaseURL:"https://street-3x3-default-rtdb.firebaseio.com",projectId:"street-3x3",storageBucket:"street-3x3.firebasestorage.app",messagingSenderId:"829695563143",appId:"1:829695563143:web:cccf22e2fe50f72d592f22",measurementId:"G-HYRY8Z1ZGF"};
+
+/* =========================================================
+   FIREBASE
+========================================================= */
+
+const config={
+  apiKey:"AIzaSyDYfJ4qQSVqBWLBu5DziwtkWWXB4ycnSSw",
+  authDomain:"street-3x3.firebaseapp.com",
+  databaseURL:"https://street-3x3-default-rtdb.firebaseio.com",
+  projectId:"street-3x3",
+  storageBucket:"street-3x3.firebasestorage.app",
+  messagingSenderId:"829695563143",
+  appId:"1:829695563143:web:cccf22e2fe50f72d592f22",
+  measurementId:"G-HYRY8Z1ZGF"
+};
+
 firebase.initializeApp(config);
+
 const db=firebase.database();
+
 const ref=db.ref("tournament");
 const liveRef1=db.ref("match");
 const liveRef2=db.ref("match2");
+
 let live1=null;
 let live2=null;
-let data={teams:{},matches:{},playoffs:{},participants:{}};
-const esc=x=>String(x??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");function name(id){
 
-if(id===undefined||id===null||id==="")return "Por definir";
+let data={
+  teams:{},
+  matches:{},
+  playoffs:{},
+  participants:{}
+};
 
-if(typeof id==="object"){
 
-if(id.name)return String(id.name);
-if(id.teamName)return String(id.teamName);
-if(id.team)return name(id.team);
-if(id.id)return name(id.id);
+/* =========================================================
+   UTILIDADES
+========================================================= */
 
-return "Por definir";
+const esc=x=>String(x??"")
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")
+.replaceAll('"',"&quot;")
+.replaceAll("'","&#039;");
 
+
+function name(id){
+
+  if(id===undefined||id===null||id==="")
+    return "Por definir";
+
+  if(typeof id==="object"){
+
+    if(id.name)return String(id.name);
+    if(id.teamName)return String(id.teamName);
+    if(id.team)return name(id.team);
+    if(id.id)return name(id.id);
+
+    return "Por definir";
+  }
+
+  const key=String(id);
+
+  if(data.teams?.[key]?.name)
+    return String(data.teams[key].name);
+
+  const found=Object.entries(data.teams||{}).find(([teamId,team])=>
+    String(teamId)===key ||
+    String(team?.name||"").toLowerCase()===key.toLowerCase()
+  );
+
+  if(found?.[1]?.name)
+    return String(found[1].name);
+
+  if(key==="undefined"||key==="null")
+    return "Por definir";
+
+  return key;
 }
 
-const key=String(id);
-
-if(data.teams?.[key]?.name){
-return String(data.teams[key].name);
-}
-
-const found=Object.entries(data.teams||{}).find(([teamId,team])=>{
-
-return String(teamId)===key ||
-String(team?.name||"").toLowerCase()===key.toLowerCase();
-
-});
-
-if(found?.[1]?.name)return String(found[1].name);
-
-if(key==="undefined"||key==="null")return "Por definir";
-
-return key;
-
-}
 
 function matchTeamName(match,side){
 
-const isHome=side==="home";
+  const isHome=side==="home";
 
-const candidates=isHome
-?[
-match?.home,
-match?.homeId,
-match?.homeTeamId,
-match?.home_team_id,
-match?.team1,
-match?.team1Id,
-match?.teamA,
-match?.teamAId,
-match?.local,
-match?.localId
-]
-:[
-match?.away,
-match?.awayId,
-match?.awayTeamId,
-match?.away_team_id,
-match?.team2,
-match?.team2Id,
-match?.teamB,
-match?.teamBId,
-match?.visitante,
-match?.visitanteId
-];
+  const candidates=isHome
+  ?[
+    match?.home,
+    match?.homeId,
+    match?.homeTeamId,
+    match?.home_team_id,
+    match?.team1,
+    match?.team1Id,
+    match?.teamA,
+    match?.teamAId,
+    match?.local,
+    match?.localId
+  ]
+  :[
+    match?.away,
+    match?.awayId,
+    match?.awayTeamId,
+    match?.away_team_id,
+    match?.team2,
+    match?.team2Id,
+    match?.teamB,
+    match?.teamBId,
+    match?.visitante,
+    match?.visitanteId
+  ];
 
-const explicit=isHome
-?[
-match?.homeName,
-match?.homeTeam,
-match?.home_team,
-match?.localName
-]
-:[
-match?.awayName,
-match?.awayTeam,
-match?.away_team,
-match?.awayName
-];
+  const explicit=isHome
+  ?[
+    match?.homeName,
+    match?.homeTeam,
+    match?.home_team,
+    match?.localName
+  ]
+  :[
+    match?.awayName,
+    match?.awayTeam,
+    match?.away_team,
+    match?.visitanteName
+  ];
 
-for(const value of [...candidates,...explicit]){
+  for(const value of [...candidates,...explicit]){
 
-if(value===undefined||value===null||value==="")continue;
+    if(value===undefined||value===null||value==="")
+      continue;
 
-const resolved=name(value);
+    const resolved=name(value);
 
-if(resolved!=="Por definir" &&
-resolved!=="undefined" &&
-resolved!=="null"){
+    if(
+      resolved!=="Por definir" &&
+      resolved!=="undefined" &&
+      resolved!=="null"
+    ){
+      return resolved;
+    }
+  }
 
-return resolved;
-
+  return "Por definir";
 }
 
-}
-
-return "Por definir";
-
-}
 
 function formatMatchDate(date){
 
-if(!date)return "Fecha por definir";
+  if(!date)return "Fecha por definir";
 
-const raw=String(date).trim();
+  const raw=String(date).trim();
 
-const iso=raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  const iso=raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
 
-if(iso){
+  if(iso){
 
-return String(iso[3]).padStart(2,"0")+"/"+
-String(iso[2]).padStart(2,"0")+"/"+
-iso[1];
+    return String(iso[3]).padStart(2,"0")+"/"+
+           String(iso[2]).padStart(2,"0")+"/"+
+           iso[1];
+  }
 
+  const us=raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+
+  if(us){
+
+    return String(us[2]).padStart(2,"0")+"/"+
+           String(us[1]).padStart(2,"0")+"/"+
+           us[3];
+  }
+
+  return raw;
 }
 
-const us=raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-
-if(us){
-
-/* Si Firebase ya guarda MM/DD/YYYY, convertir a DD/MM/YYYY. */
-return String(us[2]).padStart(2,"0")+"/"+
-String(us[1]).padStart(2,"0")+"/"+
-us[3];
-
-}
-
-return raw;
-
-}
 
 function getMatchDateTime(m){
 
-if(!m?.date || !m?.time)return null;
+  if(!m?.date||!m?.time)
+    return null;
 
-const cleanTime=String(m.time).trim().replace(".",":");
+  const cleanTime=String(m.time)
+    .trim()
+    .replace(".",":");
 
-const tm=cleanTime.match(/^(\d{1,2}):(\d{2})$/);
+  const tm=cleanTime.match(/^(\d{1,2}):(\d{2})$/);
 
-if(!tm)return null;
+  if(!tm)return null;
 
-const hh=Number(tm[1]);
-const mm=Number(tm[2]);
+  const hh=Number(tm[1]);
+  const mm=Number(tm[2]);
 
-if(hh<0||hh>23||mm<0||mm>59)return null;
+  if(hh<0||hh>23||mm<0||mm>59)
+    return null;
 
-let year,month,day;
+  let year,month,day;
 
-const rawDate=String(m.date).trim();
+  const rawDate=String(m.date).trim();
 
-let match=rawDate.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  let match=rawDate.match(
+    /^(\d{4})-(\d{1,2})-(\d{1,2})$/
+  );
 
-if(match){
+  if(match){
 
-year=Number(match[1]);
-month=Number(match[2]);
-day=Number(match[3]);
+    year=Number(match[1]);
+    month=Number(match[2]);
+    day=Number(match[3]);
 
-}else{
+  }else{
 
-match=rawDate.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    match=rawDate.match(
+      /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/
+    );
 
-if(!match)return null;
+    if(!match)return null;
 
-/* Firebase legado: MM/DD/YYYY */
-month=Number(match[1]);
-day=Number(match[2]);
-year=Number(match[3]);
+    month=Number(match[1]);
+    day=Number(match[2]);
+    year=Number(match[3]);
+  }
 
+  const iso=
+    year+"-"+
+    String(month).padStart(2,"0")+"-"+
+    String(day).padStart(2,"0")+"T"+
+    String(hh).padStart(2,"0")+":"+
+    String(mm).padStart(2,"0")+":00-03:00";
+
+  const d=new Date(iso);
+
+  return Number.isNaN(d.getTime())?null:d;
 }
 
-const iso=
-year+"-"+String(month).padStart(2,"0")+"-"+String(day).padStart(2,"0")+
-"T"+String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0")+":00-03:00";
 
-const d=new Date(iso);
-
-return Number.isNaN(d.getTime())?null:d;
-
-}
+/* =========================================================
+   MARCADORES
+========================================================= */
 
 function isScoreSet(value){
 
-return value!==null &&
-value!==undefined &&
-value!=="" &&
-Number.isFinite(Number(value));
-
+  return value!==null &&
+         value!==undefined &&
+         value!=="" &&
+         Number.isFinite(Number(value));
 }
+
 
 function isMatchFinished(m){
 
-if(!m)return false;
+  if(!m)return false;
 
-/*
-  Un partido se considera terminado solamente cuando:
-  - tiene ambos marcadores cargados, y
-  - no está explícitamente marcado como Programado.
-  Los partidos generados por el Admin nacen como Programado.
-*/
-const bothScores=isScoreSet(m.homeScore)&&isScoreSet(m.awayScore);
+  const bothScores=
+    isScoreSet(m.homeScore) &&
+    isScoreSet(m.awayScore);
 
-if(!bothScores)return false;
+  if(!bothScores)return false;
 
-if(String(m.status||"").toLowerCase()==="programado")return false;
+  const status=String(m.status||"").toLowerCase();
 
-return true;
+  if(
+    status==="programado" ||
+    status==="scheduled" ||
+    status==="pendiente"
+  ){
+    return false;
+  }
 
-}
-
-function isMatchPending(m){
-
-return !isMatchFinished(m);
-
+  return true;
 }
 
 
 function matchStatus(m){
 
-if(isMatchFinished(m)){
-return {key:"final",label:"FINALIZADO"};
+  if(isMatchFinished(m)){
+    return {
+      key:"final",
+      label:"FINALIZADO"
+    };
+  }
+
+  const dt=getMatchDateTime(m);
+
+  if(!dt){
+    return {
+      key:"upcoming",
+      label:"PRÓXIMO"
+    };
+  }
+
+  return Date.now()>=dt.getTime()
+  ?{
+    key:"live",
+    label:"EN JUEGO"
+  }
+  :{
+    key:"upcoming",
+    label:"PRÓXIMO"
+  };
 }
 
-const dt=getMatchDateTime(m);
-
-if(!dt){
-return {key:"upcoming",label:"PRÓXIMO"};
-}
-
-return new Date().getTime() >= dt.getTime()
-?{key:"live",label:"EN JUEGO"}
-:{key:"upcoming",label:"PRÓXIMO"};
-
-}
 
 function statusBadge(m){
 
-const s=matchStatus(m);
+  const s=matchStatus(m);
 
-const cls=
-s.key==="live"
-?"statusLive"
-:s.key==="final"
-?"statusFinal"
-:"statusUpcoming";
+  const cls=
+    s.key==="live"
+    ?"statusLive"
+    :s.key==="final"
+    ?"statusFinal"
+    :"statusUpcoming";
 
-const icon=
-s.key==="live"
-?"🟡 "
-:s.key==="final"
-?"🟢 "
-:"⚪ ";
+  const icon=
+    s.key==="live"
+    ?"🟡 "
+    :s.key==="final"
+    ?"🟢 "
+    :"⚪ ";
 
-return `<span class="statusBadge ${cls}">${icon}${s.label}</span>`;
-
+  return `
+    <span class="statusBadge ${cls}">
+      ${icon}${s.label}
+    </span>
+  `;
 }
+
+
+/* =========================================================
+   MARCADOR EN VIVO
+========================================================= */
+
+/*
+  Esta función acepta:
+  true
+  "true"
+  1
+  "1"
+  para running.
+*/
+
+function boolValue(v){
+
+  return v===true ||
+         v==="true" ||
+         v===1 ||
+         v==="1";
+}
+
+
+function liveStateValid(s){
+
+  if(!s)return false;
+
+  const hasMatch=
+    s.matchId ||
+    s.matchID ||
+    s.match_id ||
+    s.id;
+
+  const running=
+    boolValue(s.running) ||
+    boolValue(s.isRunning) ||
+    boolValue(s.live) ||
+    boolValue(s.active);
+
+  return !!hasMatch && running;
+}
+
+
+function getLiveMatchId(s){
+
+  return s?.matchId ||
+         s?.matchID ||
+         s?.match_id ||
+         s?.id ||
+         null;
+}
+
+
+function liveRemaining(s){
+
+  if(!s)return 0;
+
+  const end=
+    Number(s.endAt) ||
+    Number(s.endsAt) ||
+    Number(s.endTime);
+
+  if(end && boolValue(
+    s.running??s.isRunning??s.live??s.active
+  )){
+    return Math.max(
+      0,
+      Math.ceil((end-Date.now())/1000)
+    );
+  }
+
+  return Math.max(
+    0,
+    Number(
+      s.remaining ??
+      s.timeRemaining ??
+      s.seconds ??
+      0
+    )
+  );
+}
+
+
+function liveMatchObject(s,court){
+
+  if(!liveStateValid(s))
+    return null;
+
+  const matchId=getLiveMatchId(s);
+
+  const m=data.matches?.[matchId];
+
+  if(!m){
+
+    /*
+      Si el marcador guarda los nombres directamente,
+      igualmente permitimos mostrarlo.
+    */
+
+    if(
+      s.homeName ||
+      s.awayName ||
+      s.homeScore!==undefined ||
+      s.awayScore!==undefined
+    ){
+      return {
+        s:s,
+        m:{
+          home:s.home,
+          away:s.away,
+          homeName:s.homeName,
+          awayName:s.awayName
+        },
+        court:court
+      };
+    }
+
+    return null;
+  }
+
+  return {
+    s:s,
+    m:m,
+    court:court
+  };
+}
+
+
+function liveScore(s,side){
+
+  const keys=side==="home"
+  ?[
+    "homeScore",
+    "homePoints",
+    "scoreHome",
+    "score1",
+    "home_score"
+  ]
+  :[
+    "awayScore",
+    "awayPoints",
+    "scoreAway",
+    "score2",
+    "away_score"
+  ];
+
+  for(const k of keys){
+
+    if(
+      s?.[k]!==undefined &&
+      s?.[k]!==null &&
+      s?.[k]!==""
+    ){
+      return Number(s[k])||0;
+    }
+  }
+
+  return 0;
+}
+
+
+function renderLiveCenter(){
+
+  const b=
+    document.getElementById("liveCenterContent");
+
+  if(!b)return;
+
+  const entries=[
+    {s:live1,court:"1"},
+    {s:live2,court:"2"}
+  ];
+
+  const lives=entries
+    .map(({s,court})=>{
+      const m=liveMatchObject(s,court);
+      return m?m:null;
+    })
+    .filter(Boolean);
+
+  const liveCount=lives.length;
+
+  let h=`
+    <div class="homeBlock full"
+         style="border-color:var(--lime)">
+
+      <div class="homeTitle">
+        <h3>🟡 EN VIVO AHORA</h3>
+        <span>
+          ${
+            liveCount===2
+            ?"2 CANCHAS"
+            :liveCount===1
+            ?"1 CANCHA"
+            :"SIN PARTIDOS"
+          }
+        </span>
+      </div>
+
+      <div class="liveGrid">
+  `;
+
+  const byCourt={};
+
+  lives.forEach(x=>{
+    byCourt[String(x.court)]=x;
+  });
+
+  ["1","2"].forEach(court=>{
+
+    const item=byCourt[court];
+
+    if(!item){
+
+      h+=`
+        <div class="livePlaceholder">
+
+          <div style="font-size:28px;margin-bottom:8px">
+            🏀
+          </div>
+
+          <strong style="color:#fff">
+            CANCHA ${court}
+          </strong>
+
+          <div style="margin-top:6px">
+            Sin partido en juego
+          </div>
+
+        </div>
+      `;
+
+      return;
+    }
+
+    const {s,m}=item;
+
+    const home=matchTeamName({
+      home:m.home,
+      homeName:s.homeName
+    },"home");
+
+    const away=matchTeamName({
+      away:m.away,
+      awayName:s.awayName
+    },"away");
+
+    const t=liveRemaining(s);
+
+    const hs=liveScore(s,"home");
+    const as=liveScore(s,"away");
+
+    h+=`
+      <div class="homeMatch"
+           style="border-color:var(--lime);margin:0;min-height:150px">
+
+        <div class="meta">
+
+          <span>CANCHA ${court}</span>
+
+          <span class="statusBadge statusLive">
+            🟡 EN VIVO
+          </span>
+
+        </div>
+
+        <div class="teams"
+             style="font-size:16px">
+
+          <span>${esc(home)}</span>
+
+          <span style="font-size:20px!important">
+            ${hs} — ${as}
+          </span>
+
+          <span>${esc(away)}</span>
+
+        </div>
+
+        <div class="muted"
+             style="margin-top:14px;text-align:center;font-size:13px">
+
+          ⏱️
+          ${String(Math.floor(t/60)).padStart(2,"0")}:
+          ${String(t%60).padStart(2,"0")}
+
+        </div>
+
+      </div>
+    `;
+  });
+
+  h+=`
+      </div>
+    </div>
+  `;
+
+  b.innerHTML=h;
+}
+
+
+/* =========================================================
+   CUENTA REGRESIVA
+========================================================= */
+
+function updateCountdown(){
+
+  const eventDate=
+    new Date("2026-11-07T00:00:00-03:00");
+
+  const remaining=Math.max(
+    0,
+    eventDate.getTime()-Date.now()
+  );
+
+  const totalSeconds=
+    Math.floor(remaining/1000);
+
+  const days=
+    Math.floor(totalSeconds/86400);
+
+  const hours=
+    Math.floor(
+      (totalSeconds%86400)/3600
+    );
+
+  const minutes=
+    Math.floor(
+      (totalSeconds%3600)/60
+    );
+
+  const seconds=
+    totalSeconds%60;
+
+  const set=(id,value)=>{
+    const el=document.getElementById(id);
+    if(el){
+      el.textContent=
+        String(value).padStart(2,"0");
+    }
+  };
+
+  set("countdownDays",days);
+  set("countdownHours",hours);
+  set("countdownMinutes",minutes);
+  set("countdownSeconds",seconds);
+
+  const title=
+    document.getElementById("countdownTitle");
+
+  if(title){
+
+    title.textContent=
+      remaining<=0
+      ?"EL EVENTO YA COMENZÓ 🏀"
+      :"FALTAN PARA EL EVENTO";
+  }
+}
+
+
+/* =========================================================
+   ESTADO TORNEO
+========================================================= */
 
 const TOTAL_TOURNAMENT_MATCHES=31;
 const GROUP_STAGE_MATCHES=24;
-function playoffMatches(){const p=data.playoffs||{};return [p.qf1,p.qf2,p.qf3,p.qf4,p.sf1,p.sf2,p.final].filter(Boolean);}
-function isPlayoffFinished(m){return !!m&&isScoreSet(m.homeScore)&&isScoreSet(m.awayScore)&&Number(m.homeScore)!==Number(m.awayScore);}
+
+
+function playoffMatches(){
+
+  const p=data.playoffs||{};
+
+  return [
+    p.qf1,
+    p.qf2,
+    p.qf3,
+    p.qf4,
+    p.sf1,
+    p.sf2,
+    p.final
+  ].filter(Boolean);
+}
+
+
+function playoffWinner(m){
+
+  if(
+    !m ||
+    !isScoreSet(m.homeScore) ||
+    !isScoreSet(m.awayScore)
+  ){
+    return null;
+  }
+
+  if(+m.homeScore===+m.awayScore)
+    return null;
+
+  return +m.homeScore>+m.awayScore
+    ?m.home
+    :m.away;
+}
+
+
+function isPlayoffFinished(m){
+
+  return !!playoffWinner(m);
+}
+
+
 function renderTournamentStatus(){
 
- const b=document.getElementById("tournamentStatusContent");
- if(!b)return;
+  const b=
+    document.getElementById("tournamentStatusContent");
 
- const tournamentStart =
-   new Date("2026-11-07T00:00:00-03:00").getTime();
-
- const tournamentStarted =
-   Date.now() >= tournamentStart;
-
- /*
-  * ANTES DEL 7 DE NOVIEMBRE
-  * Se ignoran los partidos cargados en Firebase.
-  */
-
- if(!tournamentStarted){
-
-   b.innerHTML=`
-   <div class="homeBlock">
-
-     <div class="homeTitle">
-       <h3>🏆 ESTADO DEL TORNEO</h3>
-       <span>FASE DE GRUPOS</span>
-     </div>
-
-     <div style="font-size:24px;font-weight:900">
-       0 / ${TOTAL_TOURNAMENT_MATCHES}
-     </div>
-
-     <div class="muted" style="margin-top:4px">
-       PARTIDOS FINALIZADOS · 0% COMPLETADO
-     </div>
-
-     <div class="tournamentProgress">
-       <div style="width:0%"></div>
-     </div>
-
-     <div class="tournamentStats">
-
-       <div class="tournamentStat">
-         <b>0</b>
-         <span class="muted">FINALIZADOS</span>
-       </div>
-
-       <div class="tournamentStat">
-         <b>0</b>
-         <span class="muted">EN JUEGO</span>
-       </div>
-
-       <div class="tournamentStat">
-         <b>${TOTAL_TOURNAMENT_MATCHES}</b>
-         <span class="muted">PENDIENTES</span>
-       </div>
-
-     </div>
-
-     <div class="muted" style="margin-top:12px">
-       24 grupos · 4 cuartos · 2 semifinales · 1 final
-     </div>
-
-   </div>
-   `;
-
-   return;
- }
-
- /*
-  * DESDE EL 7 DE NOVIEMBRE
-  * vuelve a utilizar los datos reales.
-  */
-
- const groupFinished =
-   Object.values(data.matches||{})
-   .filter(m=>isMatchFinished(m))
-   .length;
-
- const playoffFinished =
-   playoffMatches()
-   .filter(isPlayoffFinished)
-   .length;
-
- const finished=Math.min(
-   TOTAL_TOURNAMENT_MATCHES,
-   groupFinished+playoffFinished
- );
-
- const liveCount=[
-   liveStateValid(live1),
-   liveStateValid(live2)
- ].filter(Boolean).length;
-
- const p=data.playoffs||{};
- const finalWinner=playoffWinner(p.final);
- const champion=finalWinner||p.champion||null;
-
- let phase="FASE DE GRUPOS";
-
- if(champion || finished>=TOTAL_TOURNAMENT_MATCHES){
-   phase="TORNEO FINALIZADO";
- }
- else if(groupFinished>=GROUP_STAGE_MATCHES){
-   phase="PLAYOFFS";
- }
-
- const pct=Math.round(
-   (finished/TOTAL_TOURNAMENT_MATCHES)*100
- );
-
- b.innerHTML=`
- <div class="homeBlock">
-
-   <div class="homeTitle">
-     <h3>🏆 ESTADO DEL TORNEO</h3>
-     <span>${phase}</span>
-   </div>
-
-   <div style="font-size:24px;font-weight:900">
-     ${finished} / ${TOTAL_TOURNAMENT_MATCHES}
-   </div>
-
-   <div class="muted" style="margin-top:4px">
-     PARTIDOS FINALIZADOS · ${pct}% COMPLETADO
-   </div>
-
-   <div class="tournamentProgress">
-     <div style="width:${pct}%"></div>
-   </div>
-
-   <div class="tournamentStats">
-
-     <div class="tournamentStat">
-       <b>${finished}</b>
-       <span class="muted">FINALIZADOS</span>
-     </div>
-
-     <div class="tournamentStat">
-       <b>${liveCount}</b>
-       <span class="muted">EN JUEGO</span>
-     </div>
-
-     <div class="tournamentStat">
-       <b>${TOTAL_TOURNAMENT_MATCHES-finished}</b>
-       <span class="muted">PENDIENTES</span>
-     </div>
-
-   </div>
-
-   <div class="muted" style="margin-top:12px">
-     24 grupos · 4 cuartos · 2 semifinales · 1 final
-   </div>
-
- </div>
- `;
-
-}
-function renderChampion(){
-
-  const b=document.getElementById("championContent");
   if(!b)return;
 
-  const tournamentStart =
-    new Date("2026-11-07T00:00:00-03:00").getTime();
+  const tournamentStart=
+    new Date("2026-11-07T00:00:00-03:00")
+    .getTime();
 
-  /*
-   * Antes del comienzo del torneo,
-   * nunca mostrar campeón aunque haya
-   * datos viejos guardados en Firebase.
-   */
-  if(Date.now() < tournamentStart){
+  if(Date.now()<tournamentStart){
+
     b.innerHTML=`
       <div class="homeBlock">
+
+        <div class="homeTitle">
+          <h3>🏆 ESTADO DEL TORNEO</h3>
+          <span>FASE DE GRUPOS</span>
+        </div>
+
+        <div style="font-size:24px;font-weight:900">
+          0 / ${TOTAL_TOURNAMENT_MATCHES}
+        </div>
+
+        <div class="muted" style="margin-top:4px">
+          PARTIDOS FINALIZADOS · 0% COMPLETADO
+        </div>
+
+        <div class="tournamentProgress">
+          <div style="width:0%"></div>
+        </div>
+
+        <div class="tournamentStats">
+
+          <div class="tournamentStat">
+            <b>0</b>
+            <span class="muted">FINALIZADOS</span>
+          </div>
+
+          <div class="tournamentStat">
+            <b>0</b>
+            <span class="muted">EN JUEGO</span>
+          </div>
+
+          <div class="tournamentStat">
+            <b>${TOTAL_TOURNAMENT_MATCHES}</b>
+            <span class="muted">PENDIENTES</span>
+          </div>
+
+        </div>
+
+        <div class="muted" style="margin-top:12px">
+          24 grupos · 4 cuartos · 2 semifinales · 1 final
+        </div>
+
+      </div>
+    `;
+
+    return;
+  }
+
+  const groupFinished=
+    Object.values(data.matches||{})
+    .filter(isMatchFinished)
+    .length;
+
+  const playoffFinished=
+    playoffMatches()
+    .filter(isPlayoffFinished)
+    .length;
+
+  const finished=Math.min(
+    TOTAL_TOURNAMENT_MATCHES,
+    groupFinished+playoffFinished
+  );
+
+  const liveCount=[
+    liveStateValid(live1),
+    liveStateValid(live2)
+  ].filter(Boolean).length;
+
+  const p=data.playoffs||{};
+
+  const champion=
+    playoffWinner(p.final) ||
+    p.champion ||
+    null;
+
+  let phase="FASE DE GRUPOS";
+
+  if(
+    champion ||
+    finished>=TOTAL_TOURNAMENT_MATCHES
+  ){
+    phase="TORNEO FINALIZADO";
+  }
+  else if(
+    groupFinished>=GROUP_STAGE_MATCHES
+  ){
+    phase="PLAYOFFS";
+  }
+
+  const pct=Math.round(
+    (finished/TOTAL_TOURNAMENT_MATCHES)*100
+  );
+
+  b.innerHTML=`
+    <div class="homeBlock">
+
+      <div class="homeTitle">
+        <h3>🏆 ESTADO DEL TORNEO</h3>
+        <span>${phase}</span>
+      </div>
+
+      <div style="font-size:24px;font-weight:900">
+        ${finished} / ${TOTAL_TOURNAMENT_MATCHES}
+      </div>
+
+      <div class="muted" style="margin-top:4px">
+        PARTIDOS FINALIZADOS · ${pct}% COMPLETADO
+      </div>
+
+      <div class="tournamentProgress">
+        <div style="width:${pct}%"></div>
+      </div>
+
+      <div class="tournamentStats">
+
+        <div class="tournamentStat">
+          <b>${finished}</b>
+          <span class="muted">FINALIZADOS</span>
+        </div>
+
+        <div class="tournamentStat">
+          <b>${liveCount}</b>
+          <span class="muted">EN JUEGO</span>
+        </div>
+
+        <div class="tournamentStat">
+          <b>${TOTAL_TOURNAMENT_MATCHES-finished}</b>
+          <span class="muted">PENDIENTES</span>
+        </div>
+
+      </div>
+
+      <div class="muted" style="margin-top:12px">
+        24 grupos · 4 cuartos · 2 semifinales · 1 final
+      </div>
+
+    </div>
+  `;
+}
+
+
+/* =========================================================
+   CAMPEÓN
+========================================================= */
+
+function renderChampion(){
+
+  const b=
+    document.getElementById("championContent");
+
+  if(!b)return;
+
+  const tournamentStart=
+    new Date("2026-11-07T00:00:00-03:00")
+    .getTime();
+
+  /*
+    ANTES DEL TORNEO:
+    jamás mostrar un campeón viejo de Firebase.
+  */
+
+  if(Date.now()<tournamentStart){
+
+    b.innerHTML=`
+      <div class="homeBlock">
+
         <div class="homeTitle">
           <h3>🏀 ¿VAS A SER PARTE?</h3>
           <span>STREET 3x3</span>
@@ -773,7 +2094,9 @@ function renderChampion(){
 
         <div style="font-size:30px;font-weight:900;line-height:1.05">
           NO VENGAS A MIRAR.<br>
-          <span style="color:var(--lime)">VENÍ A JUGAR.</span>
+          <span style="color:var(--lime)">
+            VENÍ A JUGAR.
+          </span>
         </div>
 
         <div class="muted" style="margin-top:12px">
@@ -781,7 +2104,9 @@ function renderChampion(){
         </div>
 
         <div style="margin-top:14px">
-          <span class="badge">INSCRIPCIONES ABIERTAS</span>
+          <span class="badge">
+            INSCRIPCIONES ABIERTAS
+          </span>
         </div>
 
         <a
@@ -800,30 +2125,19 @@ function renderChampion(){
     return;
   }
 
-  /*
-   * Desde el comienzo del torneo,
-   * vuelve a mostrar el campeón real.
-   */
-
   const p=data.playoffs||{};
 
-  const winner=m=>{
-    if(
-      !m ||
-      !isScoreSet(m.homeScore) ||
-      !isScoreSet(m.awayScore) ||
-      +m.homeScore===+m.awayScore
-    )return null;
+  const champ=
+    p.champion ||
+    playoffWinner(p.final);
 
-    return +m.homeScore>+m.awayScore
-      ?m.home
-      :m.away;
-  };
-
-  const f=p.final;
-  const champ=p.champion||winner(f);
+  /*
+    SI NO HAY CAMPEÓN REAL:
+    NO MOSTRAR NADA.
+  */
 
   if(!champ){
+
     b.innerHTML="";
     return;
   }
@@ -832,16 +2146,25 @@ function renderChampion(){
 
   const matches=
     Object.values(data.matches||{})
-    .filter(m=>m.home===champ||m.away===champ);
+    .filter(m=>
+      m.home===champ ||
+      m.away===champ
+    );
 
-  let pj=0,pg=0,pp=0,pf=0,pc=0;
+  let pj=0;
+  let pg=0;
+  let pp=0;
+  let pf=0;
+  let pc=0;
 
   for(const m of matches){
 
     if(
       !isScoreSet(m.homeScore) ||
       !isScoreSet(m.awayScore)
-    )continue;
+    ){
+      continue;
+    }
 
     pj++;
 
@@ -863,14 +2186,15 @@ function renderChampion(){
 
       if(as>hs)pg++;
       else pp++;
-
     }
   }
 
   b.innerHTML=`
     <div class="homeBlock full championHero">
 
-      <div style="font-size:52px">🏆</div>
+      <div style="font-size:52px">
+        🏆
+      </div>
 
       <div class="kicker">
         CAMPEÓN STREET 3x3
@@ -885,594 +2209,1721 @@ function renderChampion(){
       </div>
 
       <div style="margin-top:16px;font-weight:900">
-        ${pj} PJ · ${pg} PG · ${pp} PP · PF ${pf} · PC ${pc}
+        ${pj} PJ · ${pg} PG · ${pp} PP ·
+        PF ${pf} · PC ${pc}
       </div>
 
     </div>
   `;
-
 }
+
+
+/* =========================================================
+   HOME
+========================================================= */
+
 function renderHomePlayerOfRound(){
 
-const b=document.getElementById("homePlayerOfRound");
-if(!b)return;
+  const b=
+    document.getElementById("homePlayerOfRound");
 
-const p=data.playerOfRound?data.participants?.[data.playerOfRound]:null;
+  if(!b)return;
 
-if(!p){
-b.innerHTML="";
-return;
-}
+  const p=
+    data.playerOfRound
+    ?data.participants?.[data.playerOfRound]
+    :null;
 
-const team=data.teams?.[p.team];
-
-b.innerHTML=`
-<div class="homeBlock">
-<div class="homeTitle">
-<h3>⭐ JUGADOR DE LA FECHA</h3>
-<span>DESTACADO</span>
-</div>
-<div style="font-size:25px;font-weight:900">${esc(p.name)}</div>
-<div class="muted">${team?esc(team.name):"Equipo por definir"}</div>
-<div style="margin-top:13px;font-weight:900">
-${Number(p.points)||0} PTS · ${Number(p.rebounds)||0} REB · ${Number(p.assists)||0} AST
-</div>
-</div>
-`;
-
-}
-
-function renderHomePlayerToWatch(){
-const b=document.getElementById("homePlayerToWatch");if(!b)return;
-const p=data.playerToWatch?data.participants?.[data.playerToWatch]:null;if(!p){b.innerHTML="";return;}
-const t=data.teams?.[p.team],g=+p.games||0;
-b.innerHTML=`<div class="homeBlock"><div class="homeTitle"><h3>👀 JUGADOR A SEGUIR</h3><span>ATENCIÓN</span></div><div style="font-size:24px;font-weight:900">${p.number?"#"+esc(p.number)+" ":""}${esc(p.name)}</div><div class="muted">${t?esc(t.name):"Equipo por definir"}</div><div style="margin-top:13px;font-weight:900">${g?(+p.points/g).toFixed(1):"0.0"} PPG · ${g?(+p.rebounds/g).toFixed(1):"0.0"} RPG · ${g?(+p.assists/g).toFixed(1):"0.0"} APG</div></div>`;
-}
-
-
-function liveStateValid(s){
-return !!s && !!s.matchId && s.running===true;
-}
-
-function liveRemaining(s){
-if(!s) return 0;
-if(s.running && s.endAt){
-return Math.max(0, Math.ceil((Number(s.endAt)-Date.now())/1000));
-}
-return Math.max(0, Number(s.remaining)||0);
-}
-
-function liveMatchObject(s,court){
-
-if(!liveStateValid(s))return null;
-
-const m=data.matches?.[s.matchId];
-if(!m)return null;
-
-return {s:s,m:m,court:court};
-
-}
-
-function renderLiveCenter(){
-
-const b=document.getElementById("liveCenterContent");
-if(!b)return;
-
-const liveEntries=[
-  {s:live1,court:"1"},
-  {s:live2,court:"2"}
-];
-
-const lives=liveEntries.map(({s,court})=>{
-  const m=liveMatchObject(s,court);
-  return m?{...m}:null;
-}).filter(Boolean);
-
-const liveCount=lives.length;
-
-let h=`
-<div class="homeBlock full" style="border-color:var(--lime)">
-  <div class="homeTitle">
-    <h3>🟡 EN VIVO AHORA</h3>
-    <span>${liveCount===2?"2 CANCHAS":liveCount===1?"1 CANCHA":"SIN PARTIDOS"}</span>
-  </div>
-  <div class="liveGrid">
-`;
-
-const byCourt={};
-lives.forEach(x=>byCourt[String(x.court)]=x);
-
-["1","2"].forEach(court=>{
-  const item=byCourt[court];
-
-  if(!item){
-    h+=`
-    <div class="livePlaceholder">
-      <div style="font-size:28px;margin-bottom:8px">🏀</div>
-      <strong style="color:#fff">CANCHA ${court}</strong>
-      <div style="margin-top:6px">Sin partido en juego</div>
-    </div>`;
+  if(!p){
+    b.innerHTML="";
     return;
   }
 
-  const {s,m}=item;
-  const home=matchTeamName({home:m.home,homeName:s.homeName},"home");
-  const away=matchTeamName({away:m.away,awayName:s.awayName},"away");
-  const t=liveRemaining(s);
+  const team=data.teams?.[p.team];
 
-  h+=`
-  <div class="homeMatch" style="border-color:var(--lime);margin:0;min-height:150px">
-    <div class="meta">
-      <span>CANCHA ${court}</span>
-      <span class="statusBadge statusLive">🟡 EN VIVO</span>
-    </div>
-    <div class="teams" style="font-size:16px">
-      <span>${esc(home)}</span>
-      <span style="font-size:20px!important">${Number(s.home)||0} — ${Number(s.away)||0}</span>
-      <span>${esc(away)}</span>
-    </div>
-    <div class="muted" style="margin-top:14px;text-align:center;font-size:13px">
-      ⏱️ ${String(Math.floor(t/60)).padStart(2,"0")}:${String(t%60).padStart(2,"0")}
-    </div>
-  </div>`;
-});
+  b.innerHTML=`
+    <div class="homeBlock">
 
-h+=`</div></div>`;
-b.innerHTML=h;
+      <div class="homeTitle">
+        <h3>⭐ JUGADOR DE LA FECHA</h3>
+        <span>DESTACADO</span>
+      </div>
 
+      <div style="font-size:25px;font-weight:900">
+        ${esc(p.name)}
+      </div>
+
+      <div class="muted">
+        ${team?esc(team.name):"Equipo por definir"}
+      </div>
+
+      <div style="margin-top:13px;font-weight:900">
+        ${Number(p.points)||0} PTS ·
+        ${Number(p.rebounds)||0} REB ·
+        ${Number(p.assists)||0} AST
+      </div>
+
+    </div>
+  `;
 }
+
+
+function renderHomePlayerToWatch(){
+
+  const b=
+    document.getElementById("homePlayerToWatch");
+
+  if(!b)return;
+
+  const p=
+    data.playerToWatch
+    ?data.participants?.[data.playerToWatch]
+    :null;
+
+  if(!p){
+    b.innerHTML="";
+    return;
+  }
+
+  const t=data.teams?.[p.team];
+  const g=+p.games||0;
+
+  b.innerHTML=`
+    <div class="homeBlock">
+
+      <div class="homeTitle">
+        <h3>👀 JUGADOR A SEGUIR</h3>
+        <span>ATENCIÓN</span>
+      </div>
+
+      <div style="font-size:24px;font-weight:900">
+        ${p.number?"#"+esc(p.number)+" ":""}
+        ${esc(p.name)}
+      </div>
+
+      <div class="muted">
+        ${t?esc(t.name):"Equipo por definir"}
+      </div>
+
+      <div style="margin-top:13px;font-weight:900">
+        ${g?(+p.points/g).toFixed(1):"0.0"} PPG ·
+        ${g?(+p.rebounds/g).toFixed(1):"0.0"} RPG ·
+        ${g?(+p.assists/g).toFixed(1):"0.0"} APG
+      </div>
+
+    </div>
+  `;
+}
+
+
 function renderNextMatches(){
- const b=document.getElementById("nextMatchesContent");
- if(!b)return;
- const now=Date.now();
- const upcoming=Object.values(data.matches||{}).filter(m=>{
-   if(isMatchFinished(m))return false;
-   const dt=getMatchDateTime(m);
-   return dt && dt.getTime()>now;
- }).sort((a,z)=>getMatchDateTime(a)-getMatchDateTime(z)).slice(0,3);
- let h=`<div class="homeBlock"><div class="homeTitle"><h3>📅 PRÓXIMOS PARTIDOS</h3><span>AGENDA</span></div>`;
- if(!upcoming.length){
-   h+=`<div class="empty">No hay próximos partidos con fecha y hora cargadas.</div>`;
- }else{
-   upcoming.forEach(m=>{h+=`<div class="homeMatch"><div class="meta"><span>${m.group?"GRUPO "+esc(m.group):(m.round?esc(m.round):"TORNEO")}</span>${statusBadge(m)}</div><div class="teams"><span>${esc(matchTeamName(m,"home"))}</span><span>VS</span><span>${esc(matchTeamName(m,"away"))}</span></div><div class="muted" style="margin-top:9px">${esc(formatMatchDate(m.date))} · ${esc(m.time||"Hora por definir")}${m.court?" · CANCHA "+esc(m.court):""}</div></div>`;});
-   h+=`<a class="dashboardLink" href="#" onclick="goToTab('fixture');return false">VER FIXTURE →</a>`;
- }
- h+=`</div>`; b.innerHTML=h;
+
+  const b=
+    document.getElementById("nextMatchesContent");
+
+  if(!b)return;
+
+  const now=Date.now();
+
+  const upcoming=
+    Object.values(data.matches||{})
+    .filter(m=>{
+      if(isMatchFinished(m))
+        return false;
+
+      const dt=getMatchDateTime(m);
+
+      return dt &&
+             dt.getTime()>now;
+    })
+    .sort(
+      (a,z)=>
+        getMatchDateTime(a)-
+        getMatchDateTime(z)
+    )
+    .slice(0,3);
+
+  let h=`
+    <div class="homeBlock">
+
+      <div class="homeTitle">
+        <h3>📅 PRÓXIMOS PARTIDOS</h3>
+        <span>AGENDA</span>
+      </div>
+  `;
+
+  if(!upcoming.length){
+
+    h+=`
+      <div class="empty">
+        No hay próximos partidos con fecha y hora cargadas.
+      </div>
+    `;
+
+  }else{
+
+    upcoming.forEach(m=>{
+
+      h+=`
+        <div class="homeMatch">
+
+          <div class="meta">
+            <span>
+              ${
+                m.group
+                ?"GRUPO "+esc(m.group)
+                :(m.round?esc(m.round):"TORNEO")
+              }
+            </span>
+
+            ${statusBadge(m)}
+          </div>
+
+          <div class="teams">
+
+            <span>
+              ${esc(matchTeamName(m,"home"))}
+            </span>
+
+            <span>VS</span>
+
+            <span>
+              ${esc(matchTeamName(m,"away"))}
+            </span>
+
+          </div>
+
+          <div class="muted" style="margin-top:9px">
+
+            ${esc(formatMatchDate(m.date))}
+            ·
+            ${esc(m.time||"Hora por definir")}
+
+            ${
+              m.court
+              ?" · CANCHA "+esc(m.court)
+              :""
+            }
+
+          </div>
+
+        </div>
+      `;
+    });
+
+    h+=`
+      <a class="dashboardLink"
+         href="#"
+         onclick="goToTab('fixture');return false">
+         VER FIXTURE →
+      </a>
+    `;
+  }
+
+  h+=`</div>`;
+
+  b.innerHTML=h;
 }
+
 
 function renderRecentResults(){
 
-const b=document.getElementById("recentResultsContent");
-if(!b)return;
+  const b=
+    document.getElementById("recentResultsContent");
 
-const results=Object.entries(data.matches||{})
-.filter(([id,m])=>isMatchFinished(m))
-.sort((a,z)=>{
+  if(!b)return;
 
-const da=getMatchDateTime(a[1]), dz=getMatchDateTime(z[1]);
+  const results=
+    Object.entries(data.matches||{})
+    .filter(([id,m])=>isMatchFinished(m))
+    .sort((a,z)=>{
 
-if(da&&dz)return dz-da;
-return 0;
+      const da=getMatchDateTime(a[1]);
+      const dz=getMatchDateTime(z[1]);
 
-})
-.slice(0,3)
-.map(x=>x[1]);
+      if(da&&dz)
+        return dz-da;
 
-if(!results.length){
-b.innerHTML="";
-return;
-}
+      return 0;
+    })
+    .slice(0,3)
+    .map(x=>x[1]);
 
-let h=`
-<div class="homeBlock">
-<div class="homeTitle">
-<h3>🔴 ÚLTIMOS RESULTADOS</h3>
-<span>RESULTADOS</span>
-</div>
-`;
+  if(!results.length){
 
-results.forEach(m=>{
-
-h+=`
-<div class="homeMatch">
-<div class="meta">
-<span>GRUPO ${esc(m.group||"")}</span>
-${statusBadge(m)}
-</div>
-<div class="teams">
-<span>${esc(matchTeamName(m,"home"))}</span>
-<span class="score">${isScoreSet(m.homeScore)?Number(m.homeScore):"—"} - ${isScoreSet(m.awayScore)?Number(m.awayScore):"—"}</span>
-<span>${esc(matchTeamName(m,"away"))}</span>
-</div>
-<div class="muted" style="margin-top:9px">
-${esc(formatMatchDate(m.date))} ${esc(m.time||"")}
-</div>
-</div>
-`;
-
-});
-
-h+=`<a class="dashboardLink" href="#" onclick="goToTab('resultados');return false">VER TODOS LOS RESULTADOS →</a></div>`;
-
-b.innerHTML=h;
-
-}
-
-function renderGroupLeaders(){
-
-const b=document.getElementById("groupLeadersContent");
-if(!b)return;
-
-let h=`
-<div class="homeBlock">
-<div class="homeTitle">
-<h3>🏆 LÍDERES DE GRUPO</h3>
-<span>POSICIONES</span>
-</div>
-<div class="leaderGrid">
-`;
-
-["A","B","C","D"].forEach(group=>{
-
-const teams=calculateTable(group);
-const leader=teams[0];
-
-if(!leader){
-
-h+=`
-<div class="leaderCard">
-<div class="group">GRUPO ${group}</div>
-<strong>Por definir</strong>
-<small>Sin equipos cargados</small>
-</div>
-`;
-return;
-
-}
-
-h+=`
-<div class="leaderCard">
-<div class="group">GRUPO ${group} · 1°</div>
-<strong>${esc(leader.name)}</strong>
-<small>${leader.pts} PTS · ${leader.pg} PG · DIF ${leader.pf-leader.pc}</small>
-</div>
-`;
-
-});
-
-h+="</div><a class=\"dashboardLink\" href=\"#\" onclick=\"goToTab('tablas');return false\">VER TABLAS COMPLETAS →</a></div>";
-
-b.innerHTML=h;
-
-}
-
-function renderTopStats(){
-
-const b=document.getElementById("topStatsContent");
-if(!b)return;
-
-const players=Object.entries(data.participants||{});
-
-if(!players.length){
-b.innerHTML="";
-return;
-}
-
-const categories=[
-["points","🏀 PUNTOS","PTS"],
-["rebounds","🔄 REBOTES","REB"],
-["assists","🎯 ASISTENCIAS","AST"]
-];
-
-let h=`
-<div class="homeBlock">
-<div class="homeTitle">
-<h3>📊 LÍDERES ESTADÍSTICOS</h3>
-<span>TOP 3</span>
-</div>
-<div class="topMini">
-`;
-
-categories.forEach(([metric,title,label])=>{
-
-const list=[...players]
-.sort((a,z)=>(Number(z[1][metric])||0)-(Number(a[1][metric])||0))
-.slice(0,3);
-
-h+=`
-<div class="topMiniCard">
-<div class="kicker">${title}</div>
-`;
-
-if(!list.length){
-
-h+=`<div class="muted" style="margin-top:10px">Sin datos</div>`;
-
-}else{
-
-list.forEach(([id,p],i)=>{
-
-const team=data.teams?.[p.team];
-
-h+=`
-<div style="margin-top:10px">
-<div style="font-size:11px;color:var(--muted)">#${i+1}</div>
-<strong>${esc(p.name)}</strong>
-<div class="muted">${team?esc(team.name):"Por definir"}</div>
-<b>${Number(p[metric])||0} ${label}</b>
-</div>
-`;
-
-});
-
-}
-
-h+=`</div>`;
-
-});
-
-h+=`</div>
-<a class="dashboardLink" href="#" onclick="goToTab('estadisticas');return false">VER TOP 15 →</a>
-</div>`;
-
-b.innerHTML=h;
-
-}
-
-function goToTab(id){
-
-const btn=document.querySelector('.nav[data-tab="'+id+'"]');
-
-if(btn)btn.click();
-
-window.scrollTo({top:0,behavior:"smooth"});
-
-}
-
-
-function refreshTimeSensitiveContent(){
-
-renderLiveCenter();renderTournamentStatus();renderNextMatches();
-renderRecentResults();
-
-const now=new Date();
-
-const clock=document.getElementById("clockStatus");
-
-if(clock){
-
-const argentinaTime=now.toLocaleTimeString("es-AR",{
-timeZone:"America/Argentina/Buenos_Aires",
-hour:"2-digit",
-minute:"2-digit",
-second:"2-digit"
-});
-
-clock.textContent="Hora oficial Argentina: "+argentinaTime;
-
-}
-
-}
-
-
-function calculateTable(group){
-const teams=Object.entries(data.teams||{}).filter(([id,t])=>t.group===group).map(([id,t])=>({id,name:t.name,pj:0,pg:0,pp:0,pf:0,pc:0,pts:0}));
-const map={};teams.forEach(t=>map[t.id]=t);
-Object.values(data.matches||{}).forEach(m=>{
-if(m.group!==group||!isScoreSet(m.homeScore)||!isScoreSet(m.awayScore))return;
-const h=map[m.home],a=map[m.away];if(!h||!a)return;
-h.pj++;a.pj++;h.pf+=+m.homeScore;h.pc+=+m.awayScore;a.pf+=+m.awayScore;a.pc+=+m.homeScore;
-if(+m.homeScore>+m.awayScore){h.pg++;a.pp++;h.pts+=2;a.pts+=1}else if(+m.homeScore<+m.awayScore){a.pg++;h.pp++;a.pts+=2;h.pts+=1}
-});
-teams.sort((a,b)=>b.pg-a.pg||(b.pf-b.pc)-(a.pf-a.pc)||b.pf-a.pf);return teams;
-}
-function renderPlayers(){
-const b=document.getElementById("playersContent");if(!b)return;const ps=Object.entries(data.participants||{});
-if(!ps.length){b.innerHTML='<div class="empty">Todavía no hay jugadores cargados.</div>';return;}
-let h="";["A","B","C","D"].forEach(g=>{const list=ps.filter(([id,p])=>data.teams?.[p.team]?.group===g).sort((a,z)=>String(a[1].name||"").localeCompare(String(z[1].name||"")));if(!list.length)return;
-h+=`<div class="group"><h3>GRUPO ${g}</h3><div class="cards">`;list.forEach(([id,p])=>{const t=data.teams?.[p.team];h+=`<div class="match playerCard" onclick="openPlayerModal('${id}')"><div class="meta"><span>JUGADOR</span><span>${p.number?"#"+esc(p.number):""}</span></div><div style="font-size:20px;font-weight:900">${esc(p.name)}</div><div class="muted">${t?esc(t.name):"Equipo por definir"}</div><div style="margin-top:12px"><span class="badge">VER PROMEDIOS</span></div></div>`});h+="</div></div>"});b.innerHTML=h;
-}
-function playerTopLabels(id){const out=[];[["points","PUNTOS"],["rebounds","REBOTES"],["assists","ASISTENCIAS"]].forEach(([m,l])=>{const r=Object.entries(data.participants||{}).sort((a,z)=>(+z[1][m]||0)-(+a[1][m]||0)).slice(0,15).map(x=>x[0]);if(r.includes(id))out.push("🥇 TOP 15 "+l)});return out}
-function openPlayerModal(id){
-const p=data.participants?.[id];if(!p)return;const t=data.teams?.[p.team],g=+p.games||0,labels=playerTopLabels(id);
-document.getElementById("playerModalContent").innerHTML=`<div class="kicker">JUGADOR</div><h2 style="font-size:32px;margin:8px 0">${p.number?"#"+esc(p.number)+" ":""}${esc(p.name)}</h2><p class="muted">${t?esc(t.name):"Equipo por definir"}</p><h3 style="margin-top:28px">PROMEDIOS</h3><div class="avgGrid"><div class="avgBox">PPG<b>${g?(+p.points/g).toFixed(1):"0.0"}</b></div><div class="avgBox">RPG<b>${g?(+p.rebounds/g).toFixed(1):"0.0"}</b></div><div class="avgBox">APG<b>${g?(+p.assists/g).toFixed(1):"0.0"}</b></div></div><div style="margin-top:18px;font-weight:900">⭐ MVP: ${+p.motm||0}</div>${labels.length?`<div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:14px">${labels.map(x=>`<span class="badge">${x}</span>`).join("")}</div>`:""}`;document.getElementById("playerModal").classList.remove("hidden");
-}
-function renderStats(){
-const b=document.getElementById("statsContent");if(!b)return;const ps=Object.entries(data.participants||{});const m=window.activeRanking||"points";const c={points:["PUNTOS","PTS","MÁXIMO ANOTADOR"],rebounds:["REBOTES","REB","MÁXIMO REBOTERO"],assists:["ASISTENCIAS","AST","MÁXIMO ASISTENTE"],motm:["MVP","MVP","MÁS MVP"]};let h=`<div class="tabs filterTabs">${Object.entries(c).map(([k,v])=>`<button class="nav ${k===m?"active":""}" onclick="setRanking('${k}')">${v[0]}</button>`).join("")}</div><div class="group"><h3>TOP 15 — ${c[m][0]}</h3><div class="tableWrap"><table class="table"><tr><th>#</th><th>Jugador</th><th>Equipo</th><th>${c[m][1]}</th></tr>`;
-ps.sort((a,z)=>(+z[1][m]||0)-(+a[1][m]||0)).slice(0,15).forEach(([id,p],i)=>{const t=data.teams?.[p.team];h+=`<tr><td class="pos">${i+1}</td><td>${esc(p.name)}${i===0?`<div class="muted">🥇 ${c[m][2]}</div>`:""}</td><td>${t?esc(t.name):"Por definir"}</td><td class="pos">${+p[m]||0}</td></tr>`});h+="</table></div></div>";b.innerHTML=h;
-}
-window.activeRanking="points";function setRanking(m){window.activeRanking=m;renderStats()}
-function filterButtons(type){const f=window[type+"Filter"]||"ALL";return `<div class="tabs filterTabs">${["ALL","A","B","C","D"].map(g=>`<button class="nav ${f===g?"active":""}" onclick="setGroupFilter('${type}','${g}')">${g==="ALL"?"TODOS":"GRUPO "+g}</button>`).join("")}</div>`}
-window.fixtureFilter="ALL";window.resultsFilter="ALL";function setGroupFilter(type,g){window[type+"Filter"]=g;type==="fixture"?renderFixture():renderResults()}
-function renderFixture(){
-const b=document.getElementById("fixtureContent");if(!b)return;const f=window.fixtureFilter;const ms=Object.values(data.matches||{}).filter(m=>f==="ALL"||m.group===f).sort((a,z)=>(getMatchDateTime(a)||new Date(8640000000000000))-(getMatchDateTime(z)||new Date(8640000000000000)));let h=filterButtons("fixture")+`<div class="cards">`;
-ms.forEach(m=>h+=`<div class="match"><div class="meta"><span>GRUPO ${esc(m.group||"")}</span>${statusBadge(m)}</div><div class="row"><span>${esc(matchTeamName(m,"home"))}</span><span class="score">${isScoreSet(m.homeScore)?m.homeScore:""}</span></div><div class="row"><span>${esc(matchTeamName(m,"away"))}</span><span class="score">${isScoreSet(m.awayScore)?m.awayScore:""}</span></div><div class="muted">${esc(formatMatchDate(m.date))} · ${esc(m.time||"Hora por definir")}${m.court?" · "+esc(m.court):""}</div></div>`);h+="</div>";b.innerHTML=h;
-}
-function renderResults(){
-const b=document.getElementById("resultsContent");if(!b)return;const f=window.resultsFilter;const ms=Object.values(data.matches||{}).filter(isMatchFinished).filter(m=>f==="ALL"||m.group===f).sort((a,z)=>(getMatchDateTime(z)||0)-(getMatchDateTime(a)||0));let h=filterButtons("results");if(!ms.length){b.innerHTML=h+'<div class="empty">No hay resultados cargados.</div>';return}h+='<div class="cards">';ms.forEach(m=>h+=`<div class="match"><div class="meta"><span>GRUPO ${esc(m.group||"")}</span><span class="statusBadge statusFinal">🟢 FINALIZADO</span></div><div class="row"><span>${esc(matchTeamName(m,"home"))}</span><span class="score">${m.homeScore}</span></div><div class="row"><span>${esc(matchTeamName(m,"away"))}</span><span class="score">${m.awayScore}</span></div><div class="muted">${esc(formatMatchDate(m.date))} · ${esc(m.time||"")}</div></div>`);h+="</div>";b.innerHTML=h;
-}
-function renderTables(){
-const b=document.getElementById("tablesContent");if(!b)return;let h="";["A","B","C","D"].forEach(g=>{const ts=calculateTable(g);h+=`<div class="group"><h3>GRUPO ${g}</h3><div class="tableWrap"><table class="table"><tr><th>#</th><th>Equipo</th><th>PJ</th><th>PG</th><th>PP</th><th>PF</th><th>PC</th><th>DIF</th><th>PTS</th></tr>`;ts.forEach((t,i)=>{const icon=i===0?"🥇":i===1?"🥈":i===2?"🔴":"⚫";h+=`<tr class="${i<2?"qualifies":""}"><td class="pos">${icon} ${i+1}</td><td><strong>${esc(t.name)}</strong>${i<2?'<div class="muted">CLASIFICA A PLAYOFFS</div>':""}</td><td>${t.pj}</td><td>${t.pg}</td><td>${t.pp}</td><td>${t.pf}</td><td>${t.pc}</td><td>${t.pf-t.pc}</td><td class="pos">${t.pts}</td></tr>`});h+="</table></div></div>"});b.innerHTML=h;
-}
-function playoffWinner(m){if(!m||!isScoreSet(m.homeScore)||!isScoreSet(m.awayScore)||+m.homeScore===+m.awayScore)return null;return +m.homeScore>+m.awayScore?m.home:m.away}
-function renderPlayoffs(){
-const b=document.getElementById("playoffContent");if(!b)return;const p=data.playoffs||{};if(!Object.keys(p).length){b.innerHTML='<div class="empty">Los playoffs todavía no fueron generados.</div>';return}const q1=playoffWinner(p.qf1),q2=playoffWinner(p.qf2),q3=playoffWinner(p.qf3),q4=playoffWinner(p.qf4),s1={...(p.sf1||{}),home:q1,away:q3},s2={...(p.sf2||{}),home:q2,away:q4},f={...(p.final||{}),home:playoffWinner(s1),away:playoffWinner(s2)},champ=playoffWinner(f);const tm=id=>id?esc(data.teams?.[id]?.name||"Por definir"):"Por definir";const game=(m,l)=>`<div class="game"><div class="muted">${l}</div><div><strong>${tm(m?.home)}</strong><span style="float:right;color:var(--lime)">${isScoreSet(m?.homeScore)?m.homeScore:""}</span></div><div><strong>${tm(m?.away)}</strong><span style="float:right;color:var(--lime)">${isScoreSet(m?.awayScore)?m.awayScore:""}</span></div>${playoffWinner(m)?`<div class="muted">✓ Clasifica ${tm(playoffWinner(m))}</div>`:""}</div>`;b.innerHTML=`<div class="bracket"><div class="round"><h3>CUARTOS DE FINAL</h3>${game(p.qf1,"CUARTO 1")}${game(p.qf2,"CUARTO 2")}${game(p.qf3,"CUARTO 3")}${game(p.qf4,"CUARTO 4")}</div><div class="round"><h3>SEMIFINALES</h3>${game(s1,"SEMIFINAL 1")}${game(s2,"SEMIFINAL 2")}</div><div class="round"><h3>FINAL</h3>${game(f,"FINAL")}</div><div class="round champ"><h3>CAMPEÓN</h3><div class="game" style="text-align:center;font-size:22px">🏆<br><br><strong>${champ?tm(champ):"POR DEFINIR"}</strong></div></div></div>`;
-}
-function closePlayerModal(event){
-
-const modal=document.getElementById("playerModal");
-if(!modal)return;
-
-if(!event || event.target===modal){
-modal.classList.add("hidden");
-}
-
-}
-
-document.addEventListener("keydown",function(event){
-if(event.key==="Escape")closePlayerModal();
-});
-
-function render(){document.getElementById("teamCount").textContent=Object.keys(data.teams||{}).length;document.getElementById("matchCount").textContent=TOTAL_TOURNAMENT_MATCHES;document.getElementById("status").textContent="● Datos actualizados en tiempo real";renderPlayers();renderStats();renderFixture();renderResults();renderTables();renderPlayoffs();renderHomePlayerOfRound();renderHomePlayerToWatch();renderLiveCenter();renderNextMatches();renderRecentResults();renderGroupLeaders();renderTopStats();renderTournamentStatus();renderChampion();refreshTimeSensitiveContent()}
-ref.on("value",s=>{
-let v=s.val();
-data=v&&typeof v==="object"&&!Array.isArray(v)?v:{teams:{},matches:{},playoffs:{}};
-data.teams=data.teams&&typeof data.teams==="object"?data.teams:{};
-data.matches=data.matches&&typeof data.matches==="object"?data.matches:{};
-data.playoffs=data.playoffs&&typeof data.playoffs==="object"?data.playoffs:{};
-data.participants=data.participants&&typeof data.participants==="object"?data.participants:{};
-data.playerOfRound=typeof data.playerOfRound==="string"?data.playerOfRound:"";
-data.playerToWatch=typeof data.playerToWatch==="string"?data.playerToWatch:"";
-render();
-});
-
-liveRef1.on("value",s=>{
-live1=s.val();
-renderLiveCenter();
-renderTournamentStatus();
-});
-
-liveRef2.on("value",s=>{
-live2=s.val();
-renderLiveCenter();
-renderTournamentStatus();
-});
-document.querySelectorAll(".nav[data-tab]").forEach(btn=>btn.onclick=()=>{document.querySelectorAll(".nav").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));btn.classList.add("active");const target=document.getElementById(btn.dataset.tab);if(target)target.classList.add("active");scrollTo({top:0,behavior:"smooth"})});
-</script>
-/* CUENTA REGRESIVA STREET 3x3 */
-
-function updateCountdown(){
-
-  const eventDate =
-    new Date("2026-11-07T00:00:00-03:00");
-
-  const now = new Date();
-
-  let remaining =
-    eventDate.getTime() - now.getTime();
-
-  if(remaining < 0){
-    remaining = 0;
-  }
-
-  const totalSeconds =
-    Math.floor(remaining / 1000);
-
-  const days =
-    Math.floor(totalSeconds / 86400);
-
-  const hours =
-    Math.floor((totalSeconds % 86400) / 3600);
-
-  const minutes =
-    Math.floor((totalSeconds % 3600) / 60);
-
-  const seconds =
-    totalSeconds % 60;
-
-  const daysEl =
-    document.getElementById("countdownDays");
-
-  const hoursEl =
-    document.getElementById("countdownHours");
-
-  const minutesEl =
-    document.getElementById("countdownMinutes");
-
-  const secondsEl =
-    document.getElementById("countdownSeconds");
-
-  if(!daysEl || !hoursEl || !minutesEl || !secondsEl){
+    b.innerHTML="";
     return;
   }
 
-  daysEl.textContent =
-    String(days).padStart(2,"0");
+  let h=`
+    <div class="homeBlock">
 
-  hoursEl.textContent =
-    String(hours).padStart(2,"0");
+      <div class="homeTitle">
+        <h3>🔴 ÚLTIMOS RESULTADOS</h3>
+        <span>RESULTADOS</span>
+      </div>
+  `;
 
-  minutesEl.textContent =
-    String(minutes).padStart(2,"0");
+  results.forEach(m=>{
 
-  secondsEl.textContent =
-    String(seconds).padStart(2,"0");
+    h+=`
+      <div class="homeMatch">
 
-  if(remaining <= 0){
+        <div class="meta">
 
-    const title =
-      document.getElementById("countdownTitle");
+          <span>
+            GRUPO ${esc(m.group||"")}
+          </span>
 
-    if(title){
-      title.textContent =
-        "EL EVENTO YA COMENZÓ 🏀";
+          ${statusBadge(m)}
+
+        </div>
+
+        <div class="teams">
+
+          <span>
+            ${esc(matchTeamName(m,"home"))}
+          </span>
+
+          <span class="score">
+            ${isScoreSet(m.homeScore)
+              ?Number(m.homeScore)
+              :"—"}
+            -
+            ${isScoreSet(m.awayScore)
+              ?Number(m.awayScore)
+              :"—"}
+          </span>
+
+          <span>
+            ${esc(matchTeamName(m,"away"))}
+          </span>
+
+        </div>
+
+        <div class="muted" style="margin-top:9px">
+          ${esc(formatMatchDate(m.date))}
+          ${esc(m.time||"")}
+        </div>
+
+      </div>
+    `;
+  });
+
+  h+=`
+      <a class="dashboardLink"
+         href="#"
+         onclick="goToTab('resultados');return false">
+        VER TODOS LOS RESULTADOS →
+      </a>
+
+    </div>
+  `;
+
+  b.innerHTML=h;
+}
+
+
+/* =========================================================
+   TABLAS
+========================================================= */
+
+function calculateTable(group){
+
+  const teams=
+    Object.entries(data.teams||{})
+    .filter(([id,t])=>t.group===group)
+    .map(([id,t])=>({
+      id,
+      name:t.name,
+      pj:0,
+      pg:0,
+      pp:0,
+      pf:0,
+      pc:0,
+      pts:0
+    }));
+
+  const map={};
+
+  teams.forEach(t=>map[t.id]=t);
+
+  Object.values(data.matches||{})
+  .forEach(m=>{
+
+    if(
+      m.group!==group ||
+      !isScoreSet(m.homeScore) ||
+      !isScoreSet(m.awayScore)
+    ){
+      return;
     }
 
+    const h=map[m.home];
+    const a=map[m.away];
+
+    if(!h||!a)return;
+
+    h.pj++;
+    a.pj++;
+
+    h.pf+=+m.homeScore;
+    h.pc+=+m.awayScore;
+
+    a.pf+=+m.awayScore;
+    a.pc+=+m.homeScore;
+
+    if(+m.homeScore>+m.awayScore){
+
+      h.pg++;
+      a.pp++;
+
+      h.pts+=2;
+      a.pts+=1;
+
+    }else if(+m.homeScore<+m.awayScore){
+
+      a.pg++;
+      h.pp++;
+
+      a.pts+=2;
+      h.pts+=1;
+    }
+
+  });
+
+  teams.sort(
+    (a,b)=>
+      b.pg-a.pg ||
+      (b.pf-b.pc)-(a.pf-a.pc) ||
+      b.pf-a.pf
+  );
+
+  return teams;
+}
+
+
+function renderGroupLeaders(){
+
+  const b=
+    document.getElementById("groupLeadersContent");
+
+  if(!b)return;
+
+  let h=`
+    <div class="homeBlock">
+
+      <div class="homeTitle">
+        <h3>🏆 LÍDERES DE GRUPO</h3>
+        <span>POSICIONES</span>
+      </div>
+
+      <div class="leaderGrid">
+  `;
+
+  ["A","B","C","D"].forEach(group=>{
+
+    const teams=calculateTable(group);
+    const leader=teams[0];
+
+    if(!leader){
+
+      h+=`
+        <div class="leaderCard">
+
+          <div class="group">
+            GRUPO ${group}
+          </div>
+
+          <strong>Por definir</strong>
+
+          <small>
+            Sin equipos cargados
+          </small>
+
+        </div>
+      `;
+
+      return;
+    }
+
+    h+=`
+      <div class="leaderCard">
+
+        <div class="group">
+          GRUPO ${group} · 1°
+        </div>
+
+        <strong>
+          ${esc(leader.name)}
+        </strong>
+
+        <small>
+          ${leader.pts} PTS ·
+          ${leader.pg} PG ·
+          DIF ${leader.pf-leader.pc}
+        </small>
+
+      </div>
+    `;
+  });
+
+  h+=`
+      </div>
+
+      <a class="dashboardLink"
+         href="#"
+         onclick="goToTab('tablas');return false">
+        VER TABLAS COMPLETAS →
+      </a>
+
+    </div>
+  `;
+
+  b.innerHTML=h;
+}
+
+
+/* =========================================================
+   ESTADÍSTICAS
+========================================================= */
+
+function renderTopStats(){
+
+  const b=
+    document.getElementById("topStatsContent");
+
+  if(!b)return;
+
+  const players=
+    Object.entries(data.participants||{});
+
+  if(!players.length){
+
+    b.innerHTML="";
+    return;
   }
 
+  const categories=[
+    ["points","🏀 PUNTOS","PTS"],
+    ["rebounds","🔄 REBOTES","REB"],
+    ["assists","🎯 ASISTENCIAS","AST"]
+  ];
+
+  let h=`
+    <div class="homeBlock">
+
+      <div class="homeTitle">
+        <h3>📊 LÍDERES ESTADÍSTICOS</h3>
+        <span>TOP 3</span>
+      </div>
+
+      <div class="topMini">
+  `;
+
+  categories.forEach(
+    ([metric,title,label])=>{
+
+      const list=[...players]
+      .sort(
+        (a,z)=>
+          (Number(z[1][metric])||0)-
+          (Number(a[1][metric])||0)
+      )
+      .slice(0,3);
+
+      h+=`
+        <div class="topMiniCard">
+
+          <div class="kicker">
+            ${title}
+          </div>
+      `;
+
+      list.forEach(([id,p],i)=>{
+
+        const team=data.teams?.[p.team];
+
+        h+=`
+          <div style="margin-top:10px">
+
+            <div style="font-size:11px;color:var(--muted)">
+              #${i+1}
+            </div>
+
+            <strong>
+              ${esc(p.name)}
+            </strong>
+
+            <div class="muted">
+              ${team?esc(team.name):"Por definir"}
+            </div>
+
+            <b>
+              ${Number(p[metric])||0} ${label}
+            </b>
+
+          </div>
+        `;
+      });
+
+      h+=`</div>`;
+    }
+  );
+
+  h+=`
+      </div>
+
+      <a class="dashboardLink"
+         href="#"
+         onclick="goToTab('estadisticas');return false">
+        VER TOP 15 →
+      </a>
+
+    </div>
+  `;
+
+  b.innerHTML=h;
 }
 
-updateCountdown();
-setInterval(updateCountdown,1000);
 
-<div id="appModal" class="appModal hidden" onclick="closeAppModal(event)">
-  <div class="appBox">
-    <button class="appClose" type="button" onclick="closeAppModal()">×</button>
-    <div class="kicker">STREET 3x3</div>
-    <h2>📱 INSTALAR LA APP / INSTALL THE APP</h2>
-    <div class="appSubtitle">
-      Agregá Street 3x3 a la pantalla de inicio para acceder como una aplicación.
-      / Add Street 3x3 to your home screen to access it like an app.
+/* =========================================================
+   JUGADORES
+========================================================= */
+
+function renderPlayers(){
+
+  const b=
+    document.getElementById("playersContent");
+
+  if(!b)return;
+
+  const ps=
+    Object.entries(data.participants||{});
+
+  if(!ps.length){
+
+    b.innerHTML=`
+      <div class="empty">
+        Todavía no hay jugadores cargados.
+      </div>
+    `;
+
+    return;
+  }
+
+  let h="";
+
+  ["A","B","C","D"].forEach(g=>{
+
+    const list=
+      ps
+      .filter(
+        ([id,p])=>
+          data.teams?.[p.team]?.group===g
+      )
+      .sort(
+        (a,z)=>
+          String(a[1].name||"")
+          .localeCompare(
+            String(z[1].name||"")
+          )
+      );
+
+    if(!list.length)return;
+
+    h+=`
+      <div class="group">
+
+        <h3>GRUPO ${g}</h3>
+
+        <div class="cards">
+    `;
+
+    list.forEach(([id,p])=>{
+
+      const t=data.teams?.[p.team];
+
+      h+=`
+        <div class="match playerCard"
+             onclick="openPlayerModal('${id}')">
+
+          <div class="meta">
+            <span>JUGADOR</span>
+            <span>
+              ${p.number?"#"+esc(p.number):""}
+            </span>
+          </div>
+
+          <div style="font-size:20px;font-weight:900">
+            ${esc(p.name)}
+          </div>
+
+          <div class="muted">
+            ${t?esc(t.name):"Equipo por definir"}
+          </div>
+
+          <div style="margin-top:12px">
+            <span class="badge">
+              VER PROMEDIOS
+            </span>
+          </div>
+
+        </div>
+      `;
+    });
+
+    h+=`
+        </div>
+      </div>
+    `;
+  });
+
+  b.innerHTML=h;
+}
+
+
+function playerTopLabels(id){
+
+  const out=[];
+
+  [
+    ["points","PUNTOS"],
+    ["rebounds","REBOTES"],
+    ["assists","ASISTENCIAS"]
+  ].forEach(([m,l])=>{
+
+    const r=
+      Object.entries(data.participants||{})
+      .sort(
+        (a,z)=>
+          (+z[1][m]||0)-
+          (+a[1][m]||0)
+      )
+      .slice(0,15)
+      .map(x=>x[0]);
+
+    if(r.includes(id))
+      out.push("🥇 TOP 15 "+l);
+  });
+
+  return out;
+}
+
+
+function openPlayerModal(id){
+
+  const p=data.participants?.[id];
+
+  if(!p)return;
+
+  const t=data.teams?.[p.team];
+  const g=+p.games||0;
+  const labels=playerTopLabels(id);
+
+  document.getElementById(
+    "playerModalContent"
+  ).innerHTML=`
+
+    <div class="kicker">
+      JUGADOR
     </div>
 
-    <div class="appGrid">
-      <div class="appStep">
-        <h3>🤖 ANDROID · CHROME</h3>
-        <p><b>1.</b> Abrí Street 3x3 en Chrome.</p>
-        <p><b>2.</b> Tocá <b>⋮</b> arriba a la derecha.</p>
-        <p><b>3.</b> Elegí <b>“Agregar a pantalla de inicio”</b> / <b>“Add to Home screen”</b>, o <b>“Instalar aplicación”</b> / <b>“Install app”</b>.</p>
-        <p><b>4.</b> Tocá <b>“Agregar”</b> / <b>“Add”</b> o <b>“Instalar”</b> / <b>“Install”</b>.</p>
+    <h2 style="font-size:32px;margin:8px 0">
+      ${p.number?"#"+esc(p.number)+" ":""}
+      ${esc(p.name)}
+    </h2>
+
+    <p class="muted">
+      ${t?esc(t.name):"Equipo por definir"}
+    </p>
+
+    <h3 style="margin-top:28px">
+      PROMEDIOS
+    </h3>
+
+    <div class="avgGrid">
+
+      <div class="avgBox">
+        PPG
+        <b>
+          ${g?(+p.points/g).toFixed(1):"0.0"}
+        </b>
       </div>
 
-      <div class="appStep">
-        <h3>🍎 IPHONE · SAFARI</h3>
-        <p><b>1.</b> Abrí Street 3x3 en Safari.</p>
-        <p><b>2.</b> Tocá <b>Compartir</b> / <b>Share</b>.</p>
-        <p><b>3.</b> Elegí <b>“Agregar a pantalla de inicio”</b> / <b>“Add to Home Screen”</b>.</p>
-        <p><b>4.</b> Tocá <b>“Agregar”</b> / <b>“Add”</b>.</p>
+      <div class="avgBox">
+        RPG
+        <b>
+          ${g?(+p.rebounds/g).toFixed(1):"0.0"}
+        </b>
+      </div>
+
+      <div class="avgBox">
+        APG
+        <b>
+          ${g?(+p.assists/g).toFixed(1):"0.0"}
+        </b>
+      </div>
+
+    </div>
+
+    <div style="margin-top:18px;font-weight:900">
+      ⭐ MVP: ${+p.motm||0}
+    </div>
+
+    ${
+      labels.length
+      ?`
+        <div style="
+          display:flex;
+          gap:7px;
+          flex-wrap:wrap;
+          margin-top:14px
+        ">
+          ${labels.map(x=>
+            `<span class="badge">${x}</span>`
+          ).join("")}
+        </div>
+      `
+      :""
+    }
+
+  `;
+
+  document
+    .getElementById("playerModal")
+    .classList.remove("hidden");
+}
+
+
+/* =========================================================
+   ESTADÍSTICAS
+========================================================= */
+
+window.activeRanking="points";
+
+function setRanking(m){
+
+  window.activeRanking=m;
+  renderStats();
+}
+
+
+function renderStats(){
+
+  const b=
+    document.getElementById("statsContent");
+
+  if(!b)return;
+
+  const ps=
+    Object.entries(data.participants||{});
+
+  const m=
+    window.activeRanking||"points";
+
+  const c={
+    points:["PUNTOS","PTS","MÁXIMO ANOTADOR"],
+    rebounds:["REBOTES","REB","MÁXIMO REBOTERO"],
+    assists:["ASISTENCIAS","AST","MÁXIMO ASISTENTE"],
+    motm:["MVP","MVP","MÁS MVP"]
+  };
+
+  let h=`
+    <div class="tabs filterTabs">
+
+      ${
+        Object.entries(c)
+        .map(([k,v])=>`
+          <button
+            class="nav ${k===m?"active":""}"
+            onclick="setRanking('${k}')">
+            ${v[0]}
+          </button>
+        `)
+        .join("")
+      }
+
+    </div>
+
+    <div class="group">
+
+      <h3>
+        TOP 15 — ${c[m][0]}
+      </h3>
+
+      <div class="tableWrap">
+
+        <table class="table">
+
+          <tr>
+            <th>#</th>
+            <th>Jugador</th>
+            <th>Equipo</th>
+            <th>${c[m][1]}</th>
+          </tr>
+  `;
+
+  ps
+  .sort(
+    (a,z)=>
+      (+z[1][m]||0)-
+      (+a[1][m]||0)
+  )
+  .slice(0,15)
+  .forEach(([id,p],i)=>{
+
+    const t=data.teams?.[p.team];
+
+    h+=`
+      <tr>
+
+        <td class="pos">
+          ${i+1}
+        </td>
+
+        <td>
+          ${esc(p.name)}
+
+          ${
+            i===0
+            ?`
+              <div class="muted">
+                🥇 ${c[m][2]}
+              </div>
+            `
+            :""
+          }
+
+        </td>
+
+        <td>
+          ${t?esc(t.name):"Por definir"}
+        </td>
+
+        <td class="pos">
+          ${+p[m]||0}
+        </td>
+
+      </tr>
+    `;
+  });
+
+  h+=`
+        </table>
       </div>
     </div>
+  `;
 
-    <div class="appTip">
-      <strong>💡 IMPORTANTE / IMPORTANT:</strong>
-      Si ya la instalaste antes, eliminá la versión anterior y volvé a instalarla
-      para que tome el nuevo ícono de Street 3x3.
+  b.innerHTML=h;
+}
+
+
+/* =========================================================
+   FIXTURE / RESULTADOS
+========================================================= */
+
+window.fixtureFilter="ALL";
+window.resultsFilter="ALL";
+
+
+function filterButtons(type){
+
+  const f=
+    window[type+"Filter"]||"ALL";
+
+  return `
+    <div class="tabs filterTabs">
+
+      ${
+        ["ALL","A","B","C","D"]
+        .map(g=>`
+          <button
+            class="nav ${f===g?"active":""}"
+            onclick="setGroupFilter('${type}','${g}')">
+            ${g==="ALL"?"TODOS":"GRUPO "+g}
+          </button>
+        `)
+        .join("")
+      }
 
     </div>
-  </div>
-</div>
+  `;
+}
 
-<div id="playerModal" class="playerModal hidden" onclick="closePlayerModal(event)">
-<div class="playerModalBox">
-<button class="playerModalClose" onclick="closePlayerModal()">×</button>
-<div id="playerModalContent"></div>
-</div>
-</div>
-<script>setInterval(()=>{refreshTimeSensitiveContent();renderLiveCenter();renderTournamentStatus();},1000);refreshTimeSensitiveContent();</script><script>
+
+function setGroupFilter(type,g){
+
+  window[type+"Filter"]=g;
+
+  type==="fixture"
+    ?renderFixture()
+    :renderResults();
+}
+
+
+function renderFixture(){
+
+  const b=
+    document.getElementById("fixtureContent");
+
+  if(!b)return;
+
+  const f=window.fixtureFilter;
+
+  const ms=
+    Object.values(data.matches||{})
+    .filter(
+      m=>f==="ALL"||m.group===f
+    )
+    .sort(
+      (a,z)=>
+        (getMatchDateTime(a)||new Date(8640000000000000))-
+        (getMatchDateTime(z)||new Date(8640000000000000))
+    );
+
+  let h=
+    filterButtons("fixture")+
+    `<div class="cards">`;
+
+  ms.forEach(m=>{
+
+    h+=`
+      <div class="match">
+
+        <div class="meta">
+          <span>
+            GRUPO ${esc(m.group||"")}
+          </span>
+
+          ${statusBadge(m)}
+        </div>
+
+        <div class="row">
+          <span>
+            ${esc(matchTeamName(m,"home"))}
+          </span>
+
+          <span class="score">
+            ${
+              isScoreSet(m.homeScore)
+              ?m.homeScore
+              :""
+            }
+          </span>
+        </div>
+
+        <div class="row">
+
+          <span>
+            ${esc(matchTeamName(m,"away"))}
+          </span>
+
+          <span class="score">
+            ${
+              isScoreSet(m.awayScore)
+              ?m.awayScore
+              :""
+            }
+          </span>
+
+        </div>
+
+        <div class="muted">
+          ${esc(formatMatchDate(m.date))}
+          ·
+          ${esc(m.time||"Hora por definir")}
+          ${
+            m.court
+            ?" · "+esc(m.court)
+            :""
+          }
+        </div>
+
+      </div>
+    `;
+  });
+
+  h+=`</div>`;
+
+  b.innerHTML=h;
+}
+
+
+function renderResults(){
+
+  const b=
+    document.getElementById("resultsContent");
+
+  if(!b)return;
+
+  const f=window.resultsFilter;
+
+  const ms=
+    Object.values(data.matches||{})
+    .filter(isMatchFinished)
+    .filter(
+      m=>f==="ALL"||m.group===f
+    )
+    .sort(
+      (a,z)=>
+        (getMatchDateTime(z)||0)-
+        (getMatchDateTime(a)||0)
+    );
+
+  let h=filterButtons("results");
+
+  if(!ms.length){
+
+    b.innerHTML=
+      h+
+      `
+        <div class="empty">
+          No hay resultados cargados.
+        </div>
+      `;
+
+    return;
+  }
+
+  h+=`<div class="cards">`;
+
+  ms.forEach(m=>{
+
+    h+=`
+      <div class="match">
+
+        <div class="meta">
+
+          <span>
+            GRUPO ${esc(m.group||"")}
+          </span>
+
+          <span class="statusBadge statusFinal">
+            🟢 FINALIZADO
+          </span>
+
+        </div>
+
+        <div class="row">
+
+          <span>
+            ${esc(matchTeamName(m,"home"))}
+          </span>
+
+          <span class="score">
+            ${m.homeScore}
+          </span>
+
+        </div>
+
+        <div class="row">
+
+          <span>
+            ${esc(matchTeamName(m,"away"))}
+          </span>
+
+          <span class="score">
+            ${m.awayScore}
+          </span>
+
+        </div>
+
+        <div class="muted">
+          ${esc(formatMatchDate(m.date))}
+          ·
+          ${esc(m.time||"")}
+        </div>
+
+      </div>
+    `;
+  });
+
+  h+=`</div>`;
+
+  b.innerHTML=h;
+}
+
+
+/* =========================================================
+   TABLAS
+========================================================= */
+
+function renderTables(){
+
+  const b=
+    document.getElementById("tablesContent");
+
+  if(!b)return;
+
+  let h="";
+
+  ["A","B","C","D"].forEach(g=>{
+
+    const ts=calculateTable(g);
+
+    h+=`
+      <div class="group">
+
+        <h3>GRUPO ${g}</h3>
+
+        <div class="tableWrap">
+
+          <table class="table">
+
+            <tr>
+              <th>#</th>
+              <th>Equipo</th>
+              <th>PJ</th>
+              <th>PG</th>
+              <th>PP</th>
+              <th>PF</th>
+              <th>PC</th>
+              <th>DIF</th>
+              <th>PTS</th>
+            </tr>
+    `;
+
+    ts.forEach((t,i)=>{
+
+      const icon=
+        i===0
+        ?"🥇"
+        :i===1
+        ?"🥈"
+        :i===2
+        ?"🔴"
+        :"⚫";
+
+      h+=`
+        <tr class="${i<2?"qualifies":""}">
+
+          <td class="pos">
+            ${icon} ${i+1}
+          </td>
+
+          <td>
+
+            <strong>
+              ${esc(t.name)}
+            </strong>
+
+            ${
+              i<2
+              ?`
+                <div class="muted">
+                  CLASIFICA A PLAYOFFS
+                </div>
+              `
+              :""
+            }
+
+          </td>
+
+          <td>${t.pj}</td>
+          <td>${t.pg}</td>
+          <td>${t.pp}</td>
+          <td>${t.pf}</td>
+          <td>${t.pc}</td>
+          <td>${t.pf-t.pc}</td>
+          <td class="pos">${t.pts}</td>
+
+        </tr>
+      `;
+    });
+
+    h+=`
+          </table>
+        </div>
+      </div>
+    `;
+  });
+
+  b.innerHTML=h;
+}
+
+
+/* =========================================================
+   PLAYOFFS
+========================================================= */
+
+function renderPlayoffs(){
+
+  const b=
+    document.getElementById("playoffContent");
+
+  if(!b)return;
+
+  const p=data.playoffs||{};
+
+  if(!Object.keys(p).length){
+
+    b.innerHTML=`
+      <div class="empty">
+        Los playoffs todavía no fueron generados.
+      </div>
+    `;
+
+    return;
+  }
+
+  const q1=playoffWinner(p.qf1);
+  const q2=playoffWinner(p.qf2);
+  const q3=playoffWinner(p.qf3);
+  const q4=playoffWinner(p.qf4);
+
+  const s1={
+    ...(p.sf1||{}),
+    home:q1,
+    away:q3
+  };
+
+  const s2={
+    ...(p.sf2||{}),
+    home:q2,
+    away:q4
+  };
+
+  const f={
+    ...(p.final||{}),
+    home:playoffWinner(s1),
+    away:playoffWinner(s2)
+  };
+
+  const champ=playoffWinner(f);
+
+  const tm=id=>
+    id
+    ?esc(data.teams?.[id]?.name||"Por definir")
+    :"Por definir";
+
+  const game=(m,l)=>`
+
+    <div class="game">
+
+      <div class="muted">
+        ${l}
+      </div>
+
+      <div>
+        <strong>
+          ${tm(m?.home)}
+        </strong>
+
+        <span style="float:right;color:var(--lime)">
+          ${
+            isScoreSet(m?.homeScore)
+            ?m.homeScore
+            :""
+          }
+        </span>
+      </div>
+
+      <div>
+
+        <strong>
+          ${tm(m?.away)}
+        </strong>
+
+        <span style="float:right;color:var(--lime)">
+          ${
+            isScoreSet(m?.awayScore)
+            ?m.awayScore
+            :""
+          }
+        </span>
+
+      </div>
+
+      ${
+        playoffWinner(m)
+        ?`
+          <div class="muted">
+            ✓ Clasifica
+            ${tm(playoffWinner(m))}
+          </div>
+        `
+        :""
+      }
+
+    </div>
+  `;
+
+  b.innerHTML=`
+
+    <div class="bracket">
+
+      <div class="round">
+
+        <h3>CUARTOS DE FINAL</h3>
+
+        ${game(p.qf1,"CUARTO 1")}
+        ${game(p.qf2,"CUARTO 2")}
+        ${game(p.qf3,"CUARTO 3")}
+        ${game(p.qf4,"CUARTO 4")}
+
+      </div>
+
+      <div class="round">
+
+        <h3>SEMIFINALES</h3>
+
+        ${game(s1,"SEMIFINAL 1")}
+        ${game(s2,"SEMIFINAL 2")}
+
+      </div>
+
+      <div class="round">
+
+        <h3>FINAL</h3>
+
+        ${game(f,"FINAL")}
+
+      </div>
+
+      <div class="round champ">
+
+        <h3>CAMPEÓN</h3>
+
+        <div class="game"
+             style="text-align:center;font-size:22px">
+
+          🏆<br><br>
+
+          <strong>
+            ${champ?tm(champ):"POR DEFINIR"}
+          </strong>
+
+        </div>
+
+      </div>
+
+    </div>
+  `;
+}
+
+
+/* =========================================================
+   MODALES
+========================================================= */
+
+function closePlayerModal(event){
+
+  const modal=
+    document.getElementById("playerModal");
+
+  if(!modal)return;
+
+  if(
+    !event ||
+    event.target===modal
+  ){
+    modal.classList.add("hidden");
+  }
+}
+
 
 function openAppModal(){
-  const m=document.getElementById("appModal");
-  if(m)m.classList.remove("hidden");
+
+  const m=
+    document.getElementById("appModal");
+
+  if(m)
+    m.classList.remove("hidden");
 }
+
+
 function closeAppModal(event){
-  const m=document.getElementById("appModal");
+
+  const m=
+    document.getElementById("appModal");
+
   if(!m)return;
-  if(!event || event.target===m)m.classList.add("hidden");
+
+  if(
+    !event ||
+    event.target===m
+  ){
+    m.classList.add("hidden");
+  }
 }
-document.addEventListener("keydown",function(event){
-  if(event.key==="Escape")closeAppModal();
+
+
+document.addEventListener(
+  "keydown",
+  event=>{
+
+    if(event.key==="Escape"){
+
+      closePlayerModal();
+      closeAppModal();
+    }
+  }
+);
+
+
+/* =========================================================
+   NAVEGACIÓN
+========================================================= */
+
+function goToTab(id){
+
+  const btn=
+    document.querySelector(
+      '.nav[data-tab="'+id+'"]'
+    );
+
+  if(btn)
+    btn.click();
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+}
+
+
+document
+.querySelectorAll(".nav[data-tab]")
+.forEach(btn=>{
+
+  btn.onclick=()=>{
+
+    document
+    .querySelectorAll(".nav")
+    .forEach(x=>
+      x.classList.remove("active")
+    );
+
+    document
+    .querySelectorAll(".section")
+    .forEach(x=>
+      x.classList.remove("active")
+    );
+
+    btn.classList.add("active");
+
+    const target=
+      document.getElementById(
+        btn.dataset.tab
+      );
+
+    if(target)
+      target.classList.add("active");
+
+    window.scrollTo({
+      top:0,
+      behavior:"smooth"
+    });
+  };
 });
 
+
+/* =========================================================
+   RELOJ Y ACTUALIZACIÓN
+========================================================= */
+
+function refreshTimeSensitiveContent(){
+
+  renderLiveCenter();
+  renderTournamentStatus();
+  renderNextMatches();
+  renderRecentResults();
+
+  const clock=
+    document.getElementById("clockStatus");
+
+  if(clock){
+
+    const argentinaTime=
+      new Date().toLocaleTimeString(
+        "es-AR",
+        {
+          timeZone:"America/Argentina/Buenos_Aires",
+          hour:"2-digit",
+          minute:"2-digit",
+          second:"2-digit"
+        }
+      );
+
+    clock.textContent=
+      "Hora oficial Argentina: "+
+      argentinaTime;
+  }
+
+  updateCountdown();
+}
+
+
+/* =========================================================
+   RENDER GENERAL
+========================================================= */
+
+function render(){
+
+  const teamCount=
+    document.getElementById("teamCount");
+
+  const matchCount=
+    document.getElementById("matchCount");
+
+  const status=
+    document.getElementById("status");
+
+  if(teamCount)
+    teamCount.textContent=
+      Object.keys(data.teams||{}).length;
+
+  if(matchCount)
+    matchCount.textContent=
+      TOTAL_TOURNAMENT_MATCHES;
+
+  if(status)
+    status.textContent=
+      "● Datos actualizados en tiempo real";
+
+  renderPlayers();
+  renderStats();
+  renderFixture();
+  renderResults();
+  renderTables();
+  renderPlayoffs();
+
+  renderHomePlayerOfRound();
+  renderHomePlayerToWatch();
+  renderLiveCenter();
+  renderNextMatches();
+  renderRecentResults();
+  renderGroupLeaders();
+  renderTopStats();
+  renderTournamentStatus();
+  renderChampion();
+
+  refreshTimeSensitiveContent();
+}
+
+
+/* =========================================================
+   FIREBASE TOURNAMENT
+========================================================= */
+
+ref.on("value",s=>{
+
+  const v=s.val();
+
+  data=
+    v &&
+    typeof v==="object" &&
+    !Array.isArray(v)
+    ?v
+    :{
+      teams:{},
+      matches:{},
+      playoffs:{},
+      participants:{}
+    };
+
+  data.teams=
+    data.teams &&
+    typeof data.teams==="object"
+    ?data.teams
+    :{};
+
+  data.matches=
+    data.matches &&
+    typeof data.matches==="object"
+    ?data.matches
+    :{};
+
+  data.playoffs=
+    data.playoffs &&
+    typeof data.playoffs==="object"
+    ?data.playoffs
+    :{};
+
+  data.participants=
+    data.participants &&
+    typeof data.participants==="object"
+    ?data.participants
+    :{};
+
+  data.playerOfRound=
+    typeof data.playerOfRound==="string"
+    ?data.playerOfRound
+    :"";
+
+  data.playerToWatch=
+    typeof data.playerToWatch==="string"
+    ?data.playerToWatch
+    :"";
+
+  render();
+});
+
+
+/* =========================================================
+   FIREBASE MARCADOR CANCHA 1
+========================================================= */
+
+liveRef1.on("value",s=>{
+
+  live1=s.val();
+
+  renderLiveCenter();
+  renderTournamentStatus();
+});
+
+
+/* =========================================================
+   FIREBASE MARCADOR CANCHA 2
+========================================================= */
+
+liveRef2.on("value",s=>{
+
+  live2=s.val();
+
+  renderLiveCenter();
+  renderTournamentStatus();
+});
+
+
+/* =========================================================
+   ACTUALIZACIÓN CADA SEGUNDO
+========================================================= */
+
+setInterval(()=>{
+
+  updateCountdown();
+  refreshTimeSensitiveContent();
+
+},1000);
+
+
+/* =========================================================
+   SERVICE WORKER
+========================================================= */
+
+if("serviceWorker" in navigator){
+
+  window.addEventListener(
+    "load",
+    ()=>{
+      navigator.serviceWorker
+      .register("sw.js")
+      .catch(()=>{});
+    }
+  );
+}
+
+
+/* =========================================================
+   INICIO
+========================================================= */
+
+updateCountdown();
+refreshTimeSensitiveContent();
+
 </script>
-<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script></body>
+
+</body>
 </html>
