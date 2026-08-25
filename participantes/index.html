@@ -1210,7 +1210,72 @@ renderTournamentStatus();
 });
 document.querySelectorAll(".nav[data-tab]").forEach(btn=>btn.onclick=()=>{document.querySelectorAll(".nav").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));btn.classList.add("active");const target=document.getElementById(btn.dataset.tab);if(target)target.classList.add("active");scrollTo({top:0,behavior:"smooth"})});
 </script>
+/* CUENTA REGRESIVA STREET 3x3 */
 
+function updateCountdown(){
+
+  const eventDate =
+    new Date("2026-11-07T00:00:00-03:00").getTime();
+
+  const remaining =
+    Math.max(0,eventDate-Date.now());
+
+  const totalSeconds =
+    Math.floor(remaining/1000);
+
+  const days =
+    Math.floor(totalSeconds/86400);
+
+  const hours =
+    Math.floor((totalSeconds%86400)/3600);
+
+  const minutes =
+    Math.floor((totalSeconds%3600)/60);
+
+  const seconds =
+    totalSeconds%60;
+
+  const daysEl =
+    document.getElementById("countdownDays");
+
+  const hoursEl =
+    document.getElementById("countdownHours");
+
+  const minutesEl =
+    document.getElementById("countdownMinutes");
+
+  const secondsEl =
+    document.getElementById("countdownSeconds");
+
+  if(!daysEl)return;
+
+  daysEl.textContent =
+    String(days).padStart(2,"0");
+
+  hoursEl.textContent =
+    String(hours).padStart(2,"0");
+
+  minutesEl.textContent =
+    String(minutes).padStart(2,"0");
+
+  secondsEl.textContent =
+    String(seconds).padStart(2,"0");
+
+  if(remaining<=0){
+
+    const title =
+      document.getElementById("countdownTitle");
+
+    if(title){
+      title.textContent="EL EVENTO YA COMENZÓ 🏀";
+    }
+
+  }
+
+}
+
+updateCountdown();
+setInterval(updateCountdown,1000);
 
 <div id="appModal" class="appModal hidden" onclick="closeAppModal(event)">
   <div class="appBox">
