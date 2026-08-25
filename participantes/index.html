@@ -12,54 +12,63 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
 
 <style>
+
 :root{
   --lime:#B6FF00;
   --bg:#080A08;
   --card:#121512;
   --line:#303630;
-  --muted:#9ba19b
+  --muted:#9ba19b;
 }
 
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
 body{
   margin:0;
   background:radial-gradient(circle at 50% 0,#283000,#080A08 38%);
   color:#fff;
-  font-family:Arial,sans-serif
+  font-family:Arial,sans-serif;
 }
 
-.wrap{max-width:1200px;margin:auto;padding:0 18px}
+.wrap{
+  max-width:1200px;
+  margin:auto;
+  padding:0 18px;
+}
 
 header{
   position:sticky;
   top:0;
-  z-index:100;
+  z-index:5;
   background:#080a08ee;
-  border-bottom:1px solid #303630
+  border-bottom:1px solid #303630;
 }
 
 .top{
   min-height:72px;
   display:flex;
   align-items:center;
-  justify-content:space-between
+  justify-content:space-between;
 }
 
 .brand{
   display:flex;
   align-items:center;
   gap:10px;
-  font-weight:900
+  font-weight:900;
 }
 
 .brand img{
   width:48px;
   height:48px;
-  object-fit:contain
+  object-fit:contain;
 }
 
-.brand b{color:var(--lime)}
+.brand b{
+  color:var(--lime);
+}
 
 .live{
   background:var(--lime);
@@ -67,16 +76,14 @@ header{
   padding:7px 10px;
   border-radius:99px;
   font-size:11px;
-  font-weight:900
+  font-weight:900;
 }
 
 nav{
   display:flex;
   gap:8px;
-  overflow-x:auto;
-  overflow-y:hidden;
+  overflow:auto;
   padding:8px 0 12px;
-  -webkit-overflow-scrolling:touch
 }
 
 .nav{
@@ -87,94 +94,113 @@ nav{
   padding:10px 14px;
   font-weight:900;
   white-space:nowrap;
-  cursor:pointer
+  cursor:pointer;
 }
 
-.nav.active,.nav:hover{
+.nav.active,
+.nav:hover{
   background:var(--lime);
   color:#000;
-  border-color:var(--lime)
+  border-color:var(--lime);
 }
 
-.hero{padding:42px 0 25px}
+.hero{
+  padding:25px 0 55px;
+}
 
 .heroGrid{
   display:grid;
   grid-template-columns:1.4fr .6fr;
-  gap:18px
+  gap:18px;
 }
 
-.card,.homeBlock{
+.card,
+.homeBlock{
   background:linear-gradient(145deg,#151915,#0f120f);
   border:1px solid var(--line);
   border-radius:18px;
-  padding:28px
+}
+
+.card{
+  padding:28px;
 }
 
 .kicker{
   color:var(--lime);
   font-size:13px;
   font-weight:900;
-  letter-spacing:2px
+  letter-spacing:2px;
 }
 
 .hero h1{
   font-size:clamp(40px,7vw,78px);
   line-height:.9;
   letter-spacing:-4px;
-  margin:12px 0
+  margin:12px 0;
 }
 
-.hero h1 span{color:var(--lime)}
+.hero h1 span{
+  color:var(--lime);
+}
 
 .hero p{
   color:#c7ccc7;
   line-height:1.5;
-  max-width:650px
+  max-width:650px;
 }
 
 .stat{
   font-size:48px;
   color:var(--lime);
-  font-weight:1000
+  font-weight:1000;
 }
 
 .muted{
   color:var(--muted);
-  font-size:12px
+  font-size:12px;
 }
 
 .section{
   display:none;
-  padding:25px 0 55px
+  padding:25px 0 55px;
 }
 
-.section.active{display:block}
+.section.active{
+  display:block;
+}
 
-.title{margin-bottom:18px}
+.title{
+  margin-bottom:18px;
+}
 
 .title h2{
   font-size:34px;
-  margin:0
+  margin:0;
 }
 
-.title p{color:var(--muted)}
+.title p{
+  color:var(--muted);
+}
 
-.group{margin:22px 0}
+.group{
+  margin:22px 0;
+}
 
-.group h3{color:var(--lime)}
+.group h3{
+  color:var(--lime);
+}
 
 .cards{
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:12px
+  gap:12px;
 }
 
 .match{
   background:var(--card);
   border:1px solid var(--line);
   border-radius:13px;
-  padding:15px
+  padding:15px;
 }
 
 .meta{
@@ -182,19 +208,19 @@ nav{
   justify-content:space-between;
   color:var(--muted);
   font-size:11px;
-  margin-bottom:12px
+  margin-bottom:12px;
 }
 
 .row{
   display:flex;
   justify-content:space-between;
   padding:5px 0;
-  font-weight:800
+  font-weight:800;
 }
 
 .score{
   color:var(--lime);
-  font-size:19px
+  font-size:19px;
 }
 
 .empty{
@@ -202,78 +228,81 @@ nav{
   padding:28px;
   border:1px dashed var(--line);
   border-radius:13px;
-  color:var(--muted)
+  color:var(--muted);
 }
 
 .tableWrap{
   overflow:auto;
   border:1px solid var(--line);
-  border-radius:13px
+  border-radius:13px;
 }
 
 .table{
   width:100%;
   border-collapse:collapse;
-  min-width:650px
+  min-width:650px;
 }
 
-.table th,.table td{
+.table th,
+.table td{
   padding:12px;
   border-bottom:1px solid #252a25;
-  text-align:center
+  text-align:center;
 }
 
 .table th{
   color:var(--lime);
-  font-size:11px
+  font-size:11px;
 }
 
 .table td:nth-child(2){
   text-align:left;
-  font-weight:800
+  font-weight:800;
 }
 
 .pos{
   color:var(--lime);
-  font-weight:900
+  font-weight:900;
 }
 
 .bracket{
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:12px
+  gap:12px;
 }
 
 .round{
   background:var(--card);
   border:1px solid var(--line);
   border-radius:13px;
-  padding:13px
+  padding:13px;
 }
 
 .round h3{
   text-align:center;
   color:var(--lime);
-  font-size:13px
+  font-size:13px;
 }
 
 .game{
   background:#1a1e1a;
   border-radius:9px;
   padding:11px;
-  margin:10px 0
+  margin:10px 0;
 }
 
-.champ{border-color:var(--lime)}
+.champ{
+  border-color:var(--lime);
+}
 
 .sponsors{
-  padding:20px 0 45px
+  padding:20px 0 45px;
 }
 
 .sponsorGrid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:10px
+  gap:10px;
 }
 
 .sponsor{
@@ -285,32 +314,230 @@ nav{
   justify-content:center;
   color:#6e756e;
   font-size:11px;
-  font-weight:900
+  font-weight:900;
 }
 
 footer{
   border-top:1px solid var(--line);
   padding:25px 0;
   color:var(--muted);
-  font-size:12px
+  font-size:12px;
 }
 
-/* HOME */
+/* =========================
+   INSCRIPCIONES DESTACADAS
+========================= */
+
+.registrationHero{
+  margin-bottom:18px;
+}
+
+.registrationCard{
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 85% 15%,rgba(182,255,0,.22),transparent 35%),
+    linear-gradient(135deg,#171c13,#0c0f0c);
+  border:1px solid var(--lime);
+  border-radius:20px;
+  padding:30px;
+  box-shadow:0 0 35px rgba(182,255,0,.10);
+}
+
+.registrationCard:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(
+    115deg,
+    transparent 0%,
+    rgba(182,255,0,.04) 45%,
+    transparent 70%
+  );
+  pointer-events:none;
+}
+
+.registrationTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  margin-bottom:15px;
+}
+
+.registrationTitle{
+  font-size:clamp(32px,5vw,58px);
+  line-height:.92;
+  font-weight:1000;
+  letter-spacing:-3px;
+  margin:8px 0 14px;
+  position:relative;
+}
+
+.registrationTitle span{
+  color:var(--lime);
+}
+
+.registrationDate{
+  color:var(--muted);
+  font-size:12px;
+}
+
+.registrationBadge{
+  display:inline-block;
+  background:var(--lime);
+  color:#000;
+  padding:7px 11px;
+  border-radius:99px;
+  font-size:11px;
+  font-weight:1000;
+}
+
+.registrationButton{
+  display:inline-block;
+  margin-top:18px;
+  background:var(--lime);
+  color:#000;
+  text-decoration:none;
+  padding:12px 16px;
+  border-radius:10px;
+  font-size:12px;
+  font-weight:1000;
+  transition:.18s;
+}
+
+.registrationButton:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 25px rgba(182,255,0,.18);
+}
+
+/* =========================
+   JUGADORES
+========================= */
+
+.playerCard{
+  cursor:pointer;
+  transition:.18s transform,.18s border-color;
+}
+
+.playerCard:hover{
+  transform:translateY(-2px);
+  border-color:var(--lime);
+}
+
+.playerModal{
+  position:fixed;
+  inset:0;
+  background:#000b;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:50;
+}
+
+.playerModal.hidden{
+  display:none;
+}
+
+.playerModalBox{
+  width:min(520px,100%);
+  background:#111511;
+  border:1px solid var(--lime);
+  border-radius:18px;
+  padding:26px;
+  position:relative;
+}
+
+.playerModalClose{
+  position:absolute;
+  right:15px;
+  top:12px;
+  background:transparent;
+  border:0;
+  color:#fff;
+  font-size:25px;
+  cursor:pointer;
+}
+
+.avgGrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:18px;
+}
+
+.avgBox{
+  background:#1a1e1a;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:15px;
+  text-align:center;
+}
+
+.avgBox b{
+  display:block;
+  font-size:28px;
+  color:var(--lime);
+  margin-top:5px;
+}
+
+.badge{
+  display:inline-block;
+  background:var(--lime);
+  color:#000;
+  padding:5px 9px;
+  border-radius:99px;
+  font-size:11px;
+  font-weight:900;
+}
+
+/* =========================
+   ESTADOS
+========================= */
+
+.statusBadge{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:99px;
+  font-size:10px;
+  font-weight:900;
+}
+
+.statusUpcoming{
+  background:#303530;
+  color:#fff;
+}
+
+.statusLive{
+  background:var(--lime);
+  color:#000;
+}
+
+.statusFinal{
+  background:#1d261d;
+  color:#baff72;
+}
+
+/* =========================
+   HOME
+========================= */
 
 .homeGrid{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:18px;
   margin-top:18px;
-  align-items:start
+  align-items:start;
 }
 
 .homeBlock{
-  min-width:0
+  padding:22px;
+  min-width:0;
 }
 
 .homeBlock.full{
-  grid-column:1/-1
+  grid-column:1/-1;
 }
 
 .homeTitle{
@@ -318,25 +545,25 @@ footer{
   justify-content:space-between;
   align-items:center;
   gap:10px;
-  margin-bottom:14px
+  margin-bottom:14px;
 }
 
 .homeTitle h3{
   margin:0;
-  font-size:18px
+  font-size:18px;
 }
 
 .homeTitle span{
   color:var(--lime);
   font-size:11px;
   font-weight:900;
-  letter-spacing:1px
+  letter-spacing:1px;
 }
 
 .liveGrid{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:14px
+  gap:14px;
 }
 
 .livePlaceholder{
@@ -350,7 +577,66 @@ footer{
   justify-content:center;
   align-items:center;
   text-align:center;
-  color:var(--muted)
+  color:var(--muted);
+}
+
+.leaderGrid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+
+.leaderCard{
+  background:#1a1e1a;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:15px;
+}
+
+.leaderCard .group{
+  margin:0 0 7px;
+  color:var(--lime);
+  font-size:11px;
+  font-weight:900;
+}
+
+.leaderCard strong{
+  display:block;
+  font-size:17px;
+  margin-bottom:4px;
+}
+
+.leaderCard small{
+  color:var(--muted);
+}
+
+.topMini{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.topMiniCard{
+  background:#1a1e1a;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:15px;
+}
+
+.topMiniCard .kicker{
+  font-size:10px;
+  letter-spacing:1px;
+}
+
+.topMiniCard strong{
+  display:block;
+  font-size:17px;
+  margin:8px 0 4px;
+}
+
+.topMiniCard b{
+  color:var(--lime);
+  font-size:24px;
 }
 
 .homeMatch{
@@ -358,34 +644,35 @@ footer{
   border:1px solid var(--line);
   border-radius:12px;
   padding:14px;
-  margin-bottom:10px
+  margin-bottom:10px;
 }
 
-.homeMatch:last-child{margin-bottom:0}
+.homeMatch:last-child{
+  margin-bottom:0;
+}
 
 .homeMatch .teams{
   display:flex;
   justify-content:space-between;
   align-items:center;
   gap:10px;
-  font-weight:900
+  font-weight:900;
 }
 
 .homeMatch .teams span{
-  min-width:0
+  min-width:0;
 }
 
 .homeMatch .teams span:first-child,
 .homeMatch .teams span:last-child{
   overflow:hidden;
   text-overflow:ellipsis;
-  white-space:nowrap
+  white-space:nowrap;
 }
 
 .homeMatch .teams span:nth-child(2){
   color:var(--lime);
   font-size:12px;
-  flex-shrink:0
 }
 
 .dashboardLink{
@@ -394,86 +681,33 @@ footer{
   color:var(--lime);
   font-size:11px;
   font-weight:900;
-  text-decoration:none
+  text-decoration:none;
 }
 
-.leaderGrid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px
-}
-
-.leaderCard{
-  background:#1a1e1a;
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:15px
-}
-
-.leaderCard .group{
-  margin:0 0 7px;
-  color:var(--lime);
-  font-size:11px;
-  font-weight:900
-}
-
-.leaderCard strong{
-  display:block;
-  font-size:17px;
-  margin-bottom:4px
-}
-
-.leaderCard small{color:var(--muted)}
-
-.topMini{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px
-}
-
-.topMiniCard{
-  background:#1a1e1a;
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:15px
-}
-
-.topMiniCard .kicker{
-  font-size:10px;
-  letter-spacing:1px
-}
-
-.topMiniCard strong{
-  display:block;
-  font-size:17px;
-  margin:8px 0 4px
-}
-
-.topMiniCard b{
-  color:var(--lime);
-  font-size:24px
-}
+/* =========================
+   ESTADO TORNEO
+========================= */
 
 .tournamentProgress{
   height:9px;
   background:#252a25;
   border-radius:99px;
   overflow:hidden;
-  margin-top:12px
+  margin-top:12px;
 }
 
 .tournamentProgress>div{
   height:100%;
   background:var(--lime);
   border-radius:99px;
-  transition:width .3s
+  transition:width .3s;
 }
 
 .tournamentStats{
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:8px;
-  margin-top:14px
+  margin-top:14px;
 }
 
 .tournamentStat{
@@ -481,125 +715,42 @@ footer{
   border:1px solid var(--line);
   border-radius:11px;
   padding:12px;
-  text-align:center
+  text-align:center;
 }
 
 .tournamentStat b{
   display:block;
   color:var(--lime);
   font-size:22px;
-  margin-bottom:3px
+  margin-bottom:3px;
 }
 
-/* CAMPEÓN */
+.qualifies{
+  background:rgba(182,255,0,.07);
+}
+
+.qualifies td:first-child{
+  border-left:3px solid var(--lime);
+}
+
+.filterTabs{
+  display:flex;
+  flex-wrap:wrap;
+}
+
+.filterTabs .nav{
+  font-size:11px;
+}
 
 .championHero{
   text-align:center;
   border-color:var(--lime);
-  background:radial-gradient(circle at 50% 0,#394500,#121512 60%)
+  background:radial-gradient(circle at 50% 0,#394500,#121512 60%);
 }
 
-/* PLAYER */
-
-.playerCard{
-  cursor:pointer;
-  transition:.18s transform,.18s border-color
-}
-
-.playerCard:hover{
-  transform:translateY(-2px);
-  border-color:var(--lime)
-}
-
-.playerModal{
-  position:fixed;
-  inset:0;
-  background:#000b;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  z-index:200
-}
-
-.playerModal.hidden{display:none}
-
-.playerModalBox{
-  width:min(520px,100%);
-  background:#111511;
-  border:1px solid var(--lime);
-  border-radius:18px;
-  padding:26px;
-  position:relative
-}
-
-.playerModalClose{
-  position:absolute;
-  right:15px;
-  top:12px;
-  background:transparent;
-  border:0;
-  color:#fff;
-  font-size:25px;
-  cursor:pointer
-}
-
-.avgGrid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-  margin-top:18px
-}
-
-.avgBox{
-  background:#1a1e1a;
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:15px;
-  text-align:center
-}
-
-.avgBox b{
-  display:block;
-  font-size:28px;
-  color:var(--lime);
-  margin-top:5px
-}
-
-.badge{
-  display:inline-block;
-  background:var(--lime);
-  color:#000;
-  padding:5px 9px;
-  border-radius:99px;
-  font-size:11px;
-  font-weight:900
-}
-
-.statusBadge{
-  display:inline-block;
-  padding:5px 9px;
-  border-radius:99px;
-  font-size:10px;
-  font-weight:900
-}
-
-.statusUpcoming{
-  background:#303530;
-  color:#fff
-}
-
-.statusLive{
-  background:var(--lime);
-  color:#000
-}
-
-.statusFinal{
-  background:#1d261d;
-  color:#baff72
-}
-
-/* CUENTA REGRESIVA */
+/* =========================
+   CUENTA REGRESIVA
+========================= */
 
 .countdown{
   margin-top:18px;
@@ -607,25 +758,25 @@ footer{
   border:1px solid var(--lime);
   border-radius:18px;
   padding:22px;
-  text-align:center
+  text-align:center;
 }
 
 .countdown .kicker{
   color:var(--lime);
   font-size:11px;
   font-weight:900;
-  letter-spacing:2px
+  letter-spacing:2px;
 }
 
 .countdown h2{
   margin:7px 0 4px;
-  font-size:24px
+  font-size:24px;
 }
 
 .countdown .subtitle{
   color:var(--muted);
   font-size:12px;
-  margin-bottom:16px
+  margin-bottom:16px;
 }
 
 .countdownGrid{
@@ -633,21 +784,21 @@ footer{
   grid-template-columns:repeat(4,1fr);
   gap:10px;
   max-width:620px;
-  margin:auto
+  margin:auto;
 }
 
 .countdownBox{
   background:#1a1e1a;
   border:1px solid var(--line);
   border-radius:12px;
-  padding:13px 8px
+  padding:13px 8px;
 }
 
 .countdownBox b{
   display:block;
   color:var(--lime);
   font-size:32px;
-  line-height:1
+  line-height:1;
 }
 
 .countdownBox span{
@@ -656,10 +807,12 @@ footer{
   font-size:9px;
   font-weight:900;
   letter-spacing:1px;
-  margin-top:6px
+  margin-top:6px;
 }
 
-/* APP */
+/* =========================
+   APP
+========================= */
 
 .appModal{
   position:fixed;
@@ -669,10 +822,12 @@ footer{
   align-items:center;
   justify-content:center;
   padding:18px;
-  z-index:300
+  z-index:80;
 }
 
-.appModal.hidden{display:none}
+.appModal.hidden{
+  display:none;
+}
 
 .appBox{
   width:min(760px,100%);
@@ -683,7 +838,7 @@ footer{
   border-radius:18px;
   padding:26px;
   position:relative;
-  box-shadow:0 0 45px #000
+  box-shadow:0 0 45px #000;
 }
 
 .appClose{
@@ -697,42 +852,46 @@ footer{
   color:#fff;
   border-radius:9px;
   font-size:24px;
-  cursor:pointer
+  cursor:pointer;
 }
 
 .appBox h2{
   margin:0 45px 5px 0;
-  font-size:30px
+  font-size:30px;
 }
 
 .appSubtitle{
   color:var(--muted);
-  margin-bottom:22px
+  margin-bottom:22px;
 }
 
 .appGrid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:14px
+  gap:14px;
 }
 
 .appStep{
   background:#1a1e1a;
   border:1px solid var(--line);
   border-radius:13px;
-  padding:18px
+  padding:18px;
 }
 
 .appStep h3{
   margin:0 0 10px;
   color:var(--lime);
-  font-size:17px
+  font-size:17px;
 }
 
 .appStep p{
   margin:7px 0;
   color:#d8ddd8;
-  line-height:1.45
+  line-height:1.45;
+}
+
+.appStep b{
+  color:#fff;
 }
 
 .appTip{
@@ -741,148 +900,202 @@ footer{
   border:1px dashed #596059;
   border-radius:12px;
   color:#c7ccc7;
-  line-height:1.45
+  line-height:1.45;
 }
 
-.appTip strong{color:var(--lime)}
-
-.qualifies{
-  background:rgba(182,255,0,.07)
+.appTip strong{
+  color:var(--lime);
 }
 
-.qualifies td:first-child{
-  border-left:3px solid var(--lime)
-}
-
-.filterTabs{
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px
-}
-
-.filterTabs .nav{font-size:11px}
-
-/* RESPONSIVE */
+/* =========================
+   RESPONSIVE
+========================= */
 
 @media(max-width:850px){
-  .heroGrid{grid-template-columns:1fr}
-  .cards{grid-template-columns:1fr 1fr}
-  .bracket{grid-template-columns:1fr 1fr}
-  .sponsorGrid{grid-template-columns:1fr 1fr}
-  .homeGrid{grid-template-columns:1fr}
-  .homeBlock.full{grid-column:auto}
-  .liveGrid{grid-template-columns:1fr}
-  .leaderGrid{grid-template-columns:1fr 1fr}
+
+  .heroGrid{
+    grid-template-columns:1fr;
+  }
+
+  .cards{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .bracket{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .sponsorGrid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .homeGrid{
+    grid-template-columns:1fr;
+  }
+
+  .homeBlock.full{
+    grid-column:auto;
+  }
+
+  .liveGrid{
+    grid-template-columns:1fr;
+  }
+
+  .leaderGrid{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(max-width:650px){
+
+  .appGrid{
+    grid-template-columns:1fr;
+  }
+
+  .appBox{
+    padding:21px;
+  }
+
+  .appBox h2{
+    font-size:25px;
+  }
 }
 
 @media(max-width:560px){
+
   nav{
+    display:flex;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    overflow-y:hidden;
     gap:6px;
-    padding-bottom:10px
+    padding-bottom:10px;
+    -webkit-overflow-scrolling:touch;
   }
 
-  .nav{
+  nav .nav{
+    flex:0 0 auto;
     padding:10px 12px;
     font-size:11px;
-    flex:0 0 auto
   }
 
   .hero{
-    padding-top:25px
+    padding-top:18px;
   }
 
   .hero h1{
     font-size:48px;
-    letter-spacing:-2px
+    letter-spacing:-2px;
   }
 
-  .card,.homeBlock{
-    padding:18px
+  .cards,
+  .bracket{
+    grid-template-columns:1fr;
   }
 
-  .cards,.bracket{
-    grid-template-columns:1fr
+  .card{
+    padding:18px;
   }
 
   .table{
-    min-width:560px
+    min-width:560px;
   }
 
-  .table th,.table td{
+  .table th,
+  .table td{
     padding:9px 7px;
-    font-size:11px
+    font-size:11px;
   }
 
-  .match{padding:16px}
+  .match{
+    padding:16px;
+  }
 
-  .score{font-size:22px}
+  .score{
+    font-size:22px;
+  }
 
   .avgGrid{
-    grid-template-columns:1fr 1fr
+    grid-template-columns:1fr 1fr;
   }
 
   .playerModalBox{
-    padding:22px
-  }
-
-  .leaderGrid,
-  .topMini{
-    grid-template-columns:1fr
+    padding:22px;
   }
 
   .homeGrid{
     gap:12px;
-    margin-top:12px
+    margin-top:12px;
+  }
+
+  .homeBlock{
+    padding:17px;
+  }
+
+  .leaderGrid{
+    grid-template-columns:1fr;
+  }
+
+  .topMini{
+    grid-template-columns:1fr;
   }
 
   .countdown{
-    padding:18px 12px
+    padding:18px 12px;
   }
 
   .countdown h2{
-    font-size:21px
+    font-size:21px;
   }
 
   .countdownGrid{
-    gap:6px
+    gap:6px;
   }
 
   .countdownBox{
-    padding:11px 5px
+    padding:11px 5px;
   }
 
   .countdownBox b{
-    font-size:25px
+    font-size:25px;
   }
 
-  .appGrid{
-    grid-template-columns:1fr
+  .registrationCard{
+    padding:22px 18px;
   }
 
-  .appBox{
-    padding:21px
+  .registrationTitle{
+    font-size:38px;
+    letter-spacing:-2px;
   }
 
-  .appBox h2{
-    font-size:25px
+  .registrationTop{
+    align-items:flex-start;
   }
+
 }
+
 </style>
 </head>
 
 <body>
 
 <header>
+
 <div class="wrap">
 
 <div class="top">
 
 <div class="brand">
+
 <img src="../logo.png" alt="Street 3x3">
+
 <div>
-<b>STREET</b> 3x3<br>
+<b>STREET</b> 3x3
+<br>
 <span class="muted">TORNEO OFICIAL</span>
 </div>
+
 </div>
 
 <div class="live">● EN VIVO</div>
@@ -891,34 +1104,72 @@ footer{
 
 <nav>
 
-<button class="nav active" data-tab="inicio">INICIO</button>
+<button class="nav active" data-tab="inicio">
+INICIO
+</button>
 
-<button class="nav" type="button" onclick="openAppModal()">📱 APP</button>
+<button class="nav" type="button" onclick="openAppModal()">
+📱 APP
+</button>
 
-<button class="nav" data-tab="jugadores">JUGADORES</button>
-<button class="nav" data-tab="estadisticas">ESTADÍSTICAS</button>
-<button class="nav" data-tab="fixture">FIXTURE</button>
-<button class="nav" data-tab="resultados">RESULTADOS</button>
-<button class="nav" data-tab="tablas">TABLAS</button>
-<button class="nav" data-tab="playoffs">PLAYOFFS</button>
+<button class="nav" data-tab="jugadores">
+JUGADORES
+</button>
+
+<button class="nav" data-tab="estadisticas">
+ESTADÍSTICAS
+</button>
+
+<button class="nav" data-tab="fixture">
+FIXTURE
+</button>
+
+<button class="nav" data-tab="resultados">
+RESULTADOS
+</button>
+
+<button class="nav" data-tab="tablas">
+TABLAS
+</button>
+
+<button class="nav" data-tab="playoffs">
+PLAYOFFS
+</button>
 
 </nav>
 
 </div>
+
 </header>
+
 
 <main class="wrap">
 
 <section id="inicio" class="section active hero">
 
+
+<!-- =========================
+     INSCRIPCIONES ARRIBA
+========================= -->
+
+<div id="registrationHero" class="registrationHero"></div>
+
+
+<!-- =========================
+     HERO PRINCIPAL
+========================= -->
+
 <div class="heroGrid">
 
 <div class="card">
 
-<div class="kicker">STREET 3x3</div>
+<div class="kicker">
+STREET 3x3
+</div>
 
 <h1>
-TODO EL TORNEO.<br>
+TODO EL TORNEO.
+<br>
 <span>EN UN SOLO LUGAR.</span>
 </h1>
 
@@ -926,31 +1177,48 @@ TODO EL TORNEO.<br>
 Resultados, posiciones, jugadores y estadísticas actualizadas en tiempo real.
 </p>
 
-<div class="muted" id="status">Conectando...</div>
+<div class="muted" id="status">
+Conectando...
+</div>
 
-<div class="muted" id="clockStatus" style="margin-top:6px"></div>
+<div class="muted" id="clockStatus" style="margin-top:6px">
+</div>
 
 </div>
+
 
 <div class="card">
 
-<div class="muted">EQUIPOS INSCRIPTOS</div>
+<div class="muted">
+EQUIPOS INSCRIPTOS
+</div>
 
-<div class="stat" id="teamCount">—</div>
+<div class="stat" id="teamCount">
+—
+</div>
 
-<div class="muted">4 grupos · 4 equipos</div>
+<div class="muted">
+4 grupos · 4 equipos
+</div>
 
 <br>
 
-<div class="muted">PARTIDOS</div>
+<div class="muted">
+PARTIDOS
+</div>
 
-<div class="stat" id="matchCount">—</div>
-
+<div class="stat" id="matchCount">
+—
 </div>
 
 </div>
 
-<!-- CUENTA REGRESIVA -->
+</div>
+
+
+<!-- =========================
+     CUENTA REGRESIVA
+========================= -->
 
 <div class="countdown">
 
@@ -992,168 +1260,301 @@ FALTAN PARA EL EVENTO
 
 </div>
 
+
+<!-- =========================
+     CONTENIDO HOME
+========================= -->
+
 <div class="homeGrid">
 
 <div id="homePlayerOfRound"></div>
+
 <div id="homePlayerToWatch"></div>
+
 <div id="liveCenterContent"></div>
+
 <div id="nextMatchesContent"></div>
+
 <div id="recentResultsContent"></div>
+
 <div id="groupLeadersContent"></div>
+
 <div id="topStatsContent"></div>
+
 <div id="tournamentStatusContent"></div>
+
+<!-- CAMPEÓN:
+     queda vacío antes del torneo
+-->
+
 <div id="championContent"></div>
 
 </div>
 
 </section>
 
+
 <section id="jugadores" class="section">
 
 <div class="title">
+
 <h2>Jugadores</h2>
-<p>Todos los participantes del torneo.</p>
+
+<p>
+Todos los participantes del torneo.
+</p>
+
 </div>
 
 <div id="playersContent"></div>
 
 </section>
 
+
 <section id="estadisticas" class="section">
 
 <div class="title">
+
 <h2>Estadísticas</h2>
-<p>Los líderes del torneo en cada categoría.</p>
+
+<p>
+Los líderes del torneo en cada categoría.
+</p>
+
 </div>
 
 <div id="statsContent"></div>
 
 </section>
 
+
 <section id="fixture" class="section">
 
 <div class="title">
+
 <h2>Fixture</h2>
-<p>Todos los cruces de la fase de grupos.</p>
+
+<p>
+Todos los cruces de la fase de grupos.
+</p>
+
 </div>
 
 <div id="fixtureContent"></div>
 
 </section>
 
+
 <section id="resultados" class="section">
 
 <div class="title">
+
 <h2>Resultados</h2>
-<p>Marcadores cargados por la organización.</p>
+
+<p>
+Marcadores cargados por la organización.
+</p>
+
 </div>
 
 <div id="resultsContent"></div>
 
 </section>
 
+
 <section id="tablas" class="section">
 
 <div class="title">
+
 <h2>Tablas</h2>
-<p>Posiciones calculadas automáticamente.</p>
+
+<p>
+Posiciones calculadas automáticamente.
+</p>
+
 </div>
 
 <div id="tablesContent"></div>
 
 </section>
 
+
 <section id="playoffs" class="section">
 
 <div class="title">
+
 <h2>Playoffs</h2>
-<p>El camino hacia el campeonato.</p>
+
+<p>
+El camino hacia el campeonato.
+</p>
+
 </div>
 
 <div id="playoffContent"></div>
 
 </section>
 
+
 <section class="sponsors">
 
 <div style="display:flex;justify-content:space-between;align-items:center">
+
 <h3>Patrocinadores</h3>
-<span class="muted">Tu marca puede estar acá</span>
+
+<span class="muted">
+Tu marca puede estar acá
+</span>
+
 </div>
 
 <div class="sponsorGrid">
-<div class="sponsor">SPONSOR 01</div>
-<div class="sponsor">SPONSOR 02</div>
-<div class="sponsor">SPONSOR 03</div>
-<div class="sponsor">SPONSOR 04</div>
+
+<div class="sponsor">
+SPONSOR 01
+</div>
+
+<div class="sponsor">
+SPONSOR 02
+</div>
+
+<div class="sponsor">
+SPONSOR 03
+</div>
+
+<div class="sponsor">
+SPONSOR 04
+</div>
+
 </div>
 
 </section>
 
 </main>
 
+
 <footer>
 
 <div class="wrap">
-<b style="color:#fff">STREET 3x3</b>
+
+<b style="color:#fff">
+STREET 3x3
+</b>
+
 · Información oficial del torneo · Actualización en tiempo real
+
 </div>
 
 </footer>
 
 
-<!-- APP -->
+<!-- =========================
+     APP MODAL
+========================= -->
 
-<div id="appModal" class="appModal hidden" onclick="closeAppModal(event)">
+<div id="appModal"
+     class="appModal hidden"
+     onclick="closeAppModal(event)">
 
 <div class="appBox">
 
-<button class="appClose" type="button" onclick="closeAppModal()">×</button>
+<button
+class="appClose"
+type="button"
+onclick="closeAppModal()">
+×
+</button>
 
-<div class="kicker">STREET 3x3</div>
+<div class="kicker">
+STREET 3x3
+</div>
 
-<h2>📱 INSTALAR LA APP / INSTALL THE APP</h2>
+<h2>
+📱 INSTALAR LA APP / INSTALL THE APP
+</h2>
 
 <div class="appSubtitle">
+
 Agregá Street 3x3 a la pantalla de inicio para acceder como una aplicación.
+
+<br>
+
+Add Street 3x3 to your home screen to access it like an app.
+
 </div>
 
 <div class="appGrid">
 
 <div class="appStep">
 
-<h3>🤖 ANDROID · CHROME</h3>
+<h3>
+🤖 ANDROID · CHROME
+</h3>
 
-<p><b>1.</b> Abrí Street 3x3 en Chrome.</p>
-<p><b>2.</b> Tocá <b>⋮</b> arriba a la derecha.</p>
-<p><b>3.</b> Elegí <b>“Agregar a pantalla de inicio”</b> o <b>“Instalar aplicación”</b>.</p>
-<p><b>4.</b> Tocá <b>“Agregar”</b> o <b>“Instalar”</b>.</p>
+<p>
+<b>1.</b> Abrí Street 3x3 en Chrome.
+</p>
+
+<p>
+<b>2.</b> Tocá <b>⋮</b> arriba a la derecha.
+</p>
+
+<p>
+<b>3.</b> Elegí <b>“Agregar a pantalla de inicio”</b> o <b>“Instalar aplicación”</b>.
+</p>
+
+<p>
+<b>4.</b> Tocá <b>“Agregar”</b> o <b>“Instalar”</b>.
+</p>
 
 </div>
+
 
 <div class="appStep">
 
-<h3>🍎 IPHONE · SAFARI</h3>
+<h3>
+🍎 IPHONE · SAFARI
+</h3>
 
-<p><b>1.</b> Abrí Street 3x3 en Safari.</p>
-<p><b>2.</b> Tocá <b>Compartir</b>.</p>
-<p><b>3.</b> Elegí <b>“Agregar a pantalla de inicio”</b>.</p>
-<p><b>4.</b> Tocá <b>“Agregar”</b>.</p>
+<p>
+<b>1.</b> Abrí Street 3x3 en Safari.
+</p>
+
+<p>
+<b>2.</b> Tocá <b>Compartir</b>.
+</p>
+
+<p>
+<b>3.</b> Elegí <b>“Agregar a pantalla de inicio”</b>.
+</p>
+
+<p>
+<b>4.</b> Tocá <b>“Agregar”</b>.
+</p>
 
 </div>
 
 </div>
+
 
 <div class="appTip">
-<strong>💡 IMPORTANTE:</strong>
-Si ya la instalaste antes, eliminá la versión anterior y volvé a instalarla para que tome los cambios.
+
+<strong>
+💡 IMPORTANTE / IMPORTANT:
+</strong>
+
+Si ya la instalaste antes, eliminá la versión anterior y volvé a instalarla para que tome el nuevo ícono de Street 3x3.
+
 </div>
 
 </div>
+
 </div>
 
 
-<!-- PLAYER MODAL -->
+<!-- =========================
+     PLAYER MODAL
+========================= -->
 
 <div id="playerModal"
      class="playerModal hidden"
@@ -1163,7 +1564,9 @@ Si ya la instalaste antes, eliminá la versión anterior y volvé a instalarla p
 
 <button
 class="playerModalClose"
-onclick="closePlayerModal()">×</button>
+onclick="closePlayerModal()">
+×
+</button>
 
 <div id="playerModalContent"></div>
 
@@ -1174,9 +1577,9 @@ onclick="closePlayerModal()">×</button>
 
 <script>
 
-/* =========================================================
+/* =====================================================
    FIREBASE
-========================================================= */
+===================================================== */
 
 const config={
   apiKey:"AIzaSyDYfJ4qQSVqBWLBu5DziwtkWWXB4ycnSSw",
@@ -1208,9 +1611,9 @@ let data={
 };
 
 
-/* =========================================================
+/* =====================================================
    UTILIDADES
-========================================================= */
+===================================================== */
 
 const esc=x=>String(x??"")
 .replaceAll("&","&amp;")
@@ -1222,34 +1625,41 @@ const esc=x=>String(x??"")
 
 function name(id){
 
-  if(id===undefined||id===null||id==="")
+  if(id===undefined || id===null || id===""){
     return "Por definir";
+  }
 
   if(typeof id==="object"){
 
-    if(id.name)return String(id.name);
-    if(id.teamName)return String(id.teamName);
-    if(id.team)return name(id.team);
-    if(id.id)return name(id.id);
+    if(id.name) return String(id.name);
+
+    if(id.teamName) return String(id.teamName);
+
+    if(id.team) return name(id.team);
+
+    if(id.id) return name(id.id);
 
     return "Por definir";
   }
 
   const key=String(id);
 
-  if(data.teams?.[key]?.name)
+  if(data.teams?.[key]?.name){
     return String(data.teams[key].name);
+  }
 
-  const found=Object.entries(data.teams||{}).find(([teamId,team])=>
-    String(teamId)===key ||
-    String(team?.name||"").toLowerCase()===key.toLowerCase()
-  );
+  const found=Object.entries(data.teams||{}).find(([teamId,team])=>{
+    return String(teamId)===key ||
+      String(team?.name||"").toLowerCase()===key.toLowerCase();
+  });
 
-  if(found?.[1]?.name)
+  if(found?.[1]?.name){
     return String(found[1].name);
+  }
 
-  if(key==="undefined"||key==="null")
+  if(key==="undefined" || key==="null"){
     return "Por definir";
+  }
 
   return key;
 }
@@ -1260,49 +1670,50 @@ function matchTeamName(match,side){
   const isHome=side==="home";
 
   const candidates=isHome
-  ?[
-    match?.home,
-    match?.homeId,
-    match?.homeTeamId,
-    match?.home_team_id,
-    match?.team1,
-    match?.team1Id,
-    match?.teamA,
-    match?.teamAId,
-    match?.local,
-    match?.localId
-  ]
-  :[
-    match?.away,
-    match?.awayId,
-    match?.awayTeamId,
-    match?.away_team_id,
-    match?.team2,
-    match?.team2Id,
-    match?.teamB,
-    match?.teamBId,
-    match?.visitante,
-    match?.visitanteId
-  ];
+    ?[
+      match?.home,
+      match?.homeId,
+      match?.homeTeamId,
+      match?.home_team_id,
+      match?.team1,
+      match?.team1Id,
+      match?.teamA,
+      match?.teamAId,
+      match?.local,
+      match?.localId
+    ]
+    :[
+      match?.away,
+      match?.awayId,
+      match?.awayTeamId,
+      match?.away_team_id,
+      match?.team2,
+      match?.team2Id,
+      match?.teamB,
+      match?.teamBId,
+      match?.visitante,
+      match?.visitanteId
+    ];
 
   const explicit=isHome
-  ?[
-    match?.homeName,
-    match?.homeTeam,
-    match?.home_team,
-    match?.localName
-  ]
-  :[
-    match?.awayName,
-    match?.awayTeam,
-    match?.away_team,
-    match?.visitanteName
-  ];
+    ?[
+      match?.homeName,
+      match?.homeTeam,
+      match?.home_team,
+      match?.localName
+    ]
+    :[
+      match?.awayName,
+      match?.awayTeam,
+      match?.away_team,
+      match?.visitanteName
+    ];
 
   for(const value of [...candidates,...explicit]){
 
-    if(value===undefined||value===null||value==="")
+    if(value===undefined || value===null || value===""){
       continue;
+    }
 
     const resolved=name(value);
 
@@ -1313,6 +1724,7 @@ function matchTeamName(match,side){
     ){
       return resolved;
     }
+
   }
 
   return "Por definir";
@@ -1321,26 +1733,34 @@ function matchTeamName(match,side){
 
 function formatMatchDate(date){
 
-  if(!date)return "Fecha por definir";
+  if(!date){
+    return "Fecha por definir";
+  }
 
   const raw=String(date).trim();
 
-  const iso=raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  const iso=raw.match(
+    /^(\d{4})-(\d{1,2})-(\d{1,2})$/
+  );
 
   if(iso){
 
     return String(iso[3]).padStart(2,"0")+"/"+
-           String(iso[2]).padStart(2,"0")+"/"+
-           iso[1];
+      String(iso[2]).padStart(2,"0")+"/"+
+      iso[1];
+
   }
 
-  const us=raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  const us=raw.match(
+    /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/
+  );
 
   if(us){
 
     return String(us[2]).padStart(2,"0")+"/"+
-           String(us[1]).padStart(2,"0")+"/"+
-           us[3];
+      String(us[1]).padStart(2,"0")+"/"+
+      us[3];
+
   }
 
   return raw;
@@ -1349,22 +1769,28 @@ function formatMatchDate(date){
 
 function getMatchDateTime(m){
 
-  if(!m?.date||!m?.time)
+  if(!m?.date || !m?.time){
     return null;
+  }
 
   const cleanTime=String(m.time)
     .trim()
     .replace(".",":");
 
-  const tm=cleanTime.match(/^(\d{1,2}):(\d{2})$/);
+  const tm=cleanTime.match(
+    /^(\d{1,2}):(\d{2})$/
+  );
 
-  if(!tm)return null;
+  if(!tm){
+    return null;
+  }
 
   const hh=Number(tm[1]);
   const mm=Number(tm[2]);
 
-  if(hh<0||hh>23||mm<0||mm>59)
+  if(hh<0 || hh>23 || mm<0 || mm>59){
     return null;
+  }
 
   let year,month,day;
 
@@ -1386,7 +1812,9 @@ function getMatchDateTime(m){
       /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/
     );
 
-    if(!match)return null;
+    if(!match){
+      return null;
+    }
 
     month=Number(match[1]);
     day=Number(match[2]);
@@ -1396,45 +1824,43 @@ function getMatchDateTime(m){
   const iso=
     year+"-"+
     String(month).padStart(2,"0")+"-"+
-    String(day).padStart(2,"0")+"T"+
+    String(day).padStart(2,"0")+
+    "T"+
     String(hh).padStart(2,"0")+":"+
-    String(mm).padStart(2,"0")+":00-03:00";
+    String(mm).padStart(2,"0")+
+    ":00-03:00";
 
   const d=new Date(iso);
 
-  return Number.isNaN(d.getTime())?null:d;
+  return Number.isNaN(d.getTime()) ? null : d;
 }
 
-
-/* =========================================================
-   MARCADORES
-========================================================= */
 
 function isScoreSet(value){
 
   return value!==null &&
-         value!==undefined &&
-         value!=="" &&
-         Number.isFinite(Number(value));
+    value!==undefined &&
+    value!=="" &&
+    Number.isFinite(Number(value));
 }
 
 
 function isMatchFinished(m){
 
-  if(!m)return false;
+  if(!m){
+    return false;
+  }
 
   const bothScores=
     isScoreSet(m.homeScore) &&
     isScoreSet(m.awayScore);
 
-  if(!bothScores)return false;
-
-  const status=String(m.status||"").toLowerCase();
+  if(!bothScores){
+    return false;
+  }
 
   if(
-    status==="programado" ||
-    status==="scheduled" ||
-    status==="pendiente"
+    String(m.status||"").toLowerCase()==="programado"
   ){
     return false;
   }
@@ -1462,14 +1888,14 @@ function matchStatus(m){
   }
 
   return Date.now()>=dt.getTime()
-  ?{
-    key:"live",
-    label:"EN JUEGO"
-  }
-  :{
-    key:"upcoming",
-    label:"PRÓXIMO"
-  };
+    ?{
+      key:"live",
+      label:"EN JUEGO"
+    }
+    :{
+      key:"upcoming",
+      label:"PRÓXIMO"
+    };
 }
 
 
@@ -1479,17 +1905,17 @@ function statusBadge(m){
 
   const cls=
     s.key==="live"
-    ?"statusLive"
-    :s.key==="final"
-    ?"statusFinal"
-    :"statusUpcoming";
+      ?"statusLive"
+      :s.key==="final"
+        ?"statusFinal"
+        :"statusUpcoming";
 
   const icon=
     s.key==="live"
-    ?"🟡 "
-    :s.key==="final"
-    ?"🟢 "
-    :"⚪ ";
+      ?"🟡 "
+      :s.key==="final"
+        ?"🟢 "
+        :"⚪ ";
 
   return `
     <span class="statusBadge ${cls}">
@@ -1499,368 +1925,9 @@ function statusBadge(m){
 }
 
 
-/* =========================================================
-   MARCADOR EN VIVO
-========================================================= */
-
-/*
-  Esta función acepta:
-  true
-  "true"
-  1
-  "1"
-  para running.
-*/
-
-function boolValue(v){
-
-  return v===true ||
-         v==="true" ||
-         v===1 ||
-         v==="1";
-}
-
-
-function liveStateValid(s){
-
-  if(!s)return false;
-
-  const hasMatch=
-    s.matchId ||
-    s.matchID ||
-    s.match_id ||
-    s.id;
-
-  const running=
-    boolValue(s.running) ||
-    boolValue(s.isRunning) ||
-    boolValue(s.live) ||
-    boolValue(s.active);
-
-  return !!hasMatch && running;
-}
-
-
-function getLiveMatchId(s){
-
-  return s?.matchId ||
-         s?.matchID ||
-         s?.match_id ||
-         s?.id ||
-         null;
-}
-
-
-function liveRemaining(s){
-
-  if(!s)return 0;
-
-  const end=
-    Number(s.endAt) ||
-    Number(s.endsAt) ||
-    Number(s.endTime);
-
-  if(end && boolValue(
-    s.running??s.isRunning??s.live??s.active
-  )){
-    return Math.max(
-      0,
-      Math.ceil((end-Date.now())/1000)
-    );
-  }
-
-  return Math.max(
-    0,
-    Number(
-      s.remaining ??
-      s.timeRemaining ??
-      s.seconds ??
-      0
-    )
-  );
-}
-
-
-function liveMatchObject(s,court){
-
-  if(!liveStateValid(s))
-    return null;
-
-  const matchId=getLiveMatchId(s);
-
-  const m=data.matches?.[matchId];
-
-  if(!m){
-
-    /*
-      Si el marcador guarda los nombres directamente,
-      igualmente permitimos mostrarlo.
-    */
-
-    if(
-      s.homeName ||
-      s.awayName ||
-      s.homeScore!==undefined ||
-      s.awayScore!==undefined
-    ){
-      return {
-        s:s,
-        m:{
-          home:s.home,
-          away:s.away,
-          homeName:s.homeName,
-          awayName:s.awayName
-        },
-        court:court
-      };
-    }
-
-    return null;
-  }
-
-  return {
-    s:s,
-    m:m,
-    court:court
-  };
-}
-
-
-function liveScore(s,side){
-
-  const keys=side==="home"
-  ?[
-    "homeScore",
-    "homePoints",
-    "scoreHome",
-    "score1",
-    "home_score"
-  ]
-  :[
-    "awayScore",
-    "awayPoints",
-    "scoreAway",
-    "score2",
-    "away_score"
-  ];
-
-  for(const k of keys){
-
-    if(
-      s?.[k]!==undefined &&
-      s?.[k]!==null &&
-      s?.[k]!==""
-    ){
-      return Number(s[k])||0;
-    }
-  }
-
-  return 0;
-}
-
-
-function renderLiveCenter(){
-
-  const b=
-    document.getElementById("liveCenterContent");
-
-  if(!b)return;
-
-  const entries=[
-    {s:live1,court:"1"},
-    {s:live2,court:"2"}
-  ];
-
-  const lives=entries
-    .map(({s,court})=>{
-      const m=liveMatchObject(s,court);
-      return m?m:null;
-    })
-    .filter(Boolean);
-
-  const liveCount=lives.length;
-
-  let h=`
-    <div class="homeBlock full"
-         style="border-color:var(--lime)">
-
-      <div class="homeTitle">
-        <h3>🟡 EN VIVO AHORA</h3>
-        <span>
-          ${
-            liveCount===2
-            ?"2 CANCHAS"
-            :liveCount===1
-            ?"1 CANCHA"
-            :"SIN PARTIDOS"
-          }
-        </span>
-      </div>
-
-      <div class="liveGrid">
-  `;
-
-  const byCourt={};
-
-  lives.forEach(x=>{
-    byCourt[String(x.court)]=x;
-  });
-
-  ["1","2"].forEach(court=>{
-
-    const item=byCourt[court];
-
-    if(!item){
-
-      h+=`
-        <div class="livePlaceholder">
-
-          <div style="font-size:28px;margin-bottom:8px">
-            🏀
-          </div>
-
-          <strong style="color:#fff">
-            CANCHA ${court}
-          </strong>
-
-          <div style="margin-top:6px">
-            Sin partido en juego
-          </div>
-
-        </div>
-      `;
-
-      return;
-    }
-
-    const {s,m}=item;
-
-    const home=matchTeamName({
-      home:m.home,
-      homeName:s.homeName
-    },"home");
-
-    const away=matchTeamName({
-      away:m.away,
-      awayName:s.awayName
-    },"away");
-
-    const t=liveRemaining(s);
-
-    const hs=liveScore(s,"home");
-    const as=liveScore(s,"away");
-
-    h+=`
-      <div class="homeMatch"
-           style="border-color:var(--lime);margin:0;min-height:150px">
-
-        <div class="meta">
-
-          <span>CANCHA ${court}</span>
-
-          <span class="statusBadge statusLive">
-            🟡 EN VIVO
-          </span>
-
-        </div>
-
-        <div class="teams"
-             style="font-size:16px">
-
-          <span>${esc(home)}</span>
-
-          <span style="font-size:20px!important">
-            ${hs} — ${as}
-          </span>
-
-          <span>${esc(away)}</span>
-
-        </div>
-
-        <div class="muted"
-             style="margin-top:14px;text-align:center;font-size:13px">
-
-          ⏱️
-          ${String(Math.floor(t/60)).padStart(2,"0")}:
-          ${String(t%60).padStart(2,"0")}
-
-        </div>
-
-      </div>
-    `;
-  });
-
-  h+=`
-      </div>
-    </div>
-  `;
-
-  b.innerHTML=h;
-}
-
-
-/* =========================================================
-   CUENTA REGRESIVA
-========================================================= */
-
-function updateCountdown(){
-
-  const eventDate=
-    new Date("2026-11-07T00:00:00-03:00");
-
-  const remaining=Math.max(
-    0,
-    eventDate.getTime()-Date.now()
-  );
-
-  const totalSeconds=
-    Math.floor(remaining/1000);
-
-  const days=
-    Math.floor(totalSeconds/86400);
-
-  const hours=
-    Math.floor(
-      (totalSeconds%86400)/3600
-    );
-
-  const minutes=
-    Math.floor(
-      (totalSeconds%3600)/60
-    );
-
-  const seconds=
-    totalSeconds%60;
-
-  const set=(id,value)=>{
-    const el=document.getElementById(id);
-    if(el){
-      el.textContent=
-        String(value).padStart(2,"0");
-    }
-  };
-
-  set("countdownDays",days);
-  set("countdownHours",hours);
-  set("countdownMinutes",minutes);
-  set("countdownSeconds",seconds);
-
-  const title=
-    document.getElementById("countdownTitle");
-
-  if(title){
-
-    title.textContent=
-      remaining<=0
-      ?"EL EVENTO YA COMENZÓ 🏀"
-      :"FALTAN PARA EL EVENTO";
-  }
-}
-
-
-/* =========================================================
-   ESTADO TORNEO
-========================================================= */
+/* =====================================================
+   TORNEO
+===================================================== */
 
 const TOTAL_TOURNAMENT_MATCHES=31;
 const GROUP_STAGE_MATCHES=24;
@@ -1882,18 +1949,25 @@ function playoffMatches(){
 }
 
 
+function isPlayoffFinished(m){
+
+  return !!m &&
+    isScoreSet(m.homeScore) &&
+    isScoreSet(m.awayScore) &&
+    Number(m.homeScore)!==Number(m.awayScore);
+}
+
+
 function playoffWinner(m){
 
   if(
     !m ||
     !isScoreSet(m.homeScore) ||
-    !isScoreSet(m.awayScore)
+    !isScoreSet(m.awayScore) ||
+    +m.homeScore===+m.awayScore
   ){
     return null;
   }
-
-  if(+m.homeScore===+m.awayScore)
-    return null;
 
   return +m.homeScore>+m.awayScore
     ?m.home
@@ -1901,31 +1975,118 @@ function playoffWinner(m){
 }
 
 
-function isPlayoffFinished(m){
+/* =====================================================
+   HERO DE INSCRIPCIÓN
+===================================================== */
 
-  return !!playoffWinner(m);
-}
+function renderRegistrationHero(){
 
+  const b=document.getElementById("registrationHero");
 
-function renderTournamentStatus(){
-
-  const b=
-    document.getElementById("tournamentStatusContent");
-
-  if(!b)return;
+  if(!b){
+    return;
+  }
 
   const tournamentStart=
-    new Date("2026-11-07T00:00:00-03:00")
-    .getTime();
+    new Date("2026-11-07T00:00:00-03:00").getTime();
+
+  /*
+    Antes del torneo mostramos inscripción.
+  */
 
   if(Date.now()<tournamentStart){
 
     b.innerHTML=`
+
+      <div class="registrationCard">
+
+        <div class="registrationTop">
+
+          <div class="kicker">
+            🏀 ¿VAS A SER PARTE?
+          </div>
+
+          <span class="registrationBadge">
+            STREET 3x3
+          </span>
+
+        </div>
+
+        <div class="registrationTitle">
+          NO VENGAS A MIRAR.<br>
+          <span>VENÍ A JUGAR.</span>
+        </div>
+
+        <div class="registrationDate">
+          Street 3x3 · 7 de noviembre
+        </div>
+
+        <div style="margin-top:14px">
+
+          <span class="registrationBadge">
+            INSCRIPCIONES ABIERTAS
+          </span>
+
+        </div>
+
+        <a
+          href="https://www.instagram.com/street.3x3/"
+          target="_blank"
+          rel="noopener"
+          class="registrationButton"
+        >
+          ANOTÁ A TU EQUIPO →
+        </a>
+
+      </div>
+
+    `;
+
+    return;
+  }
+
+  /*
+    Después del inicio ya no mostramos
+    la tarjeta de inscripción.
+  */
+
+  b.innerHTML="";
+}
+
+
+/* =====================================================
+   ESTADO DEL TORNEO
+===================================================== */
+
+function renderTournamentStatus(){
+
+  const b=document.getElementById(
+    "tournamentStatusContent"
+  );
+
+  if(!b){
+    return;
+  }
+
+  const tournamentStart=
+    new Date("2026-11-07T00:00:00-03:00").getTime();
+
+  if(Date.now()<tournamentStart){
+
+    b.innerHTML=`
+
       <div class="homeBlock">
 
         <div class="homeTitle">
-          <h3>🏆 ESTADO DEL TORNEO</h3>
-          <span>FASE DE GRUPOS</span>
+
+          <h3>
+            🏆 ESTADO DEL TORNEO
+          </h3>
+
+          <span>
+            FASE DE GRUPOS
+          </span>
+
         </div>
 
         <div style="font-size:24px;font-weight:900">
@@ -1964,14 +2125,16 @@ function renderTournamentStatus(){
         </div>
 
       </div>
+
     `;
 
     return;
   }
 
+
   const groupFinished=
     Object.values(data.matches||{})
-    .filter(isMatchFinished)
+    .filter(m=>isMatchFinished(m))
     .length;
 
   const playoffFinished=
@@ -1991,8 +2154,10 @@ function renderTournamentStatus(){
 
   const p=data.playoffs||{};
 
+  const finalWinner=playoffWinner(p.final);
+
   const champion=
-    playoffWinner(p.final) ||
+    finalWinner ||
     p.champion ||
     null;
 
@@ -2002,12 +2167,15 @@ function renderTournamentStatus(){
     champion ||
     finished>=TOTAL_TOURNAMENT_MATCHES
   ){
+
     phase="TORNEO FINALIZADO";
-  }
-  else if(
+
+  }else if(
     groupFinished>=GROUP_STAGE_MATCHES
   ){
+
     phase="PLAYOFFS";
+
   }
 
   const pct=Math.round(
@@ -2015,11 +2183,19 @@ function renderTournamentStatus(){
   );
 
   b.innerHTML=`
+
     <div class="homeBlock">
 
       <div class="homeTitle">
-        <h3>🏆 ESTADO DEL TORNEO</h3>
-        <span>${phase}</span>
+
+        <h3>
+          🏆 ESTADO DEL TORNEO
+        </h3>
+
+        <span>
+          ${phase}
+        </span>
+
       </div>
 
       <div style="font-size:24px;font-weight:900">
@@ -2058,83 +2234,46 @@ function renderTournamentStatus(){
       </div>
 
     </div>
+
   `;
 }
 
 
-/* =========================================================
+/* =====================================================
    CAMPEÓN
-========================================================= */
+===================================================== */
 
 function renderChampion(){
 
-  const b=
-    document.getElementById("championContent");
+  const b=document.getElementById(
+    "championContent"
+  );
 
-  if(!b)return;
+  if(!b){
+    return;
+  }
 
   const tournamentStart=
-    new Date("2026-11-07T00:00:00-03:00")
-    .getTime();
+    new Date("2026-11-07T00:00:00-03:00").getTime();
 
   /*
-    ANTES DEL TORNEO:
-    jamás mostrar un campeón viejo de Firebase.
+    MUY IMPORTANTE:
+    antes del torneo jamás aparece CAMPEÓN.
   */
 
   if(Date.now()<tournamentStart){
 
-    b.innerHTML=`
-      <div class="homeBlock">
-
-        <div class="homeTitle">
-          <h3>🏀 ¿VAS A SER PARTE?</h3>
-          <span>STREET 3x3</span>
-        </div>
-
-        <div style="font-size:30px;font-weight:900;line-height:1.05">
-          NO VENGAS A MIRAR.<br>
-          <span style="color:var(--lime)">
-            VENÍ A JUGAR.
-          </span>
-        </div>
-
-        <div class="muted" style="margin-top:12px">
-          Street 3x3 · 7 de noviembre
-        </div>
-
-        <div style="margin-top:14px">
-          <span class="badge">
-            INSCRIPCIONES ABIERTAS
-          </span>
-        </div>
-
-        <a
-          href="https://www.instagram.com/street.3x3/"
-          target="_blank"
-          rel="noopener"
-          class="dashboardLink"
-          style="font-size:12px"
-        >
-          ANOTÁ A TU EQUIPO →
-        </a>
-
-      </div>
-    `;
-
+    b.innerHTML="";
     return;
   }
 
   const p=data.playoffs||{};
 
+  const f=p.final;
+
   const champ=
     p.champion ||
-    playoffWinner(p.final);
-
-  /*
-    SI NO HAY CAMPEÓN REAL:
-    NO MOSTRAR NADA.
-  */
+    playoffWinner(f);
 
   if(!champ){
 
@@ -2146,9 +2285,8 @@ function renderChampion(){
 
   const matches=
     Object.values(data.matches||{})
-    .filter(m=>
-      m.home===champ ||
-      m.away===champ
+    .filter(
+      m=>m.home===champ || m.away===champ
     );
 
   let pj=0;
@@ -2176,20 +2314,28 @@ function renderChampion(){
       pf+=hs;
       pc+=as;
 
-      if(hs>as)pg++;
-      else pp++;
+      if(hs>as){
+        pg++;
+      }else{
+        pp++;
+      }
 
     }else{
 
       pf+=as;
       pc+=hs;
 
-      if(as>hs)pg++;
-      else pp++;
+      if(as>hs){
+        pg++;
+      }else{
+        pp++;
+      }
+
     }
   }
 
   b.innerHTML=`
+
     <div class="homeBlock full championHero">
 
       <div style="font-size:52px">
@@ -2201,7 +2347,7 @@ function renderChampion(){
       </div>
 
       <h2 style="font-size:38px;margin:8px 0">
-        ${team?esc(team.name):"CAMPEÓN"}
+        ${team ? esc(team.name) : "CAMPEÓN"}
       </h2>
 
       <div class="muted">
@@ -2209,32 +2355,35 @@ function renderChampion(){
       </div>
 
       <div style="margin-top:16px;font-weight:900">
-        ${pj} PJ · ${pg} PG · ${pp} PP ·
-        PF ${pf} · PC ${pc}
+        ${pj} PJ · ${pg} PG · ${pp} PP · PF ${pf} · PC ${pc}
       </div>
 
     </div>
+
   `;
 }
 
 
-/* =========================================================
-   HOME
-========================================================= */
+/* =====================================================
+   JUGADOR DE LA FECHA
+===================================================== */
 
 function renderHomePlayerOfRound(){
 
-  const b=
-    document.getElementById("homePlayerOfRound");
+  const b=document.getElementById(
+    "homePlayerOfRound"
+  );
 
-  if(!b)return;
+  if(!b){
+    return;
+  }
 
-  const p=
-    data.playerOfRound
+  const p=data.playerOfRound
     ?data.participants?.[data.playerOfRound]
     :null;
 
   if(!p){
+
     b.innerHTML="";
     return;
   }
@@ -2242,11 +2391,19 @@ function renderHomePlayerOfRound(){
   const team=data.teams?.[p.team];
 
   b.innerHTML=`
+
     <div class="homeBlock">
 
       <div class="homeTitle">
-        <h3>⭐ JUGADOR DE LA FECHA</h3>
-        <span>DESTACADO</span>
+
+        <h3>
+          ⭐ JUGADOR DE LA FECHA
+        </h3>
+
+        <span>
+          DESTACADO
+        </span>
+
       </div>
 
       <div style="font-size:25px;font-weight:900">
@@ -2254,7 +2411,7 @@ function renderHomePlayerOfRound(){
       </div>
 
       <div class="muted">
-        ${team?esc(team.name):"Equipo por definir"}
+        ${team ? esc(team.name) : "Equipo por definir"}
       </div>
 
       <div style="margin-top:13px;font-weight:900">
@@ -2264,92 +2421,377 @@ function renderHomePlayerOfRound(){
       </div>
 
     </div>
+
   `;
 }
 
 
+/* =====================================================
+   JUGADOR A SEGUIR
+===================================================== */
+
 function renderHomePlayerToWatch(){
 
-  const b=
-    document.getElementById("homePlayerToWatch");
+  const b=document.getElementById(
+    "homePlayerToWatch"
+  );
 
-  if(!b)return;
+  if(!b){
+    return;
+  }
 
-  const p=
-    data.playerToWatch
+  const p=data.playerToWatch
     ?data.participants?.[data.playerToWatch]
     :null;
 
   if(!p){
+
     b.innerHTML="";
     return;
   }
 
   const t=data.teams?.[p.team];
+
   const g=+p.games||0;
 
   b.innerHTML=`
+
     <div class="homeBlock">
 
       <div class="homeTitle">
-        <h3>👀 JUGADOR A SEGUIR</h3>
-        <span>ATENCIÓN</span>
+
+        <h3>
+          👀 JUGADOR A SEGUIR
+        </h3>
+
+        <span>
+          ATENCIÓN
+        </span>
+
       </div>
 
       <div style="font-size:24px;font-weight:900">
-        ${p.number?"#"+esc(p.number)+" ":""}
+        ${p.number ? "#"+esc(p.number)+" " : ""}
         ${esc(p.name)}
       </div>
 
       <div class="muted">
-        ${t?esc(t.name):"Equipo por definir"}
+        ${t ? esc(t.name) : "Equipo por definir"}
       </div>
 
       <div style="margin-top:13px;font-weight:900">
-        ${g?(+p.points/g).toFixed(1):"0.0"} PPG ·
-        ${g?(+p.rebounds/g).toFixed(1):"0.0"} RPG ·
-        ${g?(+p.assists/g).toFixed(1):"0.0"} APG
+
+        ${g ? (+p.points/g).toFixed(1) : "0.0"} PPG ·
+        ${g ? (+p.rebounds/g).toFixed(1) : "0.0"} RPG ·
+        ${g ? (+p.assists/g).toFixed(1) : "0.0"} APG
+
       </div>
 
     </div>
+
   `;
 }
 
 
+/* =====================================================
+   MARCADOR EN VIVO
+===================================================== */
+
+function liveStateValid(s){
+
+  return !!s &&
+    !!s.matchId &&
+    s.running===true;
+}
+
+
+function liveRemaining(s){
+
+  if(!s){
+    return 0;
+  }
+
+  if(s.running && s.endAt){
+
+    return Math.max(
+      0,
+      Math.ceil(
+        (Number(s.endAt)-Date.now())/1000
+      )
+    );
+
+  }
+
+  return Math.max(
+    0,
+    Number(s.remaining)||0
+  );
+}
+
+
+function liveMatchObject(s,court){
+
+  if(!liveStateValid(s)){
+    return null;
+  }
+
+  const m=data.matches?.[s.matchId];
+
+  if(!m){
+    return null;
+  }
+
+  return {
+    s,
+    m,
+    court
+  };
+}
+
+
+function renderLiveCenter(){
+
+  const b=document.getElementById(
+    "liveCenterContent"
+  );
+
+  if(!b){
+    return;
+  }
+
+  const liveEntries=[
+    {
+      s:live1,
+      court:"1"
+    },
+    {
+      s:live2,
+      court:"2"
+    }
+  ];
+
+  const lives=
+    liveEntries
+    .map(({s,court})=>{
+      const m=liveMatchObject(s,court);
+      return m ? {...m} : null;
+    })
+    .filter(Boolean);
+
+  const liveCount=lives.length;
+
+  let h=`
+
+    <div
+      class="homeBlock full"
+      style="border-color:var(--lime)"
+    >
+
+      <div class="homeTitle">
+
+        <h3>
+          🟡 EN VIVO AHORA
+        </h3>
+
+        <span>
+          ${
+            liveCount===2
+              ?"2 CANCHAS"
+              :liveCount===1
+                ?"1 CANCHA"
+                :"SIN PARTIDOS"
+          }
+        </span>
+
+      </div>
+
+      <div class="liveGrid">
+  `;
+
+  const byCourt={};
+
+  lives.forEach(x=>{
+    byCourt[String(x.court)]=x;
+  });
+
+  ["1","2"].forEach(court=>{
+
+    const item=byCourt[court];
+
+    if(!item){
+
+      h+=`
+
+        <div class="livePlaceholder">
+
+          <div style="font-size:28px;margin-bottom:8px">
+            🏀
+          </div>
+
+          <strong style="color:#fff">
+            CANCHA ${court}
+          </strong>
+
+          <div style="margin-top:6px">
+            Sin partido en juego
+          </div>
+
+        </div>
+
+      `;
+
+      return;
+    }
+
+    const {s,m}=item;
+
+    const home=matchTeamName(
+      {
+        home:m.home,
+        homeName:s.homeName
+      },
+      "home"
+    );
+
+    const away=matchTeamName(
+      {
+        away:m.away,
+        awayName:s.awayName
+      },
+      "away"
+    );
+
+    const t=liveRemaining(s);
+
+    h+=`
+
+      <div
+        class="homeMatch"
+        style="
+          border-color:var(--lime);
+          margin:0;
+          min-height:150px
+        "
+      >
+
+        <div class="meta">
+
+          <span>
+            CANCHA ${court}
+          </span>
+
+          <span class="statusBadge statusLive">
+            🟡 EN VIVO
+          </span>
+
+        </div>
+
+        <div
+          class="teams"
+          style="font-size:16px"
+        >
+
+          <span>
+            ${esc(home)}
+          </span>
+
+          <span
+            style="
+              font-size:20px!important;
+              color:var(--lime)
+            "
+          >
+            ${Number(s.home)||0}
+            —
+            ${Number(s.away)||0}
+          </span>
+
+          <span>
+            ${esc(away)}
+          </span>
+
+        </div>
+
+        <div
+          class="muted"
+          style="
+            margin-top:14px;
+            text-align:center;
+            font-size:13px
+          "
+        >
+          ⏱️
+          ${String(Math.floor(t/60)).padStart(2,"0")}
+          :
+          ${String(t%60).padStart(2,"0")}
+        </div>
+
+      </div>
+
+    `;
+
+  });
+
+  h+=`
+      </div>
+    </div>
+  `;
+
+  b.innerHTML=h;
+}
+
+
+/* =====================================================
+   PRÓXIMOS PARTIDOS
+===================================================== */
+
 function renderNextMatches(){
 
-  const b=
-    document.getElementById("nextMatchesContent");
+  const b=document.getElementById(
+    "nextMatchesContent"
+  );
 
-  if(!b)return;
+  if(!b){
+    return;
+  }
 
   const now=Date.now();
 
   const upcoming=
     Object.values(data.matches||{})
     .filter(m=>{
-      if(isMatchFinished(m))
+
+      if(isMatchFinished(m)){
         return false;
+      }
 
       const dt=getMatchDateTime(m);
 
-      return dt &&
-             dt.getTime()>now;
+      return dt && dt.getTime()>now;
+
     })
     .sort(
       (a,z)=>
-        getMatchDateTime(a)-
-        getMatchDateTime(z)
+        getMatchDateTime(a)-getMatchDateTime(z)
     )
     .slice(0,3);
 
   let h=`
+
     <div class="homeBlock">
 
       <div class="homeTitle">
-        <h3>📅 PRÓXIMOS PARTIDOS</h3>
-        <span>AGENDA</span>
+
+        <h3>
+          📅 PRÓXIMOS PARTIDOS
+        </h3>
+
+        <span>
+          AGENDA
+        </span>
+
       </div>
+
   `;
 
   if(!upcoming.length){
@@ -2365,18 +2807,23 @@ function renderNextMatches(){
     upcoming.forEach(m=>{
 
       h+=`
+
         <div class="homeMatch">
 
           <div class="meta">
+
             <span>
               ${
                 m.group
-                ?"GRUPO "+esc(m.group)
-                :(m.round?esc(m.round):"TORNEO")
+                  ?"GRUPO "+esc(m.group)
+                  :(m.round
+                    ?esc(m.round)
+                    :"TORNEO")
               }
             </span>
 
             ${statusBadge(m)}
+
           </div>
 
           <div class="teams">
@@ -2385,7 +2832,9 @@ function renderNextMatches(){
               ${esc(matchTeamName(m,"home"))}
             </span>
 
-            <span>VS</span>
+            <span>
+              VS
+            </span>
 
             <span>
               ${esc(matchTeamName(m,"away"))}
@@ -2393,45 +2842,60 @@ function renderNextMatches(){
 
           </div>
 
-          <div class="muted" style="margin-top:9px">
-
+          <div
+            class="muted"
+            style="margin-top:9px"
+          >
             ${esc(formatMatchDate(m.date))}
             ·
             ${esc(m.time||"Hora por definir")}
-
-            ${
-              m.court
+            ${m.court
               ?" · CANCHA "+esc(m.court)
               :""
             }
-
           </div>
 
         </div>
+
       `;
+
     });
 
     h+=`
-      <a class="dashboardLink"
-         href="#"
-         onclick="goToTab('fixture');return false">
-         VER FIXTURE →
+
+      <a
+        class="dashboardLink"
+        href="#"
+        onclick="goToTab('fixture');return false"
+      >
+        VER FIXTURE →
       </a>
+
     `;
+
   }
 
-  h+=`</div>`;
+  h+=`
+    </div>
+  `;
 
   b.innerHTML=h;
 }
 
 
+/* =====================================================
+   RESULTADOS
+===================================================== */
+
 function renderRecentResults(){
 
-  const b=
-    document.getElementById("recentResultsContent");
+  const b=document.getElementById(
+    "recentResultsContent"
+  );
 
-  if(!b)return;
+  if(!b){
+    return;
+  }
 
   const results=
     Object.entries(data.matches||{})
@@ -2441,8 +2905,9 @@ function renderRecentResults(){
       const da=getMatchDateTime(a[1]);
       const dz=getMatchDateTime(z[1]);
 
-      if(da&&dz)
+      if(da&&dz){
         return dz-da;
+      }
 
       return 0;
     })
@@ -2456,17 +2921,27 @@ function renderRecentResults(){
   }
 
   let h=`
+
     <div class="homeBlock">
 
       <div class="homeTitle">
-        <h3>🔴 ÚLTIMOS RESULTADOS</h3>
-        <span>RESULTADOS</span>
+
+        <h3>
+          🔴 ÚLTIMOS RESULTADOS
+        </h3>
+
+        <span>
+          RESULTADOS
+        </span>
+
       </div>
+
   `;
 
   results.forEach(m=>{
 
     h+=`
+
       <div class="homeMatch">
 
         <div class="meta">
@@ -2486,13 +2961,17 @@ function renderRecentResults(){
           </span>
 
           <span class="score">
-            ${isScoreSet(m.homeScore)
-              ?Number(m.homeScore)
-              :"—"}
+            ${
+              isScoreSet(m.homeScore)
+                ?Number(m.homeScore)
+                :"—"
+            }
             -
-            ${isScoreSet(m.awayScore)
-              ?Number(m.awayScore)
-              :"—"}
+            ${
+              isScoreSet(m.awayScore)
+                ?Number(m.awayScore)
+                :"—"
+            }
           </span>
 
           <span>
@@ -2501,32 +2980,41 @@ function renderRecentResults(){
 
         </div>
 
-        <div class="muted" style="margin-top:9px">
+        <div
+          class="muted"
+          style="margin-top:9px"
+        >
           ${esc(formatMatchDate(m.date))}
           ${esc(m.time||"")}
         </div>
 
       </div>
+
     `;
+
   });
 
   h+=`
-      <a class="dashboardLink"
-         href="#"
-         onclick="goToTab('resultados');return false">
-        VER TODOS LOS RESULTADOS →
-      </a>
+
+    <a
+      class="dashboardLink"
+      href="#"
+      onclick="goToTab('resultados');return false"
+    >
+      VER TODOS LOS RESULTADOS →
+    </a>
 
     </div>
+
   `;
 
   b.innerHTML=h;
 }
 
 
-/* =========================================================
+/* =====================================================
    TABLAS
-========================================================= */
+===================================================== */
 
 function calculateTable(group){
 
@@ -2534,6 +3022,7 @@ function calculateTable(group){
     Object.entries(data.teams||{})
     .filter(([id,t])=>t.group===group)
     .map(([id,t])=>({
+
       id,
       name:t.name,
       pj:0,
@@ -2542,11 +3031,14 @@ function calculateTable(group){
       pf:0,
       pc:0,
       pts:0
+
     }));
 
   const map={};
 
-  teams.forEach(t=>map[t.id]=t);
+  teams.forEach(t=>{
+    map[t.id]=t;
+  });
 
   Object.values(data.matches||{})
   .forEach(m=>{
@@ -2562,7 +3054,9 @@ function calculateTable(group){
     const h=map[m.home];
     const a=map[m.away];
 
-    if(!h||!a)return;
+    if(!h||!a){
+      return;
+    }
 
     h.pj++;
     a.pj++;
@@ -2605,49 +3099,67 @@ function calculateTable(group){
 
 function renderGroupLeaders(){
 
-  const b=
-    document.getElementById("groupLeadersContent");
+  const b=document.getElementById(
+    "groupLeadersContent"
+  );
 
-  if(!b)return;
+  if(!b){
+    return;
+  }
 
   let h=`
+
     <div class="homeBlock">
 
       <div class="homeTitle">
-        <h3>🏆 LÍDERES DE GRUPO</h3>
-        <span>POSICIONES</span>
+
+        <h3>
+          🏆 LÍDERES DE GRUPO
+        </h3>
+
+        <span>
+          POSICIONES
+        </span>
+
       </div>
 
       <div class="leaderGrid">
+
   `;
 
   ["A","B","C","D"].forEach(group=>{
 
     const teams=calculateTable(group);
+
     const leader=teams[0];
 
     if(!leader){
 
       h+=`
+
         <div class="leaderCard">
 
           <div class="group">
             GRUPO ${group}
           </div>
 
-          <strong>Por definir</strong>
+          <strong>
+            Por definir
+          </strong>
 
           <small>
             Sin equipos cargados
           </small>
 
         </div>
+
       `;
 
       return;
     }
 
     h+=`
+
       <div class="leaderCard">
 
         <div class="group">
@@ -2665,35 +3177,44 @@ function renderGroupLeaders(){
         </small>
 
       </div>
+
     `;
+
   });
 
   h+=`
+
       </div>
 
-      <a class="dashboardLink"
-         href="#"
-         onclick="goToTab('tablas');return false">
+      <a
+        class="dashboardLink"
+        href="#"
+        onclick="goToTab('tablas');return false"
+      >
         VER TABLAS COMPLETAS →
       </a>
 
     </div>
+
   `;
 
   b.innerHTML=h;
 }
 
 
-/* =========================================================
-   ESTADÍSTICAS
-========================================================= */
+/* =====================================================
+   ESTADÍSTICAS HOME
+===================================================== */
 
 function renderTopStats(){
 
-  const b=
-    document.getElementById("topStatsContent");
+  const b=document.getElementById(
+    "topStatsContent"
+  );
 
-  if(!b)return;
+  if(!b){
+    return;
+  }
 
   const players=
     Object.entries(data.participants||{});
@@ -2711,14 +3232,23 @@ function renderTopStats(){
   ];
 
   let h=`
+
     <div class="homeBlock">
 
       <div class="homeTitle">
-        <h3>📊 LÍDERES ESTADÍSTICOS</h3>
-        <span>TOP 3</span>
+
+        <h3>
+          📊 LÍDERES ESTADÍSTICOS
+        </h3>
+
+        <span>
+          TOP 3
+        </span>
+
       </div>
 
       <div class="topMini">
+
   `;
 
   categories.forEach(
@@ -2733,11 +3263,13 @@ function renderTopStats(){
       .slice(0,3);
 
       h+=`
+
         <div class="topMiniCard">
 
           <div class="kicker">
             ${title}
           </div>
+
       `;
 
       list.forEach(([id,p],i)=>{
@@ -2745,9 +3277,15 @@ function renderTopStats(){
         const team=data.teams?.[p.team];
 
         h+=`
+
           <div style="margin-top:10px">
 
-            <div style="font-size:11px;color:var(--muted)">
+            <div
+              style="
+                font-size:11px;
+                color:var(--muted)
+              "
+            >
               #${i+1}
             </div>
 
@@ -2756,58 +3294,73 @@ function renderTopStats(){
             </strong>
 
             <div class="muted">
-              ${team?esc(team.name):"Por definir"}
+              ${team
+                ?esc(team.name)
+                :"Por definir"
+              }
             </div>
 
             <b>
-              ${Number(p[metric])||0} ${label}
+              ${Number(p[metric])||0}
+              ${label}
             </b>
 
           </div>
+
         `;
+
       });
 
-      h+=`</div>`;
+      h+=`
+
+        </div>
+
+      `;
+
     }
   );
 
   h+=`
+
       </div>
 
-      <a class="dashboardLink"
-         href="#"
-         onclick="goToTab('estadisticas');return false">
+      <a
+        class="dashboardLink"
+        href="#"
+        onclick="goToTab('estadisticas');return false"
+      >
         VER TOP 15 →
       </a>
 
     </div>
+
   `;
 
   b.innerHTML=h;
 }
 
 
-/* =========================================================
+/* =====================================================
    JUGADORES
-========================================================= */
+===================================================== */
 
 function renderPlayers(){
 
-  const b=
-    document.getElementById("playersContent");
+  const b=document.getElementById(
+    "playersContent"
+  );
 
-  if(!b)return;
+  if(!b){
+    return;
+  }
 
   const ps=
     Object.entries(data.participants||{});
 
   if(!ps.length){
 
-    b.innerHTML=`
-      <div class="empty">
-        Todavía no hay jugadores cargados.
-      </div>
-    `;
+    b.innerHTML=
+      '<div class="empty">Todavía no hay jugadores cargados.</div>';
 
     return;
   }
@@ -2830,14 +3383,20 @@ function renderPlayers(){
           )
       );
 
-    if(!list.length)return;
+    if(!list.length){
+      return;
+    }
 
     h+=`
+
       <div class="group">
 
-        <h3>GRUPO ${g}</h3>
+        <h3>
+          GRUPO ${g}
+        </h3>
 
         <div class="cards">
+
     `;
 
     list.forEach(([id,p])=>{
@@ -2845,43 +3404,71 @@ function renderPlayers(){
       const t=data.teams?.[p.team];
 
       h+=`
-        <div class="match playerCard"
-             onclick="openPlayerModal('${id}')">
+
+        <div
+          class="match playerCard"
+          onclick="openPlayerModal('${id}')"
+        >
 
           <div class="meta">
-            <span>JUGADOR</span>
+
             <span>
-              ${p.number?"#"+esc(p.number):""}
+              JUGADOR
             </span>
+
+            <span>
+              ${p.number
+                ?"#"+esc(p.number)
+                :""
+              }
+            </span>
+
           </div>
 
-          <div style="font-size:20px;font-weight:900">
+          <div
+            style="
+              font-size:20px;
+              font-weight:900
+            "
+          >
             ${esc(p.name)}
           </div>
 
           <div class="muted">
-            ${t?esc(t.name):"Equipo por definir"}
+            ${t
+              ?esc(t.name)
+              :"Equipo por definir"
+            }
           </div>
 
           <div style="margin-top:12px">
+
             <span class="badge">
               VER PROMEDIOS
             </span>
+
           </div>
 
         </div>
+
       `;
+
     });
 
     h+=`
         </div>
       </div>
     `;
+
   });
 
   b.innerHTML=h;
 }
 
+
+/* =====================================================
+   MODAL JUGADOR
+===================================================== */
 
 function playerTopLabels(id){
 
@@ -2903,8 +3490,10 @@ function playerTopLabels(id){
       .slice(0,15)
       .map(x=>x[0]);
 
-    if(r.includes(id))
+    if(r.includes(id)){
       out.push("🥇 TOP 15 "+l);
+    }
+
   });
 
   return out;
@@ -2915,10 +3504,14 @@ function openPlayerModal(id){
 
   const p=data.participants?.[id];
 
-  if(!p)return;
+  if(!p){
+    return;
+  }
 
   const t=data.teams?.[p.team];
+
   const g=+p.games||0;
+
   const labels=playerTopLabels(id);
 
   document.getElementById(
@@ -2930,12 +3523,21 @@ function openPlayerModal(id){
     </div>
 
     <h2 style="font-size:32px;margin:8px 0">
-      ${p.number?"#"+esc(p.number)+" ":""}
+
+      ${p.number
+        ?"#"+esc(p.number)+" "
+        :""
+      }
+
       ${esc(p.name)}
+
     </h2>
 
     <p class="muted">
-      ${t?esc(t.name):"Equipo por definir"}
+      ${t
+        ?esc(t.name)
+        :"Equipo por definir"
+      }
     </p>
 
     <h3 style="margin-top:28px">
@@ -2947,21 +3549,30 @@ function openPlayerModal(id){
       <div class="avgBox">
         PPG
         <b>
-          ${g?(+p.points/g).toFixed(1):"0.0"}
+          ${g
+            ?(+p.points/g).toFixed(1)
+            :"0.0"
+          }
         </b>
       </div>
 
       <div class="avgBox">
         RPG
         <b>
-          ${g?(+p.rebounds/g).toFixed(1):"0.0"}
+          ${g
+            ?(+p.rebounds/g).toFixed(1)
+            :"0.0"
+          }
         </b>
       </div>
 
       <div class="avgBox">
         APG
         <b>
-          ${g?(+p.assists/g).toFixed(1):"0.0"}
+          ${g
+            ?(+p.assists/g).toFixed(1)
+            :"0.0"
+          }
         </b>
       </div>
 
@@ -2974,14 +3585,16 @@ function openPlayerModal(id){
     ${
       labels.length
       ?`
-        <div style="
-          display:flex;
-          gap:7px;
-          flex-wrap:wrap;
-          margin-top:14px
-        ">
-          ${labels.map(x=>
-            `<span class="badge">${x}</span>`
+        <div
+          style="
+            display:flex;
+            gap:7px;
+            flex-wrap:wrap;
+            margin-top:14px
+          "
+        >
+          ${labels.map(
+            x=>`<span class="badge">${x}</span>`
           ).join("")}
         </div>
       `
@@ -2992,29 +3605,55 @@ function openPlayerModal(id){
 
   document
     .getElementById("playerModal")
-    .classList.remove("hidden");
+    .classList
+    .remove("hidden");
 }
 
 
-/* =========================================================
+function closePlayerModal(event){
+
+  const modal=
+    document.getElementById("playerModal");
+
+  if(!modal){
+    return;
+  }
+
+  if(
+    !event ||
+    event.target===modal
+  ){
+
+    modal.classList.add("hidden");
+
+  }
+
+}
+
+
+/* =====================================================
    ESTADÍSTICAS
-========================================================= */
+===================================================== */
 
 window.activeRanking="points";
 
 function setRanking(m){
 
   window.activeRanking=m;
+
   renderStats();
 }
 
 
 function renderStats(){
 
-  const b=
-    document.getElementById("statsContent");
+  const b=document.getElementById(
+    "statsContent"
+  );
 
-  if(!b)return;
+  if(!b){
+    return;
+  }
 
   const ps=
     Object.entries(data.participants||{});
@@ -3023,24 +3662,46 @@ function renderStats(){
     window.activeRanking||"points";
 
   const c={
-    points:["PUNTOS","PTS","MÁXIMO ANOTADOR"],
-    rebounds:["REBOTES","REB","MÁXIMO REBOTERO"],
-    assists:["ASISTENCIAS","AST","MÁXIMO ASISTENTE"],
-    motm:["MVP","MVP","MÁS MVP"]
+    points:[
+      "PUNTOS",
+      "PTS",
+      "MÁXIMO ANOTADOR"
+    ],
+    rebounds:[
+      "REBOTES",
+      "REB",
+      "MÁXIMO REBOTERO"
+    ],
+    assists:[
+      "ASISTENCIAS",
+      "AST",
+      "MÁXIMO ASISTENTE"
+    ],
+    motm:[
+      "MVP",
+      "MVP",
+      "MÁS MVP"
+    ]
   };
 
   let h=`
+
     <div class="tabs filterTabs">
 
       ${
         Object.entries(c)
-        .map(([k,v])=>`
-          <button
-            class="nav ${k===m?"active":""}"
-            onclick="setRanking('${k}')">
-            ${v[0]}
-          </button>
-        `)
+        .map(
+          ([k,v])=>`
+
+            <button
+              class="nav ${k===m?"active":""}"
+              onclick="setRanking('${k}')"
+            >
+              ${v[0]}
+            </button>
+
+          `
+        )
         .join("")
       }
 
@@ -3062,9 +3723,10 @@ function renderStats(){
             <th>Equipo</th>
             <th>${c[m][1]}</th>
           </tr>
+
   `;
 
-  ps
+  [...ps]
   .sort(
     (a,z)=>
       (+z[1][m]||0)-
@@ -3076,6 +3738,7 @@ function renderStats(){
     const t=data.teams?.[p.team];
 
     h+=`
+
       <tr>
 
         <td class="pos">
@@ -3083,6 +3746,7 @@ function renderStats(){
         </td>
 
         <td>
+
           ${esc(p.name)}
 
           ${
@@ -3098,7 +3762,10 @@ function renderStats(){
         </td>
 
         <td>
-          ${t?esc(t.name):"Por definir"}
+          ${t
+            ?esc(t.name)
+            :"Por definir"
+          }
         </td>
 
         <td class="pos">
@@ -3106,22 +3773,28 @@ function renderStats(){
         </td>
 
       </tr>
+
     `;
+
   });
 
   h+=`
+
         </table>
+
       </div>
+
     </div>
+
   `;
 
   b.innerHTML=h;
 }
 
 
-/* =========================================================
-   FIXTURE / RESULTADOS
-========================================================= */
+/* =====================================================
+   FILTROS
+===================================================== */
 
 window.fixtureFilter="ALL";
 window.resultsFilter="ALL";
@@ -3133,21 +3806,36 @@ function filterButtons(type){
     window[type+"Filter"]||"ALL";
 
   return `
+
     <div class="tabs filterTabs">
 
       ${
         ["ALL","A","B","C","D"]
-        .map(g=>`
-          <button
-            class="nav ${f===g?"active":""}"
-            onclick="setGroupFilter('${type}','${g}')">
-            ${g==="ALL"?"TODOS":"GRUPO "+g}
-          </button>
-        `)
+        .map(
+          g=>`
+
+            <button
+              class="nav ${f===g?"active":""}"
+              onclick="
+                setGroupFilter(
+                  '${type}',
+                  '${g}'
+                )
+              "
+            >
+              ${g==="ALL"
+                ?"TODOS"
+                :"GRUPO "+g
+              }
+            </button>
+
+          `
+        )
         .join("")
       }
 
     </div>
+
   `;
 }
 
@@ -3156,50 +3844,66 @@ function setGroupFilter(type,g){
 
   window[type+"Filter"]=g;
 
-  type==="fixture"
-    ?renderFixture()
-    :renderResults();
+  if(type==="fixture"){
+    renderFixture();
+  }else{
+    renderResults();
+  }
 }
 
 
+/* =====================================================
+   FIXTURE
+===================================================== */
+
 function renderFixture(){
 
-  const b=
-    document.getElementById("fixtureContent");
+  const b=document.getElementById(
+    "fixtureContent"
+  );
 
-  if(!b)return;
+  if(!b){
+    return;
+  }
 
   const f=window.fixtureFilter;
 
   const ms=
     Object.values(data.matches||{})
     .filter(
-      m=>f==="ALL"||m.group===f
+      m=>f==="ALL" || m.group===f
     )
     .sort(
       (a,z)=>
-        (getMatchDateTime(a)||new Date(8640000000000000))-
-        (getMatchDateTime(z)||new Date(8640000000000000))
+        (getMatchDateTime(a)||
+          new Date(8640000000000000))
+        -
+        (getMatchDateTime(z)||
+          new Date(8640000000000000))
     );
 
   let h=
     filterButtons("fixture")+
-    `<div class="cards">`;
+    '<div class="cards">';
 
   ms.forEach(m=>{
 
     h+=`
+
       <div class="match">
 
         <div class="meta">
+
           <span>
             GRUPO ${esc(m.group||"")}
           </span>
 
           ${statusBadge(m)}
+
         </div>
 
         <div class="row">
+
           <span>
             ${esc(matchTeamName(m,"home"))}
           </span>
@@ -3207,10 +3911,11 @@ function renderFixture(){
           <span class="score">
             ${
               isScoreSet(m.homeScore)
-              ?m.homeScore
-              :""
+                ?m.homeScore
+                :""
             }
           </span>
+
         </div>
 
         <div class="row">
@@ -3222,40 +3927,52 @@ function renderFixture(){
           <span class="score">
             ${
               isScoreSet(m.awayScore)
-              ?m.awayScore
-              :""
+                ?m.awayScore
+                :""
             }
           </span>
 
         </div>
 
         <div class="muted">
+
           ${esc(formatMatchDate(m.date))}
           ·
           ${esc(m.time||"Hora por definir")}
+
           ${
             m.court
             ?" · "+esc(m.court)
             :""
           }
+
         </div>
 
       </div>
+
     `;
+
   });
 
-  h+=`</div>`;
+  h+="</div>";
 
   b.innerHTML=h;
 }
 
 
+/* =====================================================
+   RESULTADOS
+===================================================== */
+
 function renderResults(){
 
-  const b=
-    document.getElementById("resultsContent");
+  const b=document.getElementById(
+    "resultsContent"
+  );
 
-  if(!b)return;
+  if(!b){
+    return;
+  }
 
   const f=window.resultsFilter;
 
@@ -3263,7 +3980,7 @@ function renderResults(){
     Object.values(data.matches||{})
     .filter(isMatchFinished)
     .filter(
-      m=>f==="ALL"||m.group===f
+      m=>f==="ALL" || m.group===f
     )
     .sort(
       (a,z)=>
@@ -3277,20 +3994,17 @@ function renderResults(){
 
     b.innerHTML=
       h+
-      `
-        <div class="empty">
-          No hay resultados cargados.
-        </div>
-      `;
+      '<div class="empty">No hay resultados cargados.</div>';
 
     return;
   }
 
-  h+=`<div class="cards">`;
+  h+='<div class="cards">';
 
   ms.forEach(m=>{
 
     h+=`
+
       <div class="match">
 
         <div class="meta">
@@ -3336,25 +4050,30 @@ function renderResults(){
         </div>
 
       </div>
+
     `;
+
   });
 
-  h+=`</div>`;
+  h+="</div>";
 
   b.innerHTML=h;
 }
 
 
-/* =========================================================
+/* =====================================================
    TABLAS
-========================================================= */
+===================================================== */
 
 function renderTables(){
 
-  const b=
-    document.getElementById("tablesContent");
+  const b=document.getElementById(
+    "tablesContent"
+  );
 
-  if(!b)return;
+  if(!b){
+    return;
+  }
 
   let h="";
 
@@ -3363,15 +4082,19 @@ function renderTables(){
     const ts=calculateTable(g);
 
     h+=`
+
       <div class="group">
 
-        <h3>GRUPO ${g}</h3>
+        <h3>
+          GRUPO ${g}
+        </h3>
 
         <div class="tableWrap">
 
           <table class="table">
 
             <tr>
+
               <th>#</th>
               <th>Equipo</th>
               <th>PJ</th>
@@ -3381,21 +4104,24 @@ function renderTables(){
               <th>PC</th>
               <th>DIF</th>
               <th>PTS</th>
+
             </tr>
+
     `;
 
     ts.forEach((t,i)=>{
 
       const icon=
         i===0
-        ?"🥇"
-        :i===1
-        ?"🥈"
-        :i===2
-        ?"🔴"
-        :"⚫";
+          ?"🥇"
+          :i===1
+            ?"🥈"
+            :i===2
+              ?"🔴"
+              :"⚫";
 
       h+=`
+
         <tr class="${i<2?"qualifies":""}">
 
           <td class="pos">
@@ -3426,43 +4152,53 @@ function renderTables(){
           <td>${t.pf}</td>
           <td>${t.pc}</td>
           <td>${t.pf-t.pc}</td>
-          <td class="pos">${t.pts}</td>
+
+          <td class="pos">
+            ${t.pts}
+          </td>
 
         </tr>
+
       `;
+
     });
 
     h+=`
+
           </table>
+
         </div>
+
       </div>
+
     `;
+
   });
 
   b.innerHTML=h;
 }
 
 
-/* =========================================================
+/* =====================================================
    PLAYOFFS
-========================================================= */
+===================================================== */
 
 function renderPlayoffs(){
 
-  const b=
-    document.getElementById("playoffContent");
+  const b=document.getElementById(
+    "playoffContent"
+  );
 
-  if(!b)return;
+  if(!b){
+    return;
+  }
 
   const p=data.playoffs||{};
 
   if(!Object.keys(p).length){
 
-    b.innerHTML=`
-      <div class="empty">
-        Los playoffs todavía no fueron generados.
-      </div>
-    `;
+    b.innerHTML=
+      '<div class="empty">Los playoffs todavía no fueron generados.</div>';
 
     return;
   }
@@ -3494,8 +4230,8 @@ function renderPlayoffs(){
 
   const tm=id=>
     id
-    ?esc(data.teams?.[id]?.name||"Por definir")
-    :"Por definir";
+      ?esc(data.teams?.[id]?.name||"Por definir")
+      :"Por definir";
 
   const game=(m,l)=>`
 
@@ -3506,17 +4242,24 @@ function renderPlayoffs(){
       </div>
 
       <div>
+
         <strong>
           ${tm(m?.home)}
         </strong>
 
-        <span style="float:right;color:var(--lime)">
+        <span
+          style="
+            float:right;
+            color:var(--lime)
+          "
+        >
           ${
             isScoreSet(m?.homeScore)
-            ?m.homeScore
-            :""
+              ?m.homeScore
+              :""
           }
         </span>
+
       </div>
 
       <div>
@@ -3525,11 +4268,16 @@ function renderPlayoffs(){
           ${tm(m?.away)}
         </strong>
 
-        <span style="float:right;color:var(--lime)">
+        <span
+          style="
+            float:right;
+            color:var(--lime)
+          "
+        >
           ${
             isScoreSet(m?.awayScore)
-            ?m.awayScore
-            :""
+              ?m.awayScore
+              :""
           }
         </span>
 
@@ -3547,6 +4295,7 @@ function renderPlayoffs(){
       }
 
     </div>
+
   `;
 
   b.innerHTML=`
@@ -3555,7 +4304,9 @@ function renderPlayoffs(){
 
       <div class="round">
 
-        <h3>CUARTOS DE FINAL</h3>
+        <h3>
+          CUARTOS DE FINAL
+        </h3>
 
         ${game(p.qf1,"CUARTO 1")}
         ${game(p.qf2,"CUARTO 2")}
@@ -3564,34 +4315,54 @@ function renderPlayoffs(){
 
       </div>
 
+
       <div class="round">
 
-        <h3>SEMIFINALES</h3>
+        <h3>
+          SEMIFINALES
+        </h3>
 
         ${game(s1,"SEMIFINAL 1")}
         ${game(s2,"SEMIFINAL 2")}
 
       </div>
 
+
       <div class="round">
 
-        <h3>FINAL</h3>
+        <h3>
+          FINAL
+        </h3>
 
         ${game(f,"FINAL")}
 
       </div>
 
+
       <div class="round champ">
 
-        <h3>CAMPEÓN</h3>
+        <h3>
+          CAMPEÓN
+        </h3>
 
-        <div class="game"
-             style="text-align:center;font-size:22px">
+        <div
+          class="game"
+          style="
+            text-align:center;
+            font-size:22px
+          "
+        >
 
-          🏆<br><br>
+          🏆
+
+          <br>
+          <br>
 
           <strong>
-            ${champ?tm(champ):"POR DEFINIR"}
+            ${champ
+              ?tm(champ)
+              :"POR DEFINIR"
+            }
           </strong>
 
         </div>
@@ -3599,72 +4370,14 @@ function renderPlayoffs(){
       </div>
 
     </div>
+
   `;
 }
 
 
-/* =========================================================
-   MODALES
-========================================================= */
-
-function closePlayerModal(event){
-
-  const modal=
-    document.getElementById("playerModal");
-
-  if(!modal)return;
-
-  if(
-    !event ||
-    event.target===modal
-  ){
-    modal.classList.add("hidden");
-  }
-}
-
-
-function openAppModal(){
-
-  const m=
-    document.getElementById("appModal");
-
-  if(m)
-    m.classList.remove("hidden");
-}
-
-
-function closeAppModal(event){
-
-  const m=
-    document.getElementById("appModal");
-
-  if(!m)return;
-
-  if(
-    !event ||
-    event.target===m
-  ){
-    m.classList.add("hidden");
-  }
-}
-
-
-document.addEventListener(
-  "keydown",
-  event=>{
-
-    if(event.key==="Escape"){
-
-      closePlayerModal();
-      closeAppModal();
-    }
-  }
-);
-
-
-/* =========================================================
+/* =====================================================
    NAVEGACIÓN
-========================================================= */
+===================================================== */
 
 function goToTab(id){
 
@@ -3673,8 +4386,9 @@ function goToTab(id){
       '.nav[data-tab="'+id+'"]'
     );
 
-  if(btn)
+  if(btn){
     btn.click();
+  }
 
   window.scrollTo({
     top:0,
@@ -3691,14 +4405,14 @@ document
 
     document
     .querySelectorAll(".nav")
-    .forEach(x=>
-      x.classList.remove("active")
+    .forEach(
+      x=>x.classList.remove("active")
     );
 
     document
     .querySelectorAll(".section")
-    .forEach(x=>
-      x.classList.remove("active")
+    .forEach(
+      x=>x.classList.remove("active")
     );
 
     btn.classList.add("active");
@@ -3708,38 +4422,47 @@ document
         btn.dataset.tab
       );
 
-    if(target)
+    if(target){
       target.classList.add("active");
+    }
 
-    window.scrollTo({
+    scrollTo({
       top:0,
       behavior:"smooth"
     });
+
   };
+
 });
 
 
-/* =========================================================
-   RELOJ Y ACTUALIZACIÓN
-========================================================= */
+/* =====================================================
+   RELOJ + CONTENIDO EN VIVO
+===================================================== */
 
 function refreshTimeSensitiveContent(){
 
+  renderRegistrationHero();
   renderLiveCenter();
   renderTournamentStatus();
   renderNextMatches();
   renderRecentResults();
 
+  const now=new Date();
+
   const clock=
-    document.getElementById("clockStatus");
+    document.getElementById(
+      "clockStatus"
+    );
 
   if(clock){
 
     const argentinaTime=
-      new Date().toLocaleTimeString(
+      now.toLocaleTimeString(
         "es-AR",
         {
-          timeZone:"America/Argentina/Buenos_Aires",
+          timeZone:
+            "America/Argentina/Buenos_Aires",
           hour:"2-digit",
           minute:"2-digit",
           second:"2-digit"
@@ -3749,46 +4472,42 @@ function refreshTimeSensitiveContent(){
     clock.textContent=
       "Hora oficial Argentina: "+
       argentinaTime;
+
   }
 
-  updateCountdown();
 }
 
 
-/* =========================================================
+/* =====================================================
    RENDER GENERAL
-========================================================= */
+===================================================== */
 
 function render(){
 
-  const teamCount=
-    document.getElementById("teamCount");
+  document.getElementById(
+    "teamCount"
+  ).textContent=
+    Object.keys(
+      data.teams||{}
+    ).length;
 
-  const matchCount=
-    document.getElementById("matchCount");
+  document.getElementById(
+    "matchCount"
+  ).textContent=
+    TOTAL_TOURNAMENT_MATCHES;
 
-  const status=
-    document.getElementById("status");
+  document.getElementById(
+    "status"
+  ).textContent=
+    "● Datos actualizados en tiempo real";
 
-  if(teamCount)
-    teamCount.textContent=
-      Object.keys(data.teams||{}).length;
-
-  if(matchCount)
-    matchCount.textContent=
-      TOTAL_TOURNAMENT_MATCHES;
-
-  if(status)
-    status.textContent=
-      "● Datos actualizados en tiempo real";
-
+  renderRegistrationHero();
   renderPlayers();
   renderStats();
   renderFixture();
   renderResults();
   renderTables();
   renderPlayoffs();
-
   renderHomePlayerOfRound();
   renderHomePlayerToWatch();
   renderLiveCenter();
@@ -3798,72 +4517,72 @@ function render(){
   renderTopStats();
   renderTournamentStatus();
   renderChampion();
-
   refreshTimeSensitiveContent();
+
 }
 
 
-/* =========================================================
+/* =====================================================
    FIREBASE TOURNAMENT
-========================================================= */
+===================================================== */
 
 ref.on("value",s=>{
 
-  const v=s.val();
+  let v=s.val();
 
   data=
     v &&
     typeof v==="object" &&
     !Array.isArray(v)
-    ?v
-    :{
-      teams:{},
-      matches:{},
-      playoffs:{},
-      participants:{}
-    };
+      ?v
+      :{
+        teams:{},
+        matches:{},
+        playoffs:{}
+      };
 
   data.teams=
     data.teams &&
     typeof data.teams==="object"
-    ?data.teams
-    :{};
+      ?data.teams
+      :{};
 
   data.matches=
     data.matches &&
     typeof data.matches==="object"
-    ?data.matches
-    :{};
+      ?data.matches
+      :{};
 
   data.playoffs=
     data.playoffs &&
     typeof data.playoffs==="object"
-    ?data.playoffs
-    :{};
+      ?data.playoffs
+      :{};
 
   data.participants=
     data.participants &&
     typeof data.participants==="object"
-    ?data.participants
-    :{};
+      ?data.participants
+      :{};
 
   data.playerOfRound=
     typeof data.playerOfRound==="string"
-    ?data.playerOfRound
-    :"";
+      ?data.playerOfRound
+      :"";
 
   data.playerToWatch=
     typeof data.playerToWatch==="string"
-    ?data.playerToWatch
-    :"";
+      ?data.playerToWatch
+      :"";
 
   render();
+
 });
 
 
-/* =========================================================
-   FIREBASE MARCADOR CANCHA 1
-========================================================= */
+/* =====================================================
+   FIREBASE MARCADORES EN VIVO
+===================================================== */
 
 liveRef1.on("value",s=>{
 
@@ -3871,12 +4590,9 @@ liveRef1.on("value",s=>{
 
   renderLiveCenter();
   renderTournamentStatus();
+
 });
 
-
-/* =========================================================
-   FIREBASE MARCADOR CANCHA 2
-========================================================= */
 
 liveRef2.on("value",s=>{
 
@@ -3884,24 +4600,207 @@ liveRef2.on("value",s=>{
 
   renderLiveCenter();
   renderTournamentStatus();
+
 });
 
 
-/* =========================================================
-   ACTUALIZACIÓN CADA SEGUNDO
-========================================================= */
+/* =====================================================
+   CUENTA REGRESIVA
+===================================================== */
 
+function updateCountdown(){
+
+  const eventDate=
+    new Date(
+      "2026-11-07T00:00:00-03:00"
+    ).getTime();
+
+  const now=Date.now();
+
+  let remaining=
+    eventDate-now;
+
+  if(remaining<0){
+    remaining=0;
+  }
+
+  const totalSeconds=
+    Math.floor(
+      remaining/1000
+    );
+
+  const days=
+    Math.floor(
+      totalSeconds/86400
+    );
+
+  const hours=
+    Math.floor(
+      (totalSeconds%86400)/3600
+    );
+
+  const minutes=
+    Math.floor(
+      (totalSeconds%3600)/60
+    );
+
+  const seconds=
+    totalSeconds%60;
+
+  const daysEl=
+    document.getElementById(
+      "countdownDays"
+    );
+
+  const hoursEl=
+    document.getElementById(
+      "countdownHours"
+    );
+
+  const minutesEl=
+    document.getElementById(
+      "countdownMinutes"
+    );
+
+  const secondsEl=
+    document.getElementById(
+      "countdownSeconds"
+    );
+
+  const title=
+    document.getElementById(
+      "countdownTitle"
+    );
+
+  if(
+    !daysEl ||
+    !hoursEl ||
+    !minutesEl ||
+    !secondsEl
+  ){
+    return;
+  }
+
+  daysEl.textContent=
+    String(days).padStart(2,"0");
+
+  hoursEl.textContent=
+    String(hours).padStart(2,"0");
+
+  minutesEl.textContent=
+    String(minutes).padStart(2,"0");
+
+  secondsEl.textContent=
+    String(seconds).padStart(2,"0");
+
+  if(title){
+
+    if(
+      Date.now()>=eventDate
+    ){
+
+      title.textContent=
+        "EL EVENTO YA COMENZÓ 🏀";
+
+    }else{
+
+      title.textContent=
+        "FALTAN PARA EL EVENTO";
+
+    }
+
+  }
+
+}
+
+
+/*
+  Actualiza el contador cada segundo.
+*/
+updateCountdown();
+
+setInterval(
+  updateCountdown,
+  1000
+);
+
+
+/*
+  Actualiza marcador y estados
+  cada segundo.
+*/
 setInterval(()=>{
 
-  updateCountdown();
   refreshTimeSensitiveContent();
+  renderLiveCenter();
+  renderTournamentStatus();
 
 },1000);
 
 
-/* =========================================================
+/* =====================================================
+   APP MODAL
+===================================================== */
+
+function openAppModal(){
+
+  const m=
+    document.getElementById(
+      "appModal"
+    );
+
+  if(m){
+    m.classList.remove("hidden");
+  }
+
+}
+
+
+function closeAppModal(event){
+
+  const m=
+    document.getElementById(
+      "appModal"
+    );
+
+  if(!m){
+    return;
+  }
+
+  if(
+    !event ||
+    event.target===m
+  ){
+
+    m.classList.add("hidden");
+
+  }
+
+}
+
+
+/* =====================================================
+   TECLADO
+===================================================== */
+
+document.addEventListener(
+  "keydown",
+  function(event){
+
+    if(event.key==="Escape"){
+
+      closePlayerModal();
+      closeAppModal();
+
+    }
+
+  }
+);
+
+
+/* =====================================================
    SERVICE WORKER
-========================================================= */
+===================================================== */
 
 if("serviceWorker" in navigator){
 
@@ -3913,15 +4812,8 @@ if("serviceWorker" in navigator){
       .catch(()=>{});
     }
   );
+
 }
-
-
-/* =========================================================
-   INICIO
-========================================================= */
-
-updateCountdown();
-refreshTimeSensitiveContent();
 
 </script>
 
