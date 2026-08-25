@@ -751,18 +751,147 @@ function renderTournamentStatus(){
 
 }
 function renderChampion(){
-const b=document.getElementById("championContent");if(!b)return;
-const p=data.playoffs||{};
-const winner=m=>{if(!m||!isScoreSet(m.homeScore)||!isScoreSet(m.awayScore)||+m.homeScore===+m.awayScore)return null;return +m.homeScore>+m.awayScore?m.home:m.away};
-const f=p.final;const champ=p.champion||winner(f);
-if(!champ){b.innerHTML="";return;}
-const team=data.teams?.[champ];
-const matches=Object.values(data.matches||{}).filter(m=>m.home===champ||m.away===champ);
-let pj=0,pg=0,pp=0,pf=0,pc=0;
-for(const m of matches){if(!isScoreSet(m.homeScore)||!isScoreSet(m.awayScore))continue;pj++;const hs=+m.homeScore,as=+m.awayScore;if(m.home===champ){pf+=hs;pc+=as;if(hs>as)pg++;else pp++;}else{pf+=as;pc+=hs;if(as>hs)pg++;else pp++;}}
-b.innerHTML=`<div class="homeBlock full championHero"><div style="font-size:52px">🏆</div><div class="kicker">CAMPEÓN STREET 3x3</div><h2 style="font-size:38px;margin:8px 0">${team?esc(team.name):"CAMPEÓN"}</h2><div class="muted">2026</div><div style="margin-top:16px;font-weight:900">${pj} PJ · ${pg} PG · ${pp} PP · PF ${pf} · PC ${pc}</div></div>`;
-}
 
+  const b=document.getElementById("championContent");
+  if(!b)return;
+
+  const tournamentStart =
+    new Date("2026-11-07T00:00:00-03:00").getTime();
+
+  /*
+   * Antes del comienzo del torneo,
+   * nunca mostrar campeón aunque haya
+   * datos viejos guardados en Firebase.
+   */
+  if(Date.now() < tournamentStart){
+    b.innerHTML=`
+      <div class="homeBlock">
+        <div class="homeTitle">
+          <h3>🏀 ¿VAS A SER PARTE?</h3>
+          <span>STREET 3x3</span>
+        </div>
+
+        <div style="font-size:30px;font-weight:900;line-height:1.05">
+          NO VENGAS A MIRAR.<br>
+          <span style="color:var(--lime)">VENÍ A JUGAR.</span>
+        </div>
+
+        <div class="muted" style="margin-top:12px">
+          Street 3x3 · 7 de noviembre
+        </div>
+
+        <div style="margin-top:14px">
+          <span class="badge">INSCRIPCIONES ABIERTAS</span>
+        </div>
+
+        <a
+          href="https://www.instagram.com/street.3x3/"
+          target="_blank"
+          rel="noopener"
+          class="dashboardLink"
+          style="font-size:12px"
+        >
+          ANOTÁ A TU EQUIPO →
+        </a>
+
+      </div>
+    `;
+
+    return;
+  }
+
+  /*
+   * Desde el comienzo del torneo,
+   * vuelve a mostrar el campeón real.
+   */
+
+  const p=data.playoffs||{};
+
+  const winner=m=>{
+    if(
+      !m ||
+      !isScoreSet(m.homeScore) ||
+      !isScoreSet(m.awayScore) ||
+      +m.homeScore===+m.awayScore
+    )return null;
+
+    return +m.homeScore>+m.awayScore
+      ?m.home
+      :m.away;
+  };
+
+  const f=p.final;
+  const champ=p.champion||winner(f);
+
+  if(!champ){
+    b.innerHTML="";
+    return;
+  }
+
+  const team=data.teams?.[champ];
+
+  const matches=
+    Object.values(data.matches||{})
+    .filter(m=>m.home===champ||m.away===champ);
+
+  let pj=0,pg=0,pp=0,pf=0,pc=0;
+
+  for(const m of matches){
+
+    if(
+      !isScoreSet(m.homeScore) ||
+      !isScoreSet(m.awayScore)
+    )continue;
+
+    pj++;
+
+    const hs=+m.homeScore;
+    const as=+m.awayScore;
+
+    if(m.home===champ){
+
+      pf+=hs;
+      pc+=as;
+
+      if(hs>as)pg++;
+      else pp++;
+
+    }else{
+
+      pf+=as;
+      pc+=hs;
+
+      if(as>hs)pg++;
+      else pp++;
+
+    }
+  }
+
+  b.innerHTML=`
+    <div class="homeBlock full championHero">
+
+      <div style="font-size:52px">🏆</div>
+
+      <div class="kicker">
+        CAMPEÓN STREET 3x3
+      </div>
+
+      <h2 style="font-size:38px;margin:8px 0">
+        ${team?esc(team.name):"CAMPEÓN"}
+      </h2>
+
+      <div class="muted">
+        2026
+      </div>
+
+      <div style="margin-top:16px;font-weight:900">
+        ${pj} PJ · ${pg} PG · ${pp} PP · PF ${pf} · PC ${pc}
+      </div>
+
+    </div>
+  `;
+
+}
 function renderHomePlayerOfRound(){
 
 const b=document.getElementById("homePlayerOfRound");
