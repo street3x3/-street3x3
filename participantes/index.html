@@ -116,7 +116,103 @@ nav{gap:6px;padding-bottom:10px}.nav{padding:10px 12px;font-size:11px}
 .appTip{margin-top:14px;padding:14px;border:1px dashed #596059;border-radius:12px;color:#c7ccc7;line-height:1.45}
 .appTip strong{color:var(--lime)}
 @media(max-width:650px){.appGrid{grid-template-columns:1fr}.appBox{padding:21px}.appBox h2{font-size:25px}}
+/* CUENTA REGRESIVA */
+.countdown{
+  margin-top:18px;
+  background:linear-gradient(145deg,#151915,#0f120f);
+  border:1px solid var(--lime);
+  border-radius:18px;
+  padding:22px;
+  text-align:center;
+}
 
+.countdown .kicker{
+  color:var(--lime);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:2px;
+}
+
+.countdown h2{
+  margin:7px 0 4px;
+  font-size:24px;
+}
+
+.countdown .subtitle{
+  color:var(--muted);
+  font-size:12px;
+  margin-bottom:16px;
+}
+
+.countdownGrid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  max-width:620px;
+  margin:auto;
+}
+
+.countdownBox{
+  background:#1a1e1a;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:13px 8px;
+}
+
+.countdownBox b{
+  display:block;
+  color:var(--lime);
+  font-size:32px;
+  line-height:1;
+}
+
+.countdownBox span{
+  display:block;
+  color:var(--muted);
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:1px;
+  margin-top:6px;
+}
+
+/* MENU EN CELULAR */
+@media(max-width:560px){
+  nav{
+    display:flex;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    overflow-y:hidden;
+    gap:6px;
+    padding-bottom:10px;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  nav .nav{
+    flex:0 0 auto;
+    padding:10px 12px;
+    font-size:11px;
+  }
+
+  .countdown{
+    padding:18px 12px;
+  }
+
+  .countdown h2{
+    font-size:21px;
+  }
+
+  .countdownGrid{
+    gap:6px;
+  }
+
+  .countdownBox{
+    padding:11px 5px;
+  }
+
+  .countdownBox b{
+    font-size:25px;
+  }
+}
 </style>
 </head>
 <body>
