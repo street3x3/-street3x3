@@ -595,15 +595,160 @@ const GROUP_STAGE_MATCHES=24;
 function playoffMatches(){const p=data.playoffs||{};return [p.qf1,p.qf2,p.qf3,p.qf4,p.sf1,p.sf2,p.final].filter(Boolean);}
 function isPlayoffFinished(m){return !!m&&isScoreSet(m.homeScore)&&isScoreSet(m.awayScore)&&Number(m.homeScore)!==Number(m.awayScore);}
 function renderTournamentStatus(){
- const b=document.getElementById("tournamentStatusContent");if(!b)return;
- const groupFinished=Object.values(data.matches||{}).filter(m=>isMatchFinished(m)).length;
- const playoffFinished=playoffMatches().filter(isPlayoffFinished).length;
- const finished=Math.min(TOTAL_TOURNAMENT_MATCHES,groupFinished+playoffFinished);
- const liveCount=[liveStateValid(live1),liveStateValid(live2)].filter(Boolean).length;
- const p=data.playoffs||{}, finalWinner=playoffWinner(p.final), champion=finalWinner||p.champion||null;
- let phase="FASE DE GRUPOS";if(champion||finished>=TOTAL_TOURNAMENT_MATCHES)phase="TORNEO FINALIZADO";else if(groupFinished>=GROUP_STAGE_MATCHES)phase="PLAYOFFS";
- const pct=Math.round((finished/TOTAL_TOURNAMENT_MATCHES)*100);
- b.innerHTML=`<div class="homeBlock"><div class="homeTitle"><h3>🏆 ESTADO DEL TORNEO</h3><span>${phase}</span></div><div style="font-size:24px;font-weight:900">${finished} / ${TOTAL_TOURNAMENT_MATCHES}</div><div class="muted" style="margin-top:4px">PARTIDOS FINALIZADOS · ${pct}% COMPLETADO</div><div class="tournamentProgress"><div style="width:${pct}%"></div></div><div class="tournamentStats"><div class="tournamentStat"><b>${finished}</b><span class="muted">FINALIZADOS</span></div><div class="tournamentStat"><b>${liveCount}</b><span class="muted">EN JUEGO</span></div><div class="tournamentStat"><b>${TOTAL_TOURNAMENT_MATCHES-finished}</b><span class="muted">PENDIENTES</span></div></div><div class="muted" style="margin-top:12px">24 grupos · 4 cuartos · 2 semifinales · 1 final</div></div>`;
+
+ const b=document.getElementById("tournamentStatusContent");
+ if(!b)return;
+
+ const tournamentStart =
+   new Date("2026-11-07T00:00:00-03:00").getTime();
+
+ const tournamentStarted =
+   Date.now() >= tournamentStart;
+
+ /*
+  * ANTES DEL 7 DE NOVIEMBRE
+  * Se ignoran los partidos cargados en Firebase.
+  */
+
+ if(!tournamentStarted){
+
+   b.innerHTML=`
+   <div class="homeBlock">
+
+     <div class="homeTitle">
+       <h3>🏆 ESTADO DEL TORNEO</h3>
+       <span>FASE DE GRUPOS</span>
+     </div>
+
+     <div style="font-size:24px;font-weight:900">
+       0 / ${TOTAL_TOURNAMENT_MATCHES}
+     </div>
+
+     <div class="muted" style="margin-top:4px">
+       PARTIDOS FINALIZADOS · 0% COMPLETADO
+     </div>
+
+     <div class="tournamentProgress">
+       <div style="width:0%"></div>
+     </div>
+
+     <div class="tournamentStats">
+
+       <div class="tournamentStat">
+         <b>0</b>
+         <span class="muted">FINALIZADOS</span>
+       </div>
+
+       <div class="tournamentStat">
+         <b>0</b>
+         <span class="muted">EN JUEGO</span>
+       </div>
+
+       <div class="tournamentStat">
+         <b>${TOTAL_TOURNAMENT_MATCHES}</b>
+         <span class="muted">PENDIENTES</span>
+       </div>
+
+     </div>
+
+     <div class="muted" style="margin-top:12px">
+       24 grupos · 4 cuartos · 2 semifinales · 1 final
+     </div>
+
+   </div>
+   `;
+
+   return;
+ }
+
+ /*
+  * DESDE EL 7 DE NOVIEMBRE
+  * vuelve a utilizar los datos reales.
+  */
+
+ const groupFinished =
+   Object.values(data.matches||{})
+   .filter(m=>isMatchFinished(m))
+   .length;
+
+ const playoffFinished =
+   playoffMatches()
+   .filter(isPlayoffFinished)
+   .length;
+
+ const finished=Math.min(
+   TOTAL_TOURNAMENT_MATCHES,
+   groupFinished+playoffFinished
+ );
+
+ const liveCount=[
+   liveStateValid(live1),
+   liveStateValid(live2)
+ ].filter(Boolean).length;
+
+ const p=data.playoffs||{};
+ const finalWinner=playoffWinner(p.final);
+ const champion=finalWinner||p.champion||null;
+
+ let phase="FASE DE GRUPOS";
+
+ if(champion || finished>=TOTAL_TOURNAMENT_MATCHES){
+   phase="TORNEO FINALIZADO";
+ }
+ else if(groupFinished>=GROUP_STAGE_MATCHES){
+   phase="PLAYOFFS";
+ }
+
+ const pct=Math.round(
+   (finished/TOTAL_TOURNAMENT_MATCHES)*100
+ );
+
+ b.innerHTML=`
+ <div class="homeBlock">
+
+   <div class="homeTitle">
+     <h3>🏆 ESTADO DEL TORNEO</h3>
+     <span>${phase}</span>
+   </div>
+
+   <div style="font-size:24px;font-weight:900">
+     ${finished} / ${TOTAL_TOURNAMENT_MATCHES}
+   </div>
+
+   <div class="muted" style="margin-top:4px">
+     PARTIDOS FINALIZADOS · ${pct}% COMPLETADO
+   </div>
+
+   <div class="tournamentProgress">
+     <div style="width:${pct}%"></div>
+   </div>
+
+   <div class="tournamentStats">
+
+     <div class="tournamentStat">
+       <b>${finished}</b>
+       <span class="muted">FINALIZADOS</span>
+     </div>
+
+     <div class="tournamentStat">
+       <b>${liveCount}</b>
+       <span class="muted">EN JUEGO</span>
+     </div>
+
+     <div class="tournamentStat">
+       <b>${TOTAL_TOURNAMENT_MATCHES-finished}</b>
+       <span class="muted">PENDIENTES</span>
+     </div>
+
+   </div>
+
+   <div class="muted" style="margin-top:12px">
+     24 grupos · 4 cuartos · 2 semifinales · 1 final
+   </div>
+
+ </div>
+ `;
+
 }
 function renderChampion(){
 const b=document.getElementById("championContent");if(!b)return;
