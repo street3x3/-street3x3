@@ -8,6 +8,7 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#B6FF00">
 
+<script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
 
@@ -1109,7 +1110,7 @@ INICIO
 </button>
 
 <button class="nav" type="button" onclick="openAppModal()">
-📱 APP
+<i data-lucide="smartphone" class="lucide-icon" aria-hidden="true"></i> APP
 </button>
 
 <button class="nav" data-tab="jugadores">
@@ -1470,7 +1471,7 @@ STREET 3x3
 </div>
 
 <h2>
-📱 INSTALAR LA APP / INSTALL THE APP
+<i data-lucide="smartphone" class="lucide-icon" aria-hidden="true"></i> INSTALAR LA APP / INSTALL THE APP
 </h2>
 
 <div class="appSubtitle">
@@ -1488,7 +1489,7 @@ Add Street 3x3 to your home screen to access it like an app.
 <div class="appStep">
 
 <h3>
-🤖 ANDROID · CHROME
+<i data-lucide="bot" class="lucide-icon" aria-hidden="true"></i> ANDROID · CHROME
 </h3>
 
 <p>
@@ -1513,7 +1514,7 @@ Add Street 3x3 to your home screen to access it like an app.
 <div class="appStep">
 
 <h3>
-🍎 IPHONE · SAFARI
+<i data-lucide="apple" class="lucide-icon" aria-hidden="true"></i> IPHONE · SAFARI
 </h3>
 
 <p>
@@ -1540,7 +1541,7 @@ Add Street 3x3 to your home screen to access it like an app.
 <div class="appTip">
 
 <strong>
-💡 IMPORTANTE / IMPORTANT:
+<i data-lucide="lightbulb" class="lucide-icon" aria-hidden="true"></i> IMPORTANTE / IMPORTANT:
 </strong>
 
 Si ya la instalaste antes, eliminá la versión anterior y volvé a instalarla para que tome el nuevo ícono de Street 3x3.
@@ -1576,6 +1577,12 @@ onclick="closePlayerModal()">
 
 
 <script>
+
+function refreshLucideIcons(){
+  if(window.lucide){
+    lucide.createIcons();
+  }
+}
 
 /* =====================================================
    FIREBASE
@@ -1912,9 +1919,9 @@ function statusBadge(m){
 
   const icon=
     s.key==="live"
-      ?"🟡 "
+      ?"<i data-lucide="circle" class="lucide-icon" aria-hidden="true"></i> "
       :s.key==="final"
-        ?"🟢 "
+        ?"<i data-lucide="circle-check" class="lucide-icon" aria-hidden="true"></i> "
         :"⚪ ";
 
   return `
@@ -2003,7 +2010,7 @@ function renderRegistrationHero(){
         <div class="registrationTop">
 
           <div class="kicker">
-            🏀 ¿VAS A SER PARTE?
+            <i data-lucide="circle-dot" class="lucide-icon" aria-hidden="true"></i> ¿VAS A SER PARTE?
           </div>
 
           <span class="registrationBadge">
@@ -2080,7 +2087,7 @@ function renderTournamentStatus(){
         <div class="homeTitle">
 
           <h3>
-            🏆 ESTADO DEL TORNEO
+            <i data-lucide="trophy" class="lucide-icon" aria-hidden="true"></i> ESTADO DEL TORNEO
           </h3>
 
           <span>
@@ -2189,7 +2196,7 @@ function renderTournamentStatus(){
       <div class="homeTitle">
 
         <h3>
-          🏆 ESTADO DEL TORNEO
+          <i data-lucide="trophy" class="lucide-icon" aria-hidden="true"></i> ESTADO DEL TORNEO
         </h3>
 
         <span>
@@ -2339,7 +2346,7 @@ function renderChampion(){
     <div class="homeBlock full championHero">
 
       <div style="font-size:52px">
-        🏆
+        <i data-lucide="trophy" class="lucide-icon" aria-hidden="true"></i>
       </div>
 
       <div class="kicker">
@@ -2397,7 +2404,7 @@ function renderHomePlayerOfRound(){
       <div class="homeTitle">
 
         <h3>
-          ⭐ JUGADOR DE LA FECHA
+          <i data-lucide="star" class="lucide-icon" aria-hidden="true"></i> JUGADOR DE LA FECHA
         </h3>
 
         <span>
@@ -2461,7 +2468,7 @@ function renderHomePlayerToWatch(){
       <div class="homeTitle">
 
         <h3>
-          👀 JUGADOR A SEGUIR
+          <i data-lucide="eye" class="lucide-icon" aria-hidden="true"></i> JUGADOR A SEGUIR
         </h3>
 
         <span>
@@ -2590,7 +2597,7 @@ function renderLiveCenter(){
       <div class="homeTitle">
 
         <h3>
-          🟡 EN VIVO AHORA
+          <i data-lucide="circle" class="lucide-icon" aria-hidden="true"></i> EN VIVO AHORA
         </h3>
 
         <span>
@@ -2625,7 +2632,7 @@ function renderLiveCenter(){
         <div class="livePlaceholder">
 
           <div style="font-size:28px;margin-bottom:8px">
-            🏀
+            <i data-lucide="circle-dot" class="lucide-icon" aria-hidden="true"></i>
           </div>
 
           <strong style="color:#fff">
@@ -2681,7 +2688,7 @@ function renderLiveCenter(){
           </span>
 
           <span class="statusBadge statusLive">
-            🟡 EN VIVO
+            <i data-lucide="circle" class="lucide-icon" aria-hidden="true"></i> EN VIVO
           </span>
 
         </div>
@@ -2783,7 +2790,7 @@ function renderNextMatches(){
       <div class="homeTitle">
 
         <h3>
-          📅 PRÓXIMOS PARTIDOS
+          <i data-lucide="calendar-days" class="lucide-icon" aria-hidden="true"></i> PRÓXIMOS PARTIDOS
         </h3>
 
         <span>
@@ -2927,7 +2934,7 @@ function renderRecentResults(){
       <div class="homeTitle">
 
         <h3>
-          🔴 ÚLTIMOS RESULTADOS
+          <i data-lucide="circle" class="lucide-icon" aria-hidden="true"></i> ÚLTIMOS RESULTADOS
         </h3>
 
         <span>
@@ -3114,7 +3121,7 @@ function renderGroupLeaders(){
       <div class="homeTitle">
 
         <h3>
-          🏆 LÍDERES DE GRUPO
+          <i data-lucide="trophy" class="lucide-icon" aria-hidden="true"></i> LÍDERES DE GRUPO
         </h3>
 
         <span>
@@ -3226,9 +3233,9 @@ function renderTopStats(){
   }
 
   const categories=[
-    ["points","🏀 PUNTOS","PTS"],
-    ["rebounds","🔄 REBOTES","REB"],
-    ["assists","🎯 ASISTENCIAS","AST"]
+    ["points","<i data-lucide="circle-dot" class="lucide-icon" aria-hidden="true"></i> PUNTOS","PTS"],
+    ["rebounds","<i data-lucide="refresh-cw" class="lucide-icon" aria-hidden="true"></i> REBOTES","REB"],
+    ["assists","<i data-lucide="target" class="lucide-icon" aria-hidden="true"></i> ASISTENCIAS","AST"]
   ];
 
   let h=`
@@ -3238,7 +3245,7 @@ function renderTopStats(){
       <div class="homeTitle">
 
         <h3>
-          📊 LÍDERES ESTADÍSTICOS
+          <i data-lucide="chart-no-axes-combined" class="lucide-icon" aria-hidden="true"></i> LÍDERES ESTADÍSTICOS
         </h3>
 
         <span>
@@ -3491,7 +3498,7 @@ function playerTopLabels(id){
       .map(x=>x[0]);
 
     if(r.includes(id)){
-      out.push("🥇 TOP 15 "+l);
+      out.push("<i data-lucide="medal" class="lucide-icon" aria-hidden="true"></i> TOP 15 "+l);
     }
 
   });
@@ -3579,7 +3586,7 @@ function openPlayerModal(id){
     </div>
 
     <div style="margin-top:18px;font-weight:900">
-      ⭐ MVP: ${+p.motm||0}
+      <i data-lucide="star" class="lucide-icon" aria-hidden="true"></i> MVP: ${+p.motm||0}
     </div>
 
     ${
@@ -3753,7 +3760,7 @@ function renderStats(){
             i===0
             ?`
               <div class="muted">
-                🥇 ${c[m][2]}
+                <i data-lucide="medal" class="lucide-icon" aria-hidden="true"></i> ${c[m][2]}
               </div>
             `
             :""
@@ -4014,7 +4021,7 @@ function renderResults(){
           </span>
 
           <span class="statusBadge statusFinal">
-            🟢 FINALIZADO
+            <i data-lucide="circle-check" class="lucide-icon" aria-hidden="true"></i> FINALIZADO
           </span>
 
         </div>
@@ -4113,11 +4120,11 @@ function renderTables(){
 
       const icon=
         i===0
-          ?"🥇"
+          ?"<i data-lucide="medal" class="lucide-icon" aria-hidden="true"></i>"
           :i===1
-            ?"🥈"
+            ?"<i data-lucide="medal" class="lucide-icon" aria-hidden="true"></i>"
             :i===2
-              ?"🔴"
+              ?"<i data-lucide="circle" class="lucide-icon" aria-hidden="true"></i>"
               :"⚫";
 
       h+=`
@@ -4353,7 +4360,7 @@ function renderPlayoffs(){
           "
         >
 
-          🏆
+          <i data-lucide="trophy" class="lucide-icon" aria-hidden="true"></i>
 
           <br>
           <br>
@@ -4700,7 +4707,7 @@ function updateCountdown(){
     ){
 
       title.textContent=
-        "EL EVENTO YA COMENZÓ 🏀";
+        "EL EVENTO YA COMENZÓ <i data-lucide="circle-dot" class="lucide-icon" aria-hidden="true"></i>";
 
     }else{
 
@@ -4819,3 +4826,5 @@ if("serviceWorker" in navigator){
 
 </body>
 </html>
+
+<script>refreshLucideIcons();</script>
