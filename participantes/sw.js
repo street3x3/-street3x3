@@ -1,4 +1,4 @@
-const CACHE_NAME = "street3x3-v1";
+const CACHE_NAME = "street3x3-v2";
 
 const FILES = [
   "./",
@@ -12,6 +12,7 @@ self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(FILES))
   );
+
   self.skipWaiting();
 });
 
@@ -25,13 +26,56 @@ self.addEventListener("activate", event => {
       )
     )
   );
+
   self.clients.claim();
 });
 
 self.addEventListener("fetch", event => {
+
+  const request = event.request;
+
+  // El HTML siempre se obtiene actualizado desde GitHub Pages.
+  if (
+    request.method === "GET" &&
+    request.mode === "navigate"
+  ) {
+
+    event.respondWith(
+
+      fetch(request, {
+        cache: "no-store"
+      })
+
+      .then(response => {
+
+        const copy = response.clone();
+
+        caches.open(CACHE_NAME).then(cache => {
+          cache.put("./index.html", copy);
+        });
+
+        return response;
+
+      })
+
+      .catch(() => {
+        return caches.match("./index.html");
+      })
+
+    );
+
+    return;
+  }
+
+  // Para el resto de los archivos usamos caché cuando exista.
   event.respondWith(
-    caches.match(event.request).then(cached => {
-      return cached || fetch(event.request);
+
+    caches.match(request).then(cached => {
+
+      return cached || fetch(request);
+
     })
+
   );
+
 });
