@@ -1919,9 +1919,9 @@ function statusBadge(m){
 
   const icon=
     s.key==="live"
-      ?"<i data-lucide="circle" class="lucide-icon" aria-hidden="true"></i> "
+      ?' <i data-lucide="circle" class="lucide-icon" aria-hidden="true"></i> '
       :s.key==="final"
-        ?"<i data-lucide="circle-check" class="lucide-icon" aria-hidden="true"></i> "
+        ?' <i data-lucide="circle-check" class="lucide-icon" aria-hidden="true"></i> '
         :"⚪ ";
 
   return `
@@ -3233,9 +3233,9 @@ function renderTopStats(){
   }
 
   const categories=[
-    ["points","<i data-lucide="circle-dot" class="lucide-icon" aria-hidden="true"></i> PUNTOS","PTS"],
-    ["rebounds","<i data-lucide="refresh-cw" class="lucide-icon" aria-hidden="true"></i> REBOTES","REB"],
-    ["assists","<i data-lucide="target" class="lucide-icon" aria-hidden="true"></i> ASISTENCIAS","AST"]
+    ["points",'<i data-lucide="circle-dot" class="lucide-icon" aria-hidden="true"></i> PUNTOS',"PTS"],
+    ["rebounds",'<i data-lucide="refresh-cw" class="lucide-icon" aria-hidden="true"></i> REBOTES',"REB"],
+    ["assists",'<i data-lucide="target" class="lucide-icon" aria-hidden="true"></i> ASISTENCIAS',"AST"]
   ];
 
   let h=`
@@ -3498,7 +3498,7 @@ function playerTopLabels(id){
       .map(x=>x[0]);
 
     if(r.includes(id)){
-      out.push("<i data-lucide="medal" class="lucide-icon" aria-hidden="true"></i> TOP 15 "+l);
+      out.push('<i data-lucide="medal" class="lucide-icon" aria-hidden="true"></i> TOP 15 '+l);
     }
 
   });
@@ -4120,11 +4120,11 @@ function renderTables(){
 
       const icon=
         i===0
-          ?"<i data-lucide="medal" class="lucide-icon" aria-hidden="true"></i>"
+          ?' <i data-lucide="medal" class="lucide-icon" aria-hidden="true"></i> '
           :i===1
-            ?"<i data-lucide="medal" class="lucide-icon" aria-hidden="true"></i>"
+            ?' <i data-lucide="medal" class="lucide-icon" aria-hidden="true"></i> '
             :i===2
-              ?"<i data-lucide="circle" class="lucide-icon" aria-hidden="true"></i>"
+              ?' <i data-lucide="circle" class="lucide-icon" aria-hidden="true"></i> '
               :"⚫";
 
       h+=`
@@ -4525,6 +4525,7 @@ function render(){
   renderTournamentStatus();
   renderChampion();
   refreshTimeSensitiveContent();
+  refreshLucideIcons();
 
 }
 
@@ -4706,8 +4707,8 @@ function updateCountdown(){
       Date.now()>=eventDate
     ){
 
-      title.textContent=
-        "EL EVENTO YA COMENZÓ <i data-lucide="circle-dot" class="lucide-icon" aria-hidden="true"></i>";
+      title.innerHTML=
+        '<i data-lucide="circle-dot" class="lucide-icon" aria-hidden="true"></i> EL EVENTO YA COMENZÓ';
 
     }else{
 
