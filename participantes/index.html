@@ -300,22 +300,120 @@ nav{
   padding:20px 0 45px;
 }
 
-.sponsorGrid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;
+.sponsorCarousel{
+  position:relative;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:linear-gradient(145deg,#151915,#0f120f);
+  padding:14px 48px;
+}
+
+.sponsorViewport{
+  overflow:hidden;
+  width:100%;
+}
+
+.sponsorTrack{
+  display:flex;
+  gap:14px;
+  transition:transform .55s ease;
+  will-change:transform;
 }
 
 .sponsor{
-  height:80px;
-  border:1px dashed #414741;
+  flex:0 0 calc((100% - 42px) / 4);
+  height:90px;
+  border:1px solid #414741;
   border-radius:11px;
+  background:#fff;
   display:flex;
   align-items:center;
   justify-content:center;
-  color:#6e756e;
-  font-size:11px;
-  font-weight:900;
+  overflow:hidden;
+}
+
+.sponsor img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  padding:10px 18px;
+  display:block;
+}
+
+.sponsorArrow{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:5;
+  width:34px;
+  height:34px;
+  border:1px solid #596059;
+  border-radius:50%;
+  background:#111511;
+  color:#fff;
+  font-size:22px;
+  line-height:1;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.sponsorArrow:hover{
+  background:var(--lime);
+  color:#000;
+  border-color:var(--lime);
+}
+
+.sponsorArrow.prev{
+  left:9px;
+}
+
+.sponsorArrow.next{
+  right:9px;
+}
+
+.sponsorDots{
+  display:flex;
+  justify-content:center;
+  gap:7px;
+  margin-top:10px;
+}
+
+.sponsorDot{
+  width:7px;
+  height:7px;
+  padding:0;
+  border:0;
+  border-radius:50%;
+  background:#414741;
+  cursor:pointer;
+}
+
+.sponsorDot.active{
+  background:var(--lime);
+}
+
+@media(max-width:850px){
+  .sponsor{
+    flex:0 0 calc((100% - 14px) / 2);
+  }
+}
+
+@media(max-width:560px){
+  .sponsorCarousel{
+    padding:10px 42px;
+  }
+
+  .sponsor{
+    flex:0 0 100%;
+    height:85px;
+  }
+
+  .sponsor img{
+    padding:8px 14px;
+  }
 }
 
 footer{
@@ -926,10 +1024,6 @@ footer{
     grid-template-columns:1fr 1fr;
   }
 
-  .sponsorGrid{
-    grid-template-columns:1fr 1fr;
-  }
-
   .homeGrid{
     grid-template-columns:1fr;
   }
@@ -1399,35 +1493,62 @@ El camino hacia el campeonato.
 
 <section class="sponsors">
 
-<div style="display:flex;justify-content:space-between;align-items:center">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
 
-<h3>Patrocinadores</h3>
+    <h3>Patrocinadores</h3>
 
-<span class="muted">
-Tu marca puede estar acá
-</span>
+    <span class="muted">
+      Sponsors oficiales
+    </span>
 
-</div>
+  </div>
 
-<div class="sponsorGrid">
+  <div class="sponsorCarousel">
 
-<div class="sponsor">
-SPONSOR 01
-</div>
+    <button
+      class="sponsorArrow prev"
+      type="button"
+      onclick="moveSponsors(-1)"
+      aria-label="Sponsor anterior">
+      ‹
+    </button>
 
-<div class="sponsor">
-SPONSOR 02
-</div>
+    <div class="sponsorViewport">
 
-<div class="sponsor">
-SPONSOR 03
-</div>
+      <div class="sponsorTrack" id="sponsorTrack">
 
-<div class="sponsor">
-SPONSOR 04
-</div>
+        <div class="sponsor">
+          <img
+            src="cimes.webp"
+            alt="Cimes"
+            loading="lazy">
+        </div>
 
-</div>
+        <div class="sponsor">
+          <img
+            src="dove.webp"
+            alt="Dove Men+Care"
+            loading="lazy">
+        </div>
+
+      </div>
+
+    </div>
+
+    <button
+      class="sponsorArrow next"
+      type="button"
+      onclick="moveSponsors(1)"
+      aria-label="Siguiente sponsor">
+      ›
+    </button>
+
+  </div>
+
+  <div
+    class="sponsorDots"
+    id="sponsorDots">
+  </div>
 
 </section>
 
@@ -1583,6 +1704,172 @@ function refreshLucideIcons(){
     lucide.createIcons();
   }
 }
+
+
+/* =====================================================
+   CARRUSEL DE SPONSORS
+===================================================== */
+
+let sponsorIndex=0;
+let sponsorTimer=null;
+
+function sponsorVisibleCount(){
+
+  if(window.innerWidth<=560){
+    return 1;
+  }
+
+  if(window.innerWidth<=850){
+    return 2;
+  }
+
+  return 4;
+}
+
+function renderSponsors(){
+
+  const track=document.getElementById("sponsorTrack");
+  const dots=document.getElementById("sponsorDots");
+
+  if(!track || !dots){
+    return;
+  }
+
+  const sponsors=[
+    ...track.querySelectorAll(".sponsor")
+  ];
+
+  if(!sponsors.length){
+    return;
+  }
+
+  const visible=sponsorVisibleCount();
+  const maxIndex=Math.max(0,sponsors.length-visible);
+
+  if(sponsorIndex>maxIndex){
+    sponsorIndex=0;
+  }
+
+  if(sponsors.length<=visible){
+
+    track.style.transform="translateX(0)";
+    track.style.justifyContent="center";
+
+  }else{
+
+    track.style.justifyContent="flex-start";
+
+    const itemWidth=
+      sponsors[0].getBoundingClientRect().width+14;
+
+    track.style.transform=
+      "translateX(-"+(sponsorIndex*itemWidth)+"px)";
+  }
+
+  dots.innerHTML="";
+
+  if(maxIndex>0){
+
+    for(let i=0;i<=maxIndex;i++){
+
+      const dot=document.createElement("button");
+
+      dot.type="button";
+      dot.className=
+        "sponsorDot"+
+        (i===sponsorIndex ? " active" : "");
+
+      dot.setAttribute(
+        "aria-label",
+        "Ir al grupo de sponsors "+(i+1)
+      );
+
+      dot.onclick=()=>{
+
+        sponsorIndex=i;
+
+        renderSponsors();
+
+        restartSponsorTimer();
+      };
+
+      dots.appendChild(dot);
+    }
+  }
+}
+
+function moveSponsors(direction){
+
+  const track=document.getElementById("sponsorTrack");
+
+  if(!track){
+    return;
+  }
+
+  const sponsors=[
+    ...track.querySelectorAll(".sponsor")
+  ];
+
+  const visible=sponsorVisibleCount();
+
+  const maxIndex=
+    Math.max(0,sponsors.length-visible);
+
+  if(maxIndex===0){
+    return;
+  }
+
+  sponsorIndex+=direction;
+
+  if(sponsorIndex>maxIndex){
+    sponsorIndex=0;
+  }
+
+  if(sponsorIndex<0){
+    sponsorIndex=maxIndex;
+  }
+
+  renderSponsors();
+
+  restartSponsorTimer();
+}
+
+function restartSponsorTimer(){
+
+  clearInterval(sponsorTimer);
+
+  const track=document.getElementById("sponsorTrack");
+
+  if(!track){
+    return;
+  }
+
+  const sponsors=track.querySelectorAll(".sponsor");
+
+  if(sponsors.length<=sponsorVisibleCount()){
+    return;
+  }
+
+  sponsorTimer=setInterval(
+    ()=>moveSponsors(1),
+    3500
+  );
+}
+
+window.addEventListener(
+  "resize",
+  ()=>{
+    renderSponsors();
+  }
+);
+
+window.addEventListener(
+  "load",
+  ()=>{
+    renderSponsors();
+    restartSponsorTimer();
+  }
+);
 
 /* =====================================================
    FIREBASE
