@@ -16,6 +16,8 @@ h1{margin:0 0 7px;font-size:34px}p{color:var(--muted)}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
 .card.live{border-color:var(--lime)}
+.card.paused{border-color:#777}
+.card.finished{border-color:#444}
 .meta{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;font-weight:900}
 .teams{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin:22px 0;font-size:21px;font-weight:900}
 .teams span:last-child{text-align:right}.score{color:var(--lime);font-size:24px}
@@ -43,54 +45,141 @@ firebase.initializeApp(firebaseConfig);
 const db=firebase.database();
 const tournamentRef=db.ref("tournament");
 const liveRefs={1:db.ref("match"),2:db.ref("match2")};
-let data={teams:{},matches:{}}, live={1:null,2:null};
+let data={teams:{},matches:{}},live={1:null,2:null};
 
-tournamentRef.on("value",s=>{data=s.val()||{};data.teams=data.teams||{};data.matches=data.matches||{};render();});
+tournamentRef.on("value",s=>{
+  data=s.val()||{};
+  data.teams=data.teams||{};
+  data.matches=data.matches||{};
+  render();
+});
 liveRefs[1].on("value",s=>{live[1]=s.val();render();});
 liveRefs[2].on("value",s=>{live[2]=s.val();render();});
 
-function esc(x){return String(x??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
-function team(id){return data.teams?.[id]?.name||"Por definir";}
-function dt(m){if(!m.date||!m.time)return null;const d=new Date(m.date+"T"+m.time+":00-03:00");return isNaN(d)?null:d;}
-function status(s){return s?.running===true?"EN VIVO":"SIN PARTIDO";}
+function esc(x){
+  return String(x??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+}
+
+function team(id){
+  return data.teams?.[id]?.name||"Por definir";
+}
+
+function dt(m){
+  if(!m.date||!m.time)return null;
+  const d=new Date(m.date+"T"+m.time+":00-03:00");
+  return isNaN(d)?null:d;
+}
 
 function currentMatch(court){
-const s=live[court];
-if(s?.running===true && s.matchId && data.matches[s.matchId])return data.matches[s.matchId];
-return null;
+  const s=live[court];
+  if(s?.matchId && data.matches[s.matchId]){
+    return data.matches[s.matchId];
+  }
+  return null;
+}
+
+function matchStatus(s){
+  if(!s?.matchId)return "DISPONIBLE";
+  if(s.finished===true)return "FINALIZADO";
+  if(s.running===true)return "EN VIVO";
+  return "PAUSADO";
 }
 
 function nextForCourt(court){
-const now=Date.now();
-return Object.entries(data.matches||{})
-.filter(([id,m])=>String(m.court)==String(court) && (m.homeScore==null||m.awayScore==null) && id!==(live[1]?.matchId) && id!==(live[2]?.matchId))
-.map(([id,m])=>({id,m,d:dt(m)}))
-.filter(x=>x.d)
-.sort((a,b)=>a.d-b.d)[0];
+  return Object.entries(data.matches||{})
+    .filter(([id,m])=>
+      String(m.court)===String(court) &&
+      (m.homeScore==null||m.awayScore==null) &&
+      id!==live[1]?.matchId &&
+      id!==live[2]?.matchId
+    )
+    .map(([id,m])=>({id,m,d:dt(m)}))
+    .filter(x=>x.d)
+    .sort((a,b)=>a.d-b.d)[0];
 }
 
 function render(){
-const g=document.getElementById("grid");
-let h="";
-[1,2].forEach(court=>{
-const m=currentMatch(court),s=live[court],n=nextForCourt(court);
-h+=`<div class="card ${m?"live":""}">
-<div class="meta"><span>CANCHA ${court}</span><span class="badge">${m?"🟡 EN VIVO":"⚪ DISPONIBLE"}</span></div>
-<div class="teams"><span>${esc(m?team(m.home):(n?team(n.m.home):"Sin partido"))}</span><span class="score">${m?(Number(s.home)||0)+" — "+(Number(s.away)||0):"VS"}</span><span>${esc(m?team(m.away):(n?team(n.m.away):"Sin partido"))}</span></div>
-<div class="muted">${m?"Partido en vivo":n?((n.m.date||"")+" · "+(n.m.time||"")+" · próximo"): "No hay partido asignado"}</div>
-<div class="actions" style="margin-top:16px">
-<button class="primary" onclick="location.href='../control${court===2?'2':''}/'">🎛️ CONTROL CANCHA ${court}</button>
-<button onclick="location.href='../scoreboard${court===2?'2':''}/'">📺 MARCADOR</button>
-</div></div>`;
-});
-g.innerHTML=h;
+  const g=document.getElementById("grid");
+  let h="";
 
-let rows=Object.entries(data.matches||{})
-.filter(([id,m])=>(m.homeScore==null||m.awayScore==null)&&m.date&&m.time)
-.sort((a,b)=>((a[1].date+" "+a[1].time).localeCompare(b[1].date+" "+b[1].time)))
-.slice(0,8);
+  [1,2].forEach(court=>{
+    const m=currentMatch(court);
+    const s=live[court];
+    const n=nextForCourt(court);
+    const status=matchStatus(s);
 
-document.getElementById("next").innerHTML=`<div class="card"><h2>Próximos partidos</h2>${rows.length?rows.map(([id,m])=>`<div class="nextRow"><b>Cancha ${m.court||"—"}</b><span>${esc(team(m.home))} vs ${esc(team(m.away))}</span><span>${esc(m.date)} · ${esc(m.time)}</span></div>`).join(""):"<p>No hay partidos programados.</p>"}</div>`;
+    let cardClass="";
+    if(status==="EN VIVO")cardClass="live";
+    else if(status==="PAUSADO")cardClass="paused";
+    else if(status==="FINALIZADO")cardClass="finished";
+
+    let badge="";
+    if(status==="EN VIVO")badge="🟡 EN VIVO";
+    else if(status==="PAUSADO")badge="⏸ PAUSADO";
+    else if(status==="FINALIZADO")badge="✓ FINALIZADO";
+    else badge="⚪ DISPONIBLE";
+
+    const homeName=m?team(m.home):(n?team(n.m.home):"Sin partido");
+    const awayName=m?team(m.away):(n?team(n.m.away):"Sin partido");
+
+    const score=m
+      ?(Number(s.home)||0)+" — "+(Number(s.away)||0)
+      :"VS";
+
+    let description="";
+    if(status==="EN VIVO")description="Partido en vivo";
+    else if(status==="PAUSADO")description="Partido pausado";
+    else if(status==="FINALIZADO")description="Partido finalizado";
+    else if(n)description=(n.m.date||"")+" · "+(n.m.time||"")+" · próximo";
+    else description="No hay partido asignado";
+
+    h+=`<div class="card ${cardClass}">
+      <div class="meta">
+        <span>CANCHA ${court}</span>
+        <span class="badge">${badge}</span>
+      </div>
+      <div class="teams">
+        <span>${esc(homeName)}</span>
+        <span class="score">${score}</span>
+        <span>${esc(awayName)}</span>
+      </div>
+      <div class="muted">${esc(description)}</div>
+      <div class="actions" style="margin-top:16px">
+        <button class="primary" onclick="location.href='../control${court===2?'2':''}/'">🎛️ CONTROL CANCHA ${court}</button>
+        <button onclick="location.href='../scoreboard${court===2?'2':''}/'">📺 MARCADOR</button>
+      </div>
+    </div>`;
+  });
+
+  g.innerHTML=h;
+
+  let rows=Object.entries(data.matches||{})
+    .filter(([id,m])=>
+      (m.homeScore==null||m.awayScore==null) &&
+      m.date &&
+      m.time &&
+      id!==live[1]?.matchId &&
+      id!==live[2]?.matchId
+    )
+    .sort((a,b)=>
+      (a[1].date+" "+a[1].time).localeCompare(b[1].date+" "+b[1].time)
+    )
+    .slice(0,8);
+
+  document.getElementById("next").innerHTML=`
+    <div class="card">
+      <h2>Próximos partidos</h2>
+      ${rows.length
+        ?rows.map(([id,m])=>`
+          <div class="nextRow">
+            <b>Cancha ${esc(m.court||"—")}</b>
+            <span>${esc(team(m.home))} vs ${esc(team(m.away))}</span>
+            <span>${esc(m.date)} · ${esc(m.time)}</span>
+          </div>
+        `).join("")
+        :"<p>No hay partidos programados.</p>"
+      }
+    </div>`;
 }
 </script>
 </body>
