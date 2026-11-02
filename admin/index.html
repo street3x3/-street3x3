@@ -261,6 +261,103 @@ td:nth-child(2){
     grid-template-columns:1fr;
   }
 }
+
+/* Organización visual de equipos por grupo */
+.team-groups{
+  display:flex;
+  flex-direction:column;
+  gap:22px;
+  margin-top:18px;
+}
+.team-group{
+  background:#111;
+  border:1px solid #343434;
+  border-left:4px solid var(--lime);
+  border-radius:14px;
+  padding:18px;
+}
+.team-group-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin:0 0 15px;
+}
+.team-group-header h3{
+  color:var(--lime);
+  margin:0;
+  font-size:20px;
+}
+.team-group-count{
+  color:#aaa;
+  font-size:13px;
+}
+.team-group-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.team-card{
+  background:#202020;
+  border:1px solid #393939;
+  border-radius:11px;
+  padding:15px;
+  min-width:0;
+}
+.team-card-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+}
+.team-card-name{
+  font-size:17px;
+  font-weight:800;
+  overflow-wrap:anywhere;
+}
+.team-card-roster{
+  border-top:1px solid #383838;
+  padding-top:10px;
+  margin-top:8px;
+}
+.team-card-roster-title{
+  color:#aaa;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.06em;
+  margin-bottom:8px;
+}
+.team-player{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:7px 0;
+  border-bottom:1px solid #303030;
+  font-size:13px;
+}
+.team-player:last-child{border-bottom:0}
+.team-player-name{overflow-wrap:anywhere}
+.team-player-meta{color:#aaa;white-space:nowrap;font-size:12px}
+.team-empty-roster{
+  color:#888;
+  font-size:13px;
+  font-style:italic;
+  padding:4px 0;
+}
+.team-card-actions{margin-top:12px}
+.team-pending{
+  background:#111;
+  border:1px dashed #555;
+  border-radius:14px;
+  padding:18px;
+}
+.team-pending h3{color:var(--lime);margin:0 0 14px}
+@media(max-width:800px){
+  .team-group-grid{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 
@@ -426,7 +523,7 @@ class="team-list">
 <h2>Estadísticas de jugadores</h2>
 
 <p>
-Consultá y editá los puntos y la cantidad de veces que cada jugador fue elegido jugador del partido (MVP).
+Consultá y editá cuántas veces cada jugador fue elegido jugador del partido (MVP).
 </p>
 
 <div id="statsList"></div>
@@ -851,64 +948,88 @@ function renderTeams(){
 const container=document.getElementById("teamList");
 if(!container)return;
 
+const entries=Object.entries(data.teams||{});
+const participants=Object.entries(data.participants||{});
+const groups=["A","B","C","D"];
+
+container.className="team-groups";
 container.innerHTML="";
 
-const entries=Object.entries(data.teams||{});
-const groups=["A","B","C","D"];
+function renderTeamCard(id,team,groupLabel){
+
+const roster=participants
+.filter(([playerId,player])=>player.team===id)
+.sort((a,b)=>String(a[1].name||"").localeCompare(String(b[1].name||""), "es"));
+
+const playersHtml=roster.length
+?roster.map(([playerId,player])=>`
+<div class="team-player">
+  <span class="team-player-name">${escapeHtml(player.name||"Jugador")}</span>
+  <span class="team-player-meta">
+    ${player.number!==undefined&&player.number!==""?"#"+escapeHtml(String(player.number)):""}
+    ${Number(player.motm)>0?" · MVP "+Number(player.motm):""}
+  </span>
+</div>
+`).join("")
+:'<div class="team-empty-roster">Todavía no hay jugadores cargados.</div>';
+
+return `
+<article class="team-card">
+  <div class="team-card-top">
+    <div>
+      <div class="team-card-name">${escapeHtml(team.name||"Equipo sin nombre")}</div>
+      <small>${groupLabel}</small>
+    </div>
+    <span class="team-group-count">${roster.length} jugador${roster.length===1?"":"es"}</span>
+  </div>
+  <div class="team-card-roster">
+    <div class="team-card-roster-title">PLANTEL</div>
+    ${playersHtml}
+  </div>
+  <div class="team-card-actions">
+    <button class="danger" onclick="deleteTeam('${id}')">ELIMINAR EQUIPO</button>
+  </div>
+</article>
+`;
+}
 
 groups.forEach(group=>{
 
-const members=entries.filter(([id,t])=>t.group===group);
-if(!members.length)return;
+const members=entries.filter(([id,team])=>team.group===group);
 
-const heading=document.createElement("h3");
-heading.className="group-title";
-heading.textContent="GRUPO "+group+" ("+members.length+"/4)";
-container.appendChild(heading);
-
-members.forEach(([id,t])=>{
-
-const div=document.createElement("div");
-div.className="team";
-div.innerHTML=`
-<strong>${escapeHtml(t.name)}</strong>
-<small>Grupo ${group}</small>
-<br><br>
-<button class="danger" onclick="deleteTeam('${id}')">ELIMINAR</button>
+const section=document.createElement("section");
+section.className="team-group";
+section.innerHTML=`
+  <div class="team-group-header">
+    <h3>GRUPO ${group}</h3>
+    <span class="team-group-count">${members.length} de 4 equipos</span>
+  </div>
+  <div class="team-group-grid">
+    ${members.length
+      ?members.map(([id,team])=>renderTeamCard(id,team,"Grupo "+group)).join("")
+      :'<div class="team-empty-roster">Todavía no hay equipos en este grupo.</div>'}
+  </div>
 `;
-container.appendChild(div);
+container.appendChild(section);
 
 });
 
-});
-
-const pending=entries.filter(([id,t])=>!groups.includes(t.group));
+const pending=entries.filter(([id,team])=>!groups.includes(team.group));
 
 if(pending.length){
-
-const heading=document.createElement("h3");
-heading.className="group-title";
-heading.textContent="EQUIPOS CARGADOS · PENDIENTES DE SORTEO ("+pending.length+"/16)";
-container.appendChild(heading);
-
-pending.forEach(([id,t])=>{
-
-const div=document.createElement("div");
-div.className="team";
-div.innerHTML=`
-<strong>${escapeHtml(t.name)}</strong>
-<small>Sin grupo asignado</small>
-<br><br>
-<button class="danger" onclick="deleteTeam('${id}')">ELIMINAR</button>
+const section=document.createElement("section");
+section.className="team-pending";
+section.innerHTML=`
+<h3>EQUIPOS PENDIENTES DE SORTEO (${pending.length}/16)</h3>
+<div class="team-group-grid">
+${pending.map(([id,team])=>renderTeamCard(id,team,"Sin grupo asignado")).join("")}
+</div>
 `;
-container.appendChild(div);
-
-});
-
+container.appendChild(section);
 }
 
 if(!entries.length){
-container.innerHTML="<p>Todavía no hay equipos cargados.</p>";
+container.innerHTML='<div class="team-empty-roster">Todavía no hay equipos cargados.</div>';
 }
 
 }
@@ -970,7 +1091,6 @@ name:name,
 team:team,
 number:number,
 
-points:0,
 motm:0
 
 };
@@ -1038,7 +1158,7 @@ ${p.number ? " · #"+escapeHtml(p.number) : ""}
 
 <br><br>
 
-<div>PTS: ${p.points||0} · JUGADOR DEL PARTIDO: ${p.motm||0}</div>
+<div>JUGADOR DEL PARTIDO (MVP): ${Number(p.motm)||0}</div>
 
 <br>
 
@@ -1070,27 +1190,23 @@ ensureParticipants();
 const p=data.participants[id];
 if(!p)return;
 
-const points=prompt("Puntos totales de "+p.name,p.points||0);
-if(points===null)return;
-
-const value=Number(points);
-
-if(!Number.isFinite(value)||value<0){
-alert("Los puntos deben ser un número igual o mayor a 0.");
-return;
-}
-
-const motm=prompt("Veces elegido jugador del partido (MVP) para "+p.name,p.motm||0);
+const motm=prompt(
+"Veces elegido jugador del partido (MVP) para "+p.name,
+Number(p.motm)||0
+);
 if(motm===null)return;
 
 const motmValue=Number(motm);
-if(!Number.isFinite(motmValue)||motmValue<0){
-alert("La cantidad de veces como jugador del partido debe ser un número igual o mayor a 0.");
+if(!Number.isFinite(motmValue)||motmValue<0||!Number.isInteger(motmValue)){
+alert("La cantidad de veces como jugador del partido debe ser un número entero igual o mayor a 0.");
 return;
 }
 
-p.points=value;
-p.motm=Math.floor(motmValue);
+p.motm=motmValue;
+
+// Se eliminan los puntos individuales; los puntos de las tablas de equipos
+// siguen calculándose a partir de los resultados de los partidos.
+delete p.points;
 
 save();
 renderParticipants();
@@ -1101,7 +1217,6 @@ renderStats();
 function renderStats(){
 
 const container=document.getElementById("statsList");
-
 if(!container)return;
 
 ensureParticipants();
@@ -1109,10 +1224,8 @@ ensureParticipants();
 const participants=Object.entries(data.participants||{});
 
 if(!participants.length){
-
 container.innerHTML='<div class="panel">No hay jugadores cargados.</div>';
 return;
-
 }
 
 let html=`
@@ -1121,24 +1234,21 @@ let html=`
 <tr>
 <th>Jugador</th>
 <th>Equipo</th>
-<th>PTS</th>
-<th>Jugador del partido</th>
+<th>Jugador del partido (MVP)</th>
 <th>Acción</th>
 </tr>
 `;
 
 participants
-.sort((a,b)=>(Number(b[1].points)||0)-(Number(a[1].points)||0))
+.sort((a,b)=>(Number(b[1].motm)||0)-(Number(a[1].motm)||0))
 .forEach(([id,p])=>{
 
 const team=data.teams?.[p.team];
-const points=Number(p.points)||0;
 
 html+=`
 <tr>
 <td>${escapeHtml(p.name)}</td>
 <td>${team?escapeHtml(team.name):"Equipo no encontrado"}</td>
-<td>${points}</td>
 <td>${Number(p.motm)||0}</td>
 <td>
 <button class="primary" onclick="editParticipantStats('${id}')">
@@ -1151,7 +1261,6 @@ EDITAR
 });
 
 html+="</table></div>";
-
 container.innerHTML=html;
 
 }
