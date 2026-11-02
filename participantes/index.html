@@ -322,8 +322,8 @@ nav{
 }
 
 .sponsor{
-  flex:0 0 calc((100% - 42px) / 4);
-  height:90px;
+  flex:0 0 calc((100% - 28px) / 3);
+  height:122px;
   border:1px solid #414741;
   border-radius:11px;
   background:#fff;
@@ -398,6 +398,7 @@ nav{
 @media(max-width:850px){
   .sponsor{
     flex:0 0 calc((100% - 14px) / 2);
+    height:112px;
   }
 }
 
@@ -407,8 +408,8 @@ nav{
   }
 
   .sponsor{
-    flex:0 0 100%;
-    height:85px;
+    flex:0 0 calc((100% - 14px) / 2);
+    height:100px;
   }
 
   .sponsor img{
@@ -622,12 +623,14 @@ footer{
    HOME
 ========================= */
 
+
+#homePlayerOfRound:empty{display:none;}
 .homeGrid{
   display:grid;
-  grid-template-columns:1fr 1fr;
+  grid-template-columns:repeat(2,minmax(0,1fr));
   gap:18px;
   margin-top:18px;
-  align-items:start;
+  align-items:stretch;
 }
 
 .homeBlock{
@@ -1199,37 +1202,21 @@ footer{
 
 <nav>
 
-<button class="nav active" data-tab="inicio">
-INICIO
-</button>
+<button class="nav active" data-tab="inicio">INICIO</button>
 
 <button class="nav" type="button" onclick="openAppModal()">
 <i data-lucide="smartphone" class="lucide-icon" aria-hidden="true"></i> APP
 </button>
 
-<button class="nav" data-tab="jugadores">
-JUGADORES
-</button>
+<button class="nav" data-tab="jugadores">JUGADORES</button>
 
-<button class="nav" data-tab="estadisticas">
-ESTADÍSTICAS
-</button>
+<button class="nav" data-tab="tablas">TABLAS</button>
 
-<button class="nav" data-tab="fixture">
-FIXTURE
-</button>
+<button class="nav" data-tab="fixture">FIXTURE</button>
 
-<button class="nav" data-tab="resultados">
-RESULTADOS
-</button>
+<button class="nav" data-tab="resultados">RESULTADOS</button>
 
-<button class="nav" data-tab="tablas">
-TABLAS
-</button>
-
-<button class="nav" data-tab="playoffs">
-PLAYOFFS
-</button>
+<button class="nav" data-tab="playoffs">PLAYOFFS</button>
 
 </nav>
 
@@ -1364,8 +1351,6 @@ FALTAN PARA EL EVENTO
 
 <div id="homePlayerOfRound"></div>
 
-<div id="homePlayerToWatch"></div>
-
 <div id="liveCenterContent"></div>
 
 <div id="nextMatchesContent"></div>
@@ -1373,8 +1358,6 @@ FALTAN PARA EL EVENTO
 <div id="recentResultsContent"></div>
 
 <div id="groupLeadersContent"></div>
-
-<div id="topStatsContent"></div>
 
 <div id="tournamentStatusContent"></div>
 
@@ -1406,21 +1389,6 @@ Todos los participantes del torneo.
 </section>
 
 
-<section id="estadisticas" class="section">
-
-<div class="title">
-
-<h2>Estadísticas</h2>
-
-<p>
-Los líderes del torneo en cada categoría.
-</p>
-
-</div>
-
-<div id="statsContent"></div>
-
-</section>
 
 
 <section id="fixture" class="section">
@@ -1548,7 +1516,7 @@ El camino hacia el campeonato.
         </div>
 
         <div class="sponsor">
-          <img src="bn-market.png" alt="B&N Commerce" loading="lazy">
+          <img src="bn-commerce.png" alt="B&N Commerce" loading="lazy">
         </div>
 
         <div class="sponsor">
@@ -1744,14 +1712,14 @@ let sponsorTimer=null;
 function sponsorVisibleCount(){
 
   if(window.innerWidth<=560){
-    return 1;
+    return 2;
   }
 
   if(window.innerWidth<=850){
     return 2;
   }
 
-  return 4;
+  return 3;
 }
 
 function renderSponsors(){
@@ -2736,79 +2704,6 @@ function renderHomePlayerOfRound(){
         ${team ? esc(team.name) : "Equipo por definir"}
       </div>
 
-      <div style="margin-top:13px;font-weight:900">
-        ${Number(p.points)||0} PTS ·
-        ${Number(p.rebounds)||0} REB ·
-        ${Number(p.assists)||0} AST
-      </div>
-
-    </div>
-
-  `;
-}
-
-
-/* =====================================================
-   JUGADOR A SEGUIR
-===================================================== */
-
-function renderHomePlayerToWatch(){
-
-  const b=document.getElementById(
-    "homePlayerToWatch"
-  );
-
-  if(!b){
-    return;
-  }
-
-  const p=data.playerToWatch
-    ?data.participants?.[data.playerToWatch]
-    :null;
-
-  if(!p){
-
-    b.innerHTML="";
-    return;
-  }
-
-  const t=data.teams?.[p.team];
-
-  const g=+p.games||0;
-
-  b.innerHTML=`
-
-    <div class="homeBlock">
-
-      <div class="homeTitle">
-
-        <h3>
-          <i data-lucide="eye" class="lucide-icon" aria-hidden="true"></i> JUGADOR A SEGUIR
-        </h3>
-
-        <span>
-          ATENCIÓN
-        </span>
-
-      </div>
-
-      <div style="font-size:24px;font-weight:900">
-        ${p.number ? "#"+esc(p.number)+" " : ""}
-        ${esc(p.name)}
-      </div>
-
-      <div class="muted">
-        ${t ? esc(t.name) : "Equipo por definir"}
-      </div>
-
-      <div style="margin-top:13px;font-weight:900">
-
-        ${g ? (+p.points/g).toFixed(1) : "0.0"} PPG ·
-        ${g ? (+p.rebounds/g).toFixed(1) : "0.0"} RPG ·
-        ${g ? (+p.assists/g).toFixed(1) : "0.0"} APG
-
-      </div>
-
     </div>
 
   `;
@@ -3525,265 +3420,46 @@ function renderGroupLeaders(){
 
 
 /* =====================================================
-   ESTADÍSTICAS HOME
-===================================================== */
-
-function renderTopStats(){
-
-  const b=document.getElementById(
-    "topStatsContent"
-  );
-
-  if(!b){
-    return;
-  }
-
-  const players=
-    Object.entries(data.participants||{});
-
-  if(!players.length){
-
-    b.innerHTML="";
-    return;
-  }
-
-  const categories=[
-    ["points",'<i data-lucide="circle-dot" class="lucide-icon" aria-hidden="true"></i> PUNTOS',"PTS"],
-    ["rebounds",'<i data-lucide="refresh-cw" class="lucide-icon" aria-hidden="true"></i> REBOTES',"REB"],
-    ["assists",'<i data-lucide="target" class="lucide-icon" aria-hidden="true"></i> ASISTENCIAS',"AST"]
-  ];
-
-  let h=`
-
-    <div class="homeBlock">
-
-      <div class="homeTitle">
-
-        <h3>
-          <i data-lucide="chart-no-axes-combined" class="lucide-icon" aria-hidden="true"></i> LÍDERES ESTADÍSTICOS
-        </h3>
-
-        <span>
-          TOP 3
-        </span>
-
-      </div>
-
-      <div class="topMini">
-
-  `;
-
-  categories.forEach(
-    ([metric,title,label])=>{
-
-      const list=[...players]
-      .sort(
-        (a,z)=>
-          (Number(z[1][metric])||0)-
-          (Number(a[1][metric])||0)
-      )
-      .slice(0,3);
-
-      h+=`
-
-        <div class="topMiniCard">
-
-          <div class="kicker">
-            ${title}
-          </div>
-
-      `;
-
-      list.forEach(([id,p],i)=>{
-
-        const team=data.teams?.[p.team];
-
-        h+=`
-
-          <div style="margin-top:10px">
-
-            <div
-              style="
-                font-size:11px;
-                color:var(--muted)
-              "
-            >
-              #${i+1}
-            </div>
-
-            <strong>
-              ${esc(p.name)}
-            </strong>
-
-            <div class="muted">
-              ${team
-                ?esc(team.name)
-                :"Por definir"
-              }
-            </div>
-
-            <b>
-              ${Number(p[metric])||0}
-              ${label}
-            </b>
-
-          </div>
-
-        `;
-
-      });
-
-      h+=`
-
-        </div>
-
-      `;
-
-    }
-  );
-
-  h+=`
-
-      </div>
-
-      <a
-        class="dashboardLink"
-        href="#"
-        onclick="goToTab('estadisticas');return false"
-      >
-        VER TOP 15 →
-      </a>
-
-    </div>
-
-  `;
-
-  b.innerHTML=h;
-}
-
-
-/* =====================================================
    JUGADORES
 ===================================================== */
 
 function renderPlayers(){
 
-  const b=document.getElementById(
-    "playersContent"
-  );
+  const b=document.getElementById("playersContent");
+  if(!b) return;
 
-  if(!b){
-    return;
-  }
-
-  const ps=
-    Object.entries(data.participants||{});
-
+  const ps=Object.entries(data.participants||{});
   if(!ps.length){
-
-    b.innerHTML=
-      '<div class="empty">Todavía no hay jugadores cargados.</div>';
-
+    b.innerHTML='<div class="empty">Todavía no hay jugadores cargados.</div>';
     return;
   }
 
   let h="";
-
   ["A","B","C","D"].forEach(g=>{
+    const list=ps
+      .filter(([id,p])=>data.teams?.[p.team]?.group===g)
+      .sort((a,z)=>String(a[1].name||"").localeCompare(String(z[1].name||"")));
+    if(!list.length) return;
 
-    const list=
-      ps
-      .filter(
-        ([id,p])=>
-          data.teams?.[p.team]?.group===g
-      )
-      .sort(
-        (a,z)=>
-          String(a[1].name||"")
-          .localeCompare(
-            String(z[1].name||"")
-          )
-      );
-
-    if(!list.length){
-      return;
-    }
-
-    h+=`
-
-      <div class="group">
-
-        <h3>
-          GRUPO ${g}
-        </h3>
-
-        <div class="cards">
-
-    `;
-
+    h+=`<div class="group"><h3>GRUPO ${g}</h3><div class="cards">`;
     list.forEach(([id,p])=>{
-
       const t=data.teams?.[p.team];
-
+      const motm=Number(p.motm)||0;
       h+=`
-
-        <div
-          class="match playerCard"
-          onclick="openPlayerModal('${id}')"
-        >
-
-          <div class="meta">
-
-            <span>
-              JUGADOR
-            </span>
-
-            <span>
-              ${p.number
-                ?"#"+esc(p.number)
-                :""
-              }
-            </span>
-
+        <div class="match playerCard" onclick="openPlayerModal('${id}')">
+          <div class="meta"><span>JUGADOR</span></div>
+          <div style="font-size:21px;font-weight:900">${esc(p.name)}</div>
+          <div style="font-size:17px;font-weight:900;color:var(--lime);margin-top:8px">
+            ${t?esc(t.name):"Equipo por definir"}
           </div>
-
-          <div
-            style="
-              font-size:20px;
-              font-weight:900
-            "
-          >
-            ${esc(p.name)}
+          <div class="muted" style="margin-top:12px;font-size:12px">
+            <i data-lucide="medal" class="lucide-icon" aria-hidden="true"></i>
+            Jugador del partido: <strong style="color:#fff">${motm} ${motm===1?"vez":"veces"}</strong>
           </div>
-
-          <div class="muted">
-            ${t
-              ?esc(t.name)
-              :"Equipo por definir"
-            }
-          </div>
-
-          <div style="margin-top:12px">
-
-            <span class="badge">
-              VER PROMEDIOS
-            </span>
-
-          </div>
-
-        </div>
-
-      `;
-
+        </div>`;
     });
-
-    h+=`
-        </div>
-      </div>
-    `;
-
+    h+='</div></div>';
   });
-
   b.innerHTML=h;
 }
 
@@ -3792,325 +3468,35 @@ function renderPlayers(){
    MODAL JUGADOR
 ===================================================== */
 
-function playerTopLabels(id){
-
-  const out=[];
-
-  [
-    ["points","PUNTOS"],
-    ["rebounds","REBOTES"],
-    ["assists","ASISTENCIAS"]
-  ].forEach(([m,l])=>{
-
-    const r=
-      Object.entries(data.participants||{})
-      .sort(
-        (a,z)=>
-          (+z[1][m]||0)-
-          (+a[1][m]||0)
-      )
-      .slice(0,15)
-      .map(x=>x[0]);
-
-    if(r.includes(id)){
-      out.push('<i data-lucide="medal" class="lucide-icon" aria-hidden="true"></i> TOP 15 '+l);
-    }
-
-  });
-
-  return out;
-}
-
-
 function openPlayerModal(id){
-
   const p=data.participants?.[id];
-
-  if(!p){
-    return;
-  }
-
+  if(!p) return;
   const t=data.teams?.[p.team];
+  const motm=Number(p.motm)||0;
 
-  const g=+p.games||0;
-
-  const labels=playerTopLabels(id);
-
-  document.getElementById(
-    "playerModalContent"
-  ).innerHTML=`
-
-    <div class="kicker">
-      JUGADOR
-    </div>
-
-    <h2 style="font-size:32px;margin:8px 0">
-
-      ${p.number
-        ?"#"+esc(p.number)+" "
-        :""
-      }
-
-      ${esc(p.name)}
-
-    </h2>
-
-    <p class="muted">
-      ${t
-        ?esc(t.name)
-        :"Equipo por definir"
-      }
+  document.getElementById("playerModalContent").innerHTML=`
+    <div class="kicker">JUGADOR</div>
+    <h2 style="font-size:32px;margin:8px 0">${esc(p.name)}</h2>
+    <p style="font-size:18px;font-weight:900;color:var(--lime)">
+      ${t?esc(t.name):"Equipo por definir"}
     </p>
-
-    <h3 style="margin-top:28px">
-      PROMEDIOS
-    </h3>
-
-    <div class="avgGrid">
-
-      <div class="avgBox">
-        PPG
-        <b>
-          ${g
-            ?(+p.points/g).toFixed(1)
-            :"0.0"
-          }
-        </b>
+    <div style="margin-top:24px;padding:18px;background:#1a1e1a;border:1px solid var(--line);border-radius:12px">
+      <div style="color:var(--lime);font-size:12px;font-weight:900;letter-spacing:1px">
+        <i data-lucide="medal" class="lucide-icon" aria-hidden="true"></i> JUGADOR DEL PARTIDO
       </div>
-
-      <div class="avgBox">
-        RPG
-        <b>
-          ${g
-            ?(+p.rebounds/g).toFixed(1)
-            :"0.0"
-          }
-        </b>
-      </div>
-
-      <div class="avgBox">
-        APG
-        <b>
-          ${g
-            ?(+p.assists/g).toFixed(1)
-            :"0.0"
-          }
-        </b>
-      </div>
-
+      <div style="font-size:30px;font-weight:900;margin-top:7px">${motm}</div>
+      <div class="muted">${motm===1?"vez":"veces"}</div>
     </div>
-
-    <div style="margin-top:18px;font-weight:900">
-      <i data-lucide="star" class="lucide-icon" aria-hidden="true"></i> MVP: ${+p.motm||0}
-    </div>
-
-    ${
-      labels.length
-      ?`
-        <div
-          style="
-            display:flex;
-            gap:7px;
-            flex-wrap:wrap;
-            margin-top:14px
-          "
-        >
-          ${labels.map(
-            x=>`<span class="badge">${x}</span>`
-          ).join("")}
-        </div>
-      `
-      :""
-    }
-
   `;
-
-  document
-    .getElementById("playerModal")
-    .classList
-    .remove("hidden");
+  document.getElementById("playerModal").classList.remove("hidden");
+  refreshLucideIcons();
 }
 
 
 function closePlayerModal(event){
-
-  const modal=
-    document.getElementById("playerModal");
-
-  if(!modal){
-    return;
-  }
-
-  if(
-    !event ||
-    event.target===modal
-  ){
-
-    modal.classList.add("hidden");
-
-  }
-
-}
-
-
-/* =====================================================
-   ESTADÍSTICAS
-===================================================== */
-
-window.activeRanking="points";
-
-function setRanking(m){
-
-  window.activeRanking=m;
-
-  renderStats();
-}
-
-
-function renderStats(){
-
-  const b=document.getElementById(
-    "statsContent"
-  );
-
-  if(!b){
-    return;
-  }
-
-  const ps=
-    Object.entries(data.participants||{});
-
-  const m=
-    window.activeRanking||"points";
-
-  const c={
-    points:[
-      "PUNTOS",
-      "PTS",
-      "MÁXIMO ANOTADOR"
-    ],
-    rebounds:[
-      "REBOTES",
-      "REB",
-      "MÁXIMO REBOTERO"
-    ],
-    assists:[
-      "ASISTENCIAS",
-      "AST",
-      "MÁXIMO ASISTENTE"
-    ],
-    motm:[
-      "MVP",
-      "MVP",
-      "MÁS MVP"
-    ]
-  };
-
-  let h=`
-
-    <div class="tabs filterTabs">
-
-      ${
-        Object.entries(c)
-        .map(
-          ([k,v])=>`
-
-            <button
-              class="nav ${k===m?"active":""}"
-              onclick="setRanking('${k}')"
-            >
-              ${v[0]}
-            </button>
-
-          `
-        )
-        .join("")
-      }
-
-    </div>
-
-    <div class="group">
-
-      <h3>
-        TOP 15 — ${c[m][0]}
-      </h3>
-
-      <div class="tableWrap">
-
-        <table class="table">
-
-          <tr>
-            <th>#</th>
-            <th>Jugador</th>
-            <th>Equipo</th>
-            <th>${c[m][1]}</th>
-          </tr>
-
-  `;
-
-  [...ps]
-  .sort(
-    (a,z)=>
-      (+z[1][m]||0)-
-      (+a[1][m]||0)
-  )
-  .slice(0,15)
-  .forEach(([id,p],i)=>{
-
-    const t=data.teams?.[p.team];
-
-    h+=`
-
-      <tr>
-
-        <td class="pos">
-          ${i+1}
-        </td>
-
-        <td>
-
-          ${esc(p.name)}
-
-          ${
-            i===0
-            ?`
-              <div class="muted">
-                <i data-lucide="medal" class="lucide-icon" aria-hidden="true"></i> ${c[m][2]}
-              </div>
-            `
-            :""
-          }
-
-        </td>
-
-        <td>
-          ${t
-            ?esc(t.name)
-            :"Por definir"
-          }
-        </td>
-
-        <td class="pos">
-          ${+p[m]||0}
-        </td>
-
-      </tr>
-
-    `;
-
-  });
-
-  h+=`
-
-        </table>
-
-      </div>
-
-    </div>
-
-  `;
-
-  b.innerHTML=h;
+  const modal=document.getElementById("playerModal");
+  if(!modal) return;
+  if(!event || event.target===modal) modal.classList.add("hidden");
 }
 
 
@@ -4264,7 +3650,7 @@ function renderFixture(){
 
           ${
             m.court
-            ?" · "+esc(m.court)
+            ?" · "+(String(m.court)==="1"?"CANCHA 1":String(m.court)==="2"?"CANCHA 2":esc(m.court))
             :""
           }
 
@@ -4825,18 +4211,15 @@ function render(){
 
   renderRegistrationHero();
   renderPlayers();
-  renderStats();
   renderFixture();
   renderResults();
   renderTables();
   renderPlayoffs();
   renderHomePlayerOfRound();
-  renderHomePlayerToWatch();
   renderLiveCenter();
   renderNextMatches();
   renderRecentResults();
   renderGroupLeaders();
-  renderTopStats();
   renderTournamentStatus();
   renderChampion();
   refreshTimeSensitiveContent();
