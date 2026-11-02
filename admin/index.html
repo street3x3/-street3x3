@@ -1581,7 +1581,7 @@ alert("Los dos equipos deben pertenecer al grupo seleccionado.");
 return;
 }
 
-m.status=(m.homeScore!==null&&m.awayScore!==null)?"Finalizado":"Programado";
+m.status=hasValidMatchScore(m)?"Finalizado":"Programado";
 
 save();
 renderFixture();
@@ -1619,6 +1619,78 @@ renderFixture();
 
 }
 
+function hasValidMatchScore(match){
+const valid=value=>value!==null && value!==undefined && value!=="" && Number.isFinite(Number(value));
+return valid(match.homeScore) && valid(match.awayScore);
+}
+
+function getMatchAdminStatus(match){
+const status=String(match.status||"").toLowerCase();
+if(status==="en juego" || status==="enjuego" || status==="live" || status==="playing")return "EN JUEGO";
+if(hasValidMatchScore(match))return "FINALIZADO";
+return "PROGRAMADO";
+}
+
+function saveAdminMatchResult(id){
+const match=data.matches?.[id];
+if(!match)return;
+
+const homeInput=document.getElementById(id+"_admin_home_score");
+const awayInput=document.getElementById(id+"_admin_away_score");
+if(!homeInput||!awayInput)return;
+
+const homeText=homeInput.value.trim();
+const awayText=awayInput.value.trim();
+
+if(homeText==="" || awayText===""){
+alert("Ingresá los dos resultados. Si querés dejar el partido sin resultado, usá REINICIAR RESULTADO.");
+return;
+}
+
+const homeScore=Number(homeText);
+const awayScore=Number(awayText);
+
+if(!Number.isInteger(homeScore)||!Number.isInteger(awayScore)||homeScore<0||awayScore<0){
+alert("Los resultados deben ser números enteros iguales o mayores a cero.");
+return;
+}
+
+match.homeScore=homeScore;
+match.awayScore=awayScore;
+match.status="Finalizado";
+match.resultSource="admin";
+match.adminResultOverride=true;
+match.resultUpdatedAt=Date.now();
+
+save();
+renderFixture();
+renderResults();
+renderTables();
+renderPlayoffs();
+
+alert("Resultado guardado desde Admin.");
+}
+
+function resetAdminMatchResult(id){
+const match=data.matches?.[id];
+if(!match)return;
+
+if(!confirm("¿Querés borrar el resultado de este partido y dejarlo como PROGRAMADO?"))return;
+
+match.homeScore=null;
+match.awayScore=null;
+match.status="Programado";
+match.resultSource="admin";
+match.adminResultOverride=true;
+match.resultUpdatedAt=Date.now();
+
+save();
+renderFixture();
+renderResults();
+renderTables();
+renderPlayoffs();
+}
+
 function renderFixture(){
 
 const container=document.getElementById("fixtureList");
@@ -1653,7 +1725,7 @@ html+=`
 
 <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
 <strong>PARTIDO ${index+1}</strong>
-<span style="color:#aaa">${m.homeScore!==null&&m.awayScore!==null?"FINALIZADO":"PROGRAMADO"}</span>
+<span style="color:#aaa;font-weight:800">${getMatchAdminStatus(m)}</span>
 </div>
 
 <div class="team-form" style="margin-top:15px">
@@ -1706,7 +1778,26 @@ html+=`
 <button class="danger" onclick="deleteFixtureMatch('${id}')">ELIMINAR</button>
 </div>
 
-${h&&a?`<div style="margin-top:12px;color:#aaa">${escapeHtml(h.name)} vs ${escapeHtml(a.name)} · ${m.date?escapeHtml(m.date):"sin fecha"} · ${m.time||"sin hora"} · ${m.court?"Cancha "+m.court:"sin cancha"}</div>`:"<div style='margin-top:12px;color:#ff7777'>Faltan equipos por asignar.</div>"}
+${h&&a?`
+<div style="margin-top:16px;padding:14px;background:#202020;border:1px solid #3a3a3a;border-radius:10px">
+  <div style="font-weight:800;margin-bottom:10px">RESULTADO DEL PARTIDO</div>
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    <label style="display:flex;flex-direction:column;gap:5px">
+      <small>${escapeHtml(h.name)}</small>
+      <input type="number" min="0" step="1" id="${id}_admin_home_score" value="${hasValidMatchScore(m)?Number(m.homeScore):""}" placeholder="Puntos local" style="width:125px">
+    </label>
+    <strong>–</strong>
+    <label style="display:flex;flex-direction:column;gap:5px">
+      <small>${escapeHtml(a.name)}</small>
+      <input type="number" min="0" step="1" id="${id}_admin_away_score" value="${hasValidMatchScore(m)?Number(m.awayScore):""}" placeholder="Puntos visitante" style="width:125px">
+    </label>
+    <button class="primary" onclick="saveAdminMatchResult('${id}')">GUARDAR / MODIFICAR RESULTADO</button>
+    <button class="danger" onclick="resetAdminMatchResult('${id}')">REINICIAR RESULTADO</button>
+  </div>
+  <small style="display:block;color:#aaa;margin-top:9px">El resultado se guarda en Firebase y actualiza las tablas. El marcador seguirá mostrando el resultado sincronizado.</small>
+</div>
+<div style="margin-top:12px;color:#aaa">${escapeHtml(h.name)} vs ${escapeHtml(a.name)} · ${m.date?escapeHtml(m.date):"sin fecha"} · ${m.time||"sin hora"} · ${m.court?"Cancha "+m.court:"sin cancha"}</div>
+`:"<div style='margin-top:12px;color:#ff7777'>Faltan equipos por asignar.</div>"}
 
 </div>
 `;
@@ -1735,6 +1826,7 @@ document.getElementById(id+"_away").innerHTML=fixtureTeamOptions("",group);
 function renderResults(){
 
 const container=document.getElementById("resultsList");
+if(!container)return;
 
 if(!Object.keys(data.matches||{}).length){
 
@@ -1830,12 +1922,16 @@ m.date=document.getElementById(id+"_date").value;
 m.court=document.getElementById(id+"_court").value;
 m.time=document.getElementById(id+"_time").value;
 
-m.status=
-m.homeScore!==null && m.awayScore!==null
-?"Finalizado"
-:"Programado";
+m.status=hasValidMatchScore(m)?"Finalizado":"Programado";
+m.resultSource="admin";
+m.adminResultOverride=true;
+m.resultUpdatedAt=Date.now();
 
 save();
+renderFixture();
+renderResults();
+renderTables();
+renderPlayoffs();
 
 }
 
