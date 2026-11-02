@@ -1052,10 +1052,6 @@ INICIO
 JUGADORES
 </button>
 
-<button class="nav" data-tab="estadisticas">
-ESTADÍSTICAS
-</button>
-
 <button class="nav" data-tab="tablas">
 TABLAS
 </button>
@@ -1103,7 +1099,7 @@ TODO EL TORNEO.
 </h1>
 
 <p>
-Resultados, posiciones, jugadores y estadísticas actualizadas en tiempo real.
+Resultados, posiciones y jugadores actualizados en tiempo real.
 </p>
 
 <div class="muted" id="status">
@@ -1193,21 +1189,7 @@ Todos los participantes del torneo.
 </section>
 
 
-<section id="estadisticas" class="section">
 
-<div class="title">
-
-<h2>Estadísticas</h2>
-
-<p>
-Los líderes del torneo en cada categoría.
-</p>
-
-</div>
-
-<div id="statsContent"></div>
-
-</section>
 
 
 <section id="tablas" class="section">
@@ -2368,11 +2350,6 @@ function renderHomePlayerOfRound(){
         ${team ? esc(team.name) : "Equipo por definir"}
       </div>
 
-      <div style="margin-top:13px;font-weight:900">
-        ${Number(p.points)||0} PTS ·
-        ${Number(p.rebounds)||0} REB ·
-        ${Number(p.assists)||0} AST
-      </div>
 
     </div>
 
@@ -3175,9 +3152,9 @@ function renderTopStats(){
       <a
         class="dashboardLink"
         href="#"
-        onclick="goToTab('estadisticas');return false"
+        onclick="goToTab('jugadores');return false"
       >
-        VER RANKING MVP →
+        VER JUGADORES →
       </a>
 
     </div>
@@ -3263,20 +3240,7 @@ function renderPlayers(){
           onclick="openPlayerModal('${id}')"
         >
 
-          <div class="meta">
-
-            <span>
-              JUGADOR
-            </span>
-
-            <span>
-              ${p.number
-                ?"#"+esc(p.number)
-                :""
-              }
-            </span>
-
-          </div>
+          <div class="meta"><span>JUGADOR</span></div>
 
           <div
             style="
@@ -3366,11 +3330,6 @@ function openPlayerModal(id){
 
     <h2 style="font-size:32px;margin:8px 0">
 
-      ${p.number
-        ?"#"+esc(p.number)+" "
-        :""
-      }
-
       ${esc(p.name)}
 
     </h2>
@@ -3438,113 +3397,6 @@ function closePlayerModal(event){
 
   }
 
-}
-
-
-/* =====================================================
-   ESTADÍSTICAS
-===================================================== */
-
-function renderStats(){
-
-  const b=document.getElementById(
-    "statsContent"
-  );
-
-  if(!b){
-    return;
-  }
-
-  const ps=
-    Object.entries(data.participants||{})
-    .sort(
-      (a,z)=>
-        (Number(z[1].motm)||0)-
-        (Number(a[1].motm)||0)
-    )
-    .filter(([id,p])=>(Number(p.motm)||0)>0);
-
-  if(!ps.length){
-
-    b.innerHTML=
-      '<div class="empty">Los MVP se van a mostrar a medida que se carguen las distinciones.</div>';
-
-    return;
-  }
-
-  let h=`
-
-    <div class="group">
-
-      <h3>
-        RANKING MVP
-      </h3>
-
-      <div class="tableWrap">
-
-        <table class="table">
-
-          <tr>
-            <th>#</th>
-            <th>Jugador</th>
-            <th>Equipo</th>
-            <th>MVP</th>
-          </tr>
-
-  `;
-
-  ps
-  .slice(0,15)
-  .forEach(([id,p],i)=>{
-
-    const team=data.teams?.[p.team];
-
-    h+=`
-
-      <tr>
-
-        <td class="pos">
-          ${i+1}
-        </td>
-
-        <td>
-          ${esc(p.name)}
-          ${
-            i===0
-            ?`
-              <div class="muted">
-                <i data-lucide="medal" class="lucide-icon" aria-hidden="true"></i> LÍDER MVP
-              </div>
-            `
-            :""
-          }
-        </td>
-
-        <td>
-          ${team ? esc(team.name) : "Por definir"}
-        </td>
-
-        <td class="pos">
-          ${Number(p.motm)||0}
-        </td>
-
-      </tr>
-
-    `;
-
-  });
-
-  h+=`
-
-        </table>
-
-      </div>
-
-    </div>
-
-  `;
-
-  b.innerHTML=h;
 }
 
 
@@ -4282,7 +4134,6 @@ function render(){
     "● Datos actualizados en tiempo real";
 
   renderPlayers();
-  renderStats();
   renderFixture();
   renderResults();
   renderTables();
