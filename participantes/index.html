@@ -424,6 +424,93 @@ footer{
 }
 
 /* =========================
+   INSCRIPCIONES DESTACADAS
+========================= */
+
+.registrationHero{
+  margin-bottom:18px;
+}
+
+.registrationCard{
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 85% 15%,rgba(182,255,0,.22),transparent 35%),
+    linear-gradient(135deg,#171c13,#0c0f0c);
+  border:1px solid var(--lime);
+  border-radius:20px;
+  padding:30px;
+  box-shadow:0 0 35px rgba(182,255,0,.10);
+}
+
+.registrationCard:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(
+    115deg,
+    transparent 0%,
+    rgba(182,255,0,.04) 45%,
+    transparent 70%
+  );
+  pointer-events:none;
+}
+
+.registrationTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  margin-bottom:15px;
+}
+
+.registrationTitle{
+  font-size:clamp(32px,5vw,58px);
+  line-height:.92;
+  font-weight:1000;
+  letter-spacing:-3px;
+  margin:8px 0 14px;
+  position:relative;
+}
+
+.registrationTitle span{
+  color:var(--lime);
+}
+
+.registrationDate{
+  color:var(--muted);
+  font-size:12px;
+}
+
+.registrationBadge{
+  display:inline-block;
+  background:var(--lime);
+  color:#000;
+  padding:7px 11px;
+  border-radius:99px;
+  font-size:11px;
+  font-weight:1000;
+}
+
+.registrationButton{
+  display:inline-block;
+  margin-top:18px;
+  background:var(--lime);
+  color:#000;
+  text-decoration:none;
+  padding:12px 16px;
+  border-radius:10px;
+  font-size:12px;
+  font-weight:1000;
+  transition:.18s;
+}
+
+.registrationButton:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 25px rgba(182,255,0,.18);
+}
+
+/* =========================
    JUGADORES
 ========================= */
 
@@ -537,28 +624,11 @@ footer{
 
 .homeGrid{
   display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  grid-template-areas:
-    "live live"
-    "next leaders"
-    "status recent"
-    "stats stats"
-    "player player"
-    "champ champ";
+  grid-template-columns:1fr 1fr;
   gap:18px;
   margin-top:18px;
-  align-items:stretch;
+  align-items:start;
 }
-
-#liveCenterContent{grid-area:live}
-#nextMatchesContent{grid-area:next}
-#groupLeadersContent{grid-area:leaders}
-#tournamentStatusContent{grid-area:status}
-#recentResultsContent{grid-area:recent}
-#topStatsContent{grid-area:stats}
-#homePlayerOfRound{grid-area:player}
-#championContent{grid-area:champ}
-#homePlayerOfRound:empty,#championContent:empty{display:none}
 
 .homeBlock{
   padding:22px;
@@ -778,6 +848,68 @@ footer{
 }
 
 /* =========================
+   CUENTA REGRESIVA
+========================= */
+
+.countdown{
+  margin-top:18px;
+  background:linear-gradient(145deg,#151915,#0f120f);
+  border:1px solid var(--lime);
+  border-radius:18px;
+  padding:22px;
+  text-align:center;
+}
+
+.countdown .kicker{
+  color:var(--lime);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:2px;
+}
+
+.countdown h2{
+  margin:7px 0 4px;
+  font-size:24px;
+}
+
+.countdown .subtitle{
+  color:var(--muted);
+  font-size:12px;
+  margin-bottom:16px;
+}
+
+.countdownGrid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  max-width:620px;
+  margin:auto;
+}
+
+.countdownBox{
+  background:#1a1e1a;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:13px 8px;
+}
+
+.countdownBox b{
+  display:block;
+  color:var(--lime);
+  font-size:32px;
+  line-height:1;
+}
+
+.countdownBox span{
+  display:block;
+  color:var(--muted);
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:1px;
+  margin-top:6px;
+}
+
+/* =========================
    APP
 ========================= */
 
@@ -892,6 +1024,14 @@ footer{
     grid-template-columns:1fr 1fr;
   }
 
+  .homeGrid{
+    grid-template-columns:1fr;
+  }
+
+  .homeBlock.full{
+    grid-column:auto;
+  }
+
   .liveGrid{
     grid-template-columns:1fr;
   }
@@ -902,19 +1042,6 @@ footer{
 }
 
 @media(max-width:650px){
-
-  .homeGrid{
-    grid-template-columns:1fr;
-    grid-template-areas:
-      "live"
-      "next"
-      "leaders"
-      "status"
-      "recent"
-      "stats"
-      "player"
-      "champ";
-  }
 
   .appGrid{
     grid-template-columns:1fr;
@@ -1008,6 +1135,38 @@ footer{
     grid-template-columns:1fr;
   }
 
+  .countdown{
+    padding:18px 12px;
+  }
+
+  .countdown h2{
+    font-size:21px;
+  }
+
+  .countdownGrid{
+    gap:6px;
+  }
+
+  .countdownBox{
+    padding:11px 5px;
+  }
+
+  .countdownBox b{
+    font-size:25px;
+  }
+
+  .registrationCard{
+    padding:22px 18px;
+  }
+
+  .registrationTitle{
+    font-size:38px;
+    letter-spacing:-2px;
+  }
+
+  .registrationTop{
+    align-items:flex-start;
+  }
 
 }
 
@@ -1052,8 +1211,8 @@ INICIO
 JUGADORES
 </button>
 
-<button class="nav" data-tab="tablas">
-TABLAS
+<button class="nav" data-tab="estadisticas">
+ESTADÍSTICAS
 </button>
 
 <button class="nav" data-tab="fixture">
@@ -1062,6 +1221,10 @@ FIXTURE
 
 <button class="nav" data-tab="resultados">
 RESULTADOS
+</button>
+
+<button class="nav" data-tab="tablas">
+TABLAS
 </button>
 
 <button class="nav" data-tab="playoffs">
@@ -1078,6 +1241,13 @@ PLAYOFFS
 <main class="wrap">
 
 <section id="inicio" class="section active hero">
+
+
+<!-- =========================
+     INSCRIPCIONES ARRIBA
+========================= -->
+
+<div id="registrationHero" class="registrationHero"></div>
 
 
 <!-- =========================
@@ -1099,7 +1269,7 @@ TODO EL TORNEO.
 </h1>
 
 <p>
-Resultados, posiciones y jugadores actualizados en tiempo real.
+Resultados, posiciones, jugadores y estadísticas actualizadas en tiempo real.
 </p>
 
 <div class="muted" id="status">
@@ -1115,7 +1285,7 @@ Conectando...
 <div class="card">
 
 <div class="muted">
-EQUIPOS PARTICIPANTES
+EQUIPOS INSCRIPTOS
 </div>
 
 <div class="stat" id="teamCount">
@@ -1129,11 +1299,56 @@ EQUIPOS PARTICIPANTES
 <br>
 
 <div class="muted">
-PARTIDOS FINALIZADOS
+PARTIDOS
 </div>
 
 <div class="stat" id="matchCount">
-0 de 31
+—
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     CUENTA REGRESIVA
+========================= -->
+
+<div class="countdown">
+
+<div class="kicker">
+STREET 3x3 · CUENTA REGRESIVA
+</div>
+
+<h2 id="countdownTitle">
+FALTAN PARA EL EVENTO
+</h2>
+
+<div class="subtitle">
+7 DE NOVIEMBRE · FECHA DE INICIO
+</div>
+
+<div class="countdownGrid">
+
+<div class="countdownBox">
+<b id="countdownDays">00</b>
+<span>DÍAS</span>
+</div>
+
+<div class="countdownBox">
+<b id="countdownHours">00</b>
+<span>HORAS</span>
+</div>
+
+<div class="countdownBox">
+<b id="countdownMinutes">00</b>
+<span>MINUTOS</span>
+</div>
+
+<div class="countdownBox">
+<b id="countdownSeconds">00</b>
+<span>SEGUNDOS</span>
 </div>
 
 </div>
@@ -1148,6 +1363,8 @@ PARTIDOS FINALIZADOS
 <div class="homeGrid">
 
 <div id="homePlayerOfRound"></div>
+
+<div id="homePlayerToWatch"></div>
 
 <div id="liveCenterContent"></div>
 
@@ -1189,22 +1406,19 @@ Todos los participantes del torneo.
 </section>
 
 
-
-
-
-<section id="tablas" class="section">
+<section id="estadisticas" class="section">
 
 <div class="title">
 
-<h2>Tablas</h2>
+<h2>Estadísticas</h2>
 
 <p>
-Posiciones calculadas automáticamente.
+Los líderes del torneo en cada categoría.
 </p>
 
 </div>
 
-<div id="tablesContent"></div>
+<div id="statsContent"></div>
 
 </section>
 
@@ -1239,6 +1453,23 @@ Marcadores cargados por la organización.
 </div>
 
 <div id="resultsContent"></div>
+
+</section>
+
+
+<section id="tablas" class="section">
+
+<div class="title">
+
+<h2>Tablas</h2>
+
+<p>
+Posiciones calculadas automáticamente.
+</p>
+
+</div>
+
+<div id="tablesContent"></div>
 
 </section>
 
@@ -1298,6 +1529,34 @@ El camino hacia el campeonato.
             src="dove.webp"
             alt="Dove Men+Care"
             loading="lazy">
+        </div>
+
+        <div class="sponsor">
+          <img src="angus-brother.png" alt="Angus Brother" loading="lazy">
+        </div>
+
+        <div class="sponsor">
+          <img src="powerade.png" alt="Powerade" loading="lazy">
+        </div>
+
+        <div class="sponsor">
+          <img src="la-martina.png" alt="La Martina Frutería" loading="lazy">
+        </div>
+
+        <div class="sponsor">
+          <img src="meet-fit-pilates.png" alt="Meet Fit Pilates" loading="lazy">
+        </div>
+
+        <div class="sponsor">
+          <img src="bn-market.png" alt="B&N Commerce" loading="lazy">
+        </div>
+
+        <div class="sponsor">
+          <img src="mates-la-suiza.png" alt="Mates La Suiza" loading="lazy">
+        </div>
+
+        <div class="sponsor">
+          <img src="alfajores-duo.png" alt="Alfajores Dúo" loading="lazy">
         </div>
 
       </div>
@@ -2039,10 +2298,161 @@ function playoffWinner(m){
 
 
 /* =====================================================
+   HERO DE INSCRIPCIÓN
+===================================================== */
+
+function renderRegistrationHero(){
+
+  const b=document.getElementById("registrationHero");
+
+  if(!b){
+    return;
+  }
+
+  const tournamentStart=
+    new Date("2026-11-07T00:00:00-03:00").getTime();
+
+  /*
+    Antes del torneo mostramos inscripción.
+  */
+
+  if(Date.now()<tournamentStart){
+
+    b.innerHTML=`
+
+      <div class="registrationCard">
+
+        <div class="registrationTop">
+
+          <div class="kicker">
+            <i data-lucide="circle-dot" class="lucide-icon" aria-hidden="true"></i> ¿VAS A SER PARTE?
+          </div>
+
+          <span class="registrationBadge">
+            STREET 3x3
+          </span>
+
+        </div>
+
+        <div class="registrationTitle">
+          NO VENGAS A MIRAR.<br>
+          <span>VENÍ A JUGAR.</span>
+        </div>
+
+        <div class="registrationDate">
+          Street 3x3 · 7 de noviembre
+        </div>
+
+        <div style="margin-top:14px">
+
+          <span class="registrationBadge">
+            INSCRIPCIONES ABIERTAS
+          </span>
+
+        </div>
+
+        <a
+          href="https://www.instagram.com/street3x3_2026/"
+          target="_blank"
+          rel="noopener"
+          class="registrationButton"
+        >
+          ANOTÁ A TU EQUIPO →
+        </a>
+
+      </div>
+
+    `;
+
+    return;
+  }
+
+  /*
+    Después del inicio ya no mostramos
+    la tarjeta de inscripción.
+  */
+
+  b.innerHTML="";
+}
+
+
+/* =====================================================
    ESTADO DEL TORNEO
 ===================================================== */
 
-function finishedTournamentMatches(){
+function renderTournamentStatus(){
+
+  const b=document.getElementById(
+    "tournamentStatusContent"
+  );
+
+  if(!b){
+    return;
+  }
+
+  const tournamentStart=
+    new Date("2026-11-07T00:00:00-03:00").getTime();
+
+  if(Date.now()<tournamentStart){
+
+    b.innerHTML=`
+
+      <div class="homeBlock">
+
+        <div class="homeTitle">
+
+          <h3>
+            <i data-lucide="trophy" class="lucide-icon" aria-hidden="true"></i> ESTADO DEL TORNEO
+          </h3>
+
+          <span>
+            FASE DE GRUPOS
+          </span>
+
+        </div>
+
+        <div style="font-size:24px;font-weight:900">
+          0 / ${TOTAL_TOURNAMENT_MATCHES}
+        </div>
+
+        <div class="muted" style="margin-top:4px">
+          PARTIDOS FINALIZADOS · 0% COMPLETADO
+        </div>
+
+        <div class="tournamentProgress">
+          <div style="width:0%"></div>
+        </div>
+
+        <div class="tournamentStats">
+
+          <div class="tournamentStat">
+            <b>0</b>
+            <span class="muted">FINALIZADOS</span>
+          </div>
+
+          <div class="tournamentStat">
+            <b>0</b>
+            <span class="muted">EN JUEGO</span>
+          </div>
+
+          <div class="tournamentStat">
+            <b>${TOTAL_TOURNAMENT_MATCHES}</b>
+            <span class="muted">PENDIENTES</span>
+          </div>
+
+        </div>
+
+        <div class="muted" style="margin-top:12px">
+          24 grupos · 4 cuartos · 2 semifinales · 1 final
+        </div>
+
+      </div>
+
+    `;
+
+    return;
+  }
+
 
   const groupFinished=
     Object.values(data.matches||{})
@@ -2054,36 +2464,10 @@ function finishedTournamentMatches(){
     .filter(isPlayoffFinished)
     .length;
 
-  return Math.min(
+  const finished=Math.min(
     TOTAL_TOURNAMENT_MATCHES,
     groupFinished+playoffFinished
   );
-}
-
-
-function renderTournamentStatus(){
-
-  const b=document.getElementById(
-    "tournamentStatusContent"
-  );
-
-  const finished=finishedTournamentMatches();
-
-  const matchCount=document.getElementById("matchCount");
-
-  if(matchCount){
-    matchCount.textContent=
-      finished+" de "+TOTAL_TOURNAMENT_MATCHES;
-  }
-
-  if(!b){
-    return;
-  }
-
-  const groupFinished=
-    Object.values(data.matches||{})
-    .filter(m=>isMatchFinished(m))
-    .length;
 
   const liveCount=[
     liveStateValid(live1),
@@ -2092,8 +2476,10 @@ function renderTournamentStatus(){
 
   const p=data.playoffs||{};
 
+  const finalWinner=playoffWinner(p.final);
+
   const champion=
-    playoffWinner(p.final) ||
+    finalWinner ||
     p.champion ||
     null;
 
@@ -2135,7 +2521,7 @@ function renderTournamentStatus(){
       </div>
 
       <div style="font-size:24px;font-weight:900">
-        ${finished} de ${TOTAL_TOURNAMENT_MATCHES}
+        ${finished} / ${TOTAL_TOURNAMENT_MATCHES}
       </div>
 
       <div class="muted" style="margin-top:4px">
@@ -2350,6 +2736,78 @@ function renderHomePlayerOfRound(){
         ${team ? esc(team.name) : "Equipo por definir"}
       </div>
 
+      <div style="margin-top:13px;font-weight:900">
+        ${Number(p.points)||0} PTS ·
+        ${Number(p.rebounds)||0} REB ·
+        ${Number(p.assists)||0} AST
+      </div>
+
+    </div>
+
+  `;
+}
+
+
+/* =====================================================
+   JUGADOR A SEGUIR
+===================================================== */
+
+function renderHomePlayerToWatch(){
+
+  const b=document.getElementById(
+    "homePlayerToWatch"
+  );
+
+  if(!b){
+    return;
+  }
+
+  const p=data.playerToWatch
+    ?data.participants?.[data.playerToWatch]
+    :null;
+
+  if(!p){
+
+    b.innerHTML="";
+    return;
+  }
+
+  const t=data.teams?.[p.team];
+
+  const g=+p.games||0;
+
+  b.innerHTML=`
+
+    <div class="homeBlock">
+
+      <div class="homeTitle">
+
+        <h3>
+          <i data-lucide="eye" class="lucide-icon" aria-hidden="true"></i> JUGADOR A SEGUIR
+        </h3>
+
+        <span>
+          ATENCIÓN
+        </span>
+
+      </div>
+
+      <div style="font-size:24px;font-weight:900">
+        ${p.number ? "#"+esc(p.number)+" " : ""}
+        ${esc(p.name)}
+      </div>
+
+      <div class="muted">
+        ${t ? esc(t.name) : "Equipo por definir"}
+      </div>
+
+      <div style="margin-top:13px;font-weight:900">
+
+        ${g ? (+p.points/g).toFixed(1) : "0.0"} PPG ·
+        ${g ? (+p.rebounds/g).toFixed(1) : "0.0"} RPG ·
+        ${g ? (+p.assists/g).toFixed(1) : "0.0"} APG
+
+      </div>
 
     </div>
 
@@ -3081,19 +3539,19 @@ function renderTopStats(){
   }
 
   const players=
-    Object.entries(data.participants||{})
-    .sort(
-      (a,z)=>
-        (Number(z[1].motm)||0)-
-        (Number(a[1].motm)||0)
-    )
-    .filter(([id,p])=>(Number(p.motm)||0)>0)
-    .slice(0,3);
+    Object.entries(data.participants||{});
 
   if(!players.length){
+
     b.innerHTML="";
     return;
   }
+
+  const categories=[
+    ["points",'<i data-lucide="circle-dot" class="lucide-icon" aria-hidden="true"></i> PUNTOS',"PTS"],
+    ["rebounds",'<i data-lucide="refresh-cw" class="lucide-icon" aria-hidden="true"></i> REBOTES',"REB"],
+    ["assists",'<i data-lucide="target" class="lucide-icon" aria-hidden="true"></i> ASISTENCIAS',"AST"]
+  ];
 
   let h=`
 
@@ -3102,7 +3560,7 @@ function renderTopStats(){
       <div class="homeTitle">
 
         <h3>
-          <i data-lucide="trophy" class="lucide-icon" aria-hidden="true"></i> MVP DEL TORNEO
+          <i data-lucide="chart-no-axes-combined" class="lucide-icon" aria-hidden="true"></i> LÍDERES ESTADÍSTICOS
         </h3>
 
         <span>
@@ -3115,35 +3573,74 @@ function renderTopStats(){
 
   `;
 
-  players.forEach(([id,p],i)=>{
+  categories.forEach(
+    ([metric,title,label])=>{
 
-    const team=data.teams?.[p.team];
+      const list=[...players]
+      .sort(
+        (a,z)=>
+          (Number(z[1][metric])||0)-
+          (Number(a[1][metric])||0)
+      )
+      .slice(0,3);
 
-    h+=`
+      h+=`
 
-      <div class="topMiniCard">
+        <div class="topMiniCard">
 
-        <div class="kicker">
-          #${i+1}
+          <div class="kicker">
+            ${title}
+          </div>
+
+      `;
+
+      list.forEach(([id,p],i)=>{
+
+        const team=data.teams?.[p.team];
+
+        h+=`
+
+          <div style="margin-top:10px">
+
+            <div
+              style="
+                font-size:11px;
+                color:var(--muted)
+              "
+            >
+              #${i+1}
+            </div>
+
+            <strong>
+              ${esc(p.name)}
+            </strong>
+
+            <div class="muted">
+              ${team
+                ?esc(team.name)
+                :"Por definir"
+              }
+            </div>
+
+            <b>
+              ${Number(p[metric])||0}
+              ${label}
+            </b>
+
+          </div>
+
+        `;
+
+      });
+
+      h+=`
+
         </div>
 
-        <strong>
-          ${esc(p.name)}
-        </strong>
+      `;
 
-        <div class="muted">
-          ${team ? esc(team.name) : "Por definir"}
-        </div>
-
-        <b>
-          ${Number(p.motm)||0} MVP
-        </b>
-
-      </div>
-
-    `;
-
-  });
+    }
+  );
 
   h+=`
 
@@ -3152,9 +3649,9 @@ function renderTopStats(){
       <a
         class="dashboardLink"
         href="#"
-        onclick="goToTab('jugadores');return false"
+        onclick="goToTab('estadisticas');return false"
       >
-        VER JUGADORES →
+        VER TOP 15 →
       </a>
 
     </div>
@@ -3163,11 +3660,6 @@ function renderTopStats(){
 
   b.innerHTML=h;
 }
-
-
-/* =====================================================
-   JUGADORES
-===================================================== */
 
 
 /* =====================================================
@@ -3240,7 +3732,20 @@ function renderPlayers(){
           onclick="openPlayerModal('${id}')"
         >
 
-          <div class="meta"><span>JUGADOR</span></div>
+          <div class="meta">
+
+            <span>
+              JUGADOR
+            </span>
+
+            <span>
+              ${p.number
+                ?"#"+esc(p.number)
+                :""
+              }
+            </span>
+
+          </div>
 
           <div
             style="
@@ -3251,16 +3756,19 @@ function renderPlayers(){
             ${esc(p.name)}
           </div>
 
-          <div style="font-size:16px;font-weight:900;color:var(--lime);margin-top:7px">
+          <div class="muted">
             ${t
               ?esc(t.name)
               :"Equipo por definir"
             }
           </div>
 
-          <div class="muted" style="margin-top:12px;font-size:12px">
-            <i data-lucide="medal" class="lucide-icon" aria-hidden="true"></i>
-            Jugador del partido: <strong style="color:#fff">${Number(p.motm)||0} ${Number(p.motm)===1?"vez":"veces"}</strong>
+          <div style="margin-top:12px">
+
+            <span class="badge">
+              VER PROMEDIOS
+            </span>
+
           </div>
 
         </div>
@@ -3288,19 +3796,27 @@ function playerTopLabels(id){
 
   const out=[];
 
-  const ranking=
-    Object.entries(data.participants||{})
-    .sort(
-      (a,z)=>
-        (Number(z[1].motm)||0)-
-        (Number(a[1].motm)||0)
-    )
-    .slice(0,15)
-    .map(x=>x[0]);
+  [
+    ["points","PUNTOS"],
+    ["rebounds","REBOTES"],
+    ["assists","ASISTENCIAS"]
+  ].forEach(([m,l])=>{
 
-  if(ranking.includes(id) && (Number(data.participants?.[id]?.motm)||0)>0){
-    out.push('<i data-lucide="medal" class="lucide-icon" aria-hidden="true"></i> TOP 15 MVP');
-  }
+    const r=
+      Object.entries(data.participants||{})
+      .sort(
+        (a,z)=>
+          (+z[1][m]||0)-
+          (+a[1][m]||0)
+      )
+      .slice(0,15)
+      .map(x=>x[0]);
+
+    if(r.includes(id)){
+      out.push('<i data-lucide="medal" class="lucide-icon" aria-hidden="true"></i> TOP 15 '+l);
+    }
+
+  });
 
   return out;
 }
@@ -3330,6 +3846,11 @@ function openPlayerModal(id){
 
     <h2 style="font-size:32px;margin:8px 0">
 
+      ${p.number
+        ?"#"+esc(p.number)+" "
+        :""
+      }
+
       ${esc(p.name)}
 
     </h2>
@@ -3341,14 +3862,46 @@ function openPlayerModal(id){
       }
     </p>
 
-    <div style="margin-top:26px;padding:18px;background:#1a1e1a;border:1px solid var(--line);border-radius:12px">
-      <div style="color:var(--lime);font-size:12px;font-weight:900;letter-spacing:1px">
-        <i data-lucide="medal" class="lucide-icon" aria-hidden="true"></i> JUGADOR DEL PARTIDO
+    <h3 style="margin-top:28px">
+      PROMEDIOS
+    </h3>
+
+    <div class="avgGrid">
+
+      <div class="avgBox">
+        PPG
+        <b>
+          ${g
+            ?(+p.points/g).toFixed(1)
+            :"0.0"
+          }
+        </b>
       </div>
-      <div style="font-size:30px;font-weight:900;margin-top:7px">
-        ${Number(p.motm)||0}
+
+      <div class="avgBox">
+        RPG
+        <b>
+          ${g
+            ?(+p.rebounds/g).toFixed(1)
+            :"0.0"
+          }
+        </b>
       </div>
-      <div class="muted">${Number(p.motm)===1?"vez":"veces"}</div>
+
+      <div class="avgBox">
+        APG
+        <b>
+          ${g
+            ?(+p.assists/g).toFixed(1)
+            :"0.0"
+          }
+        </b>
+      </div>
+
+    </div>
+
+    <div style="margin-top:18px;font-weight:900">
+      <i data-lucide="star" class="lucide-icon" aria-hidden="true"></i> MVP: ${+p.motm||0}
     </div>
 
     ${
@@ -3401,8 +3954,164 @@ function closePlayerModal(event){
 
 
 /* =====================================================
-   FILTROS
+   ESTADÍSTICAS
 ===================================================== */
+
+window.activeRanking="points";
+
+function setRanking(m){
+
+  window.activeRanking=m;
+
+  renderStats();
+}
+
+
+function renderStats(){
+
+  const b=document.getElementById(
+    "statsContent"
+  );
+
+  if(!b){
+    return;
+  }
+
+  const ps=
+    Object.entries(data.participants||{});
+
+  const m=
+    window.activeRanking||"points";
+
+  const c={
+    points:[
+      "PUNTOS",
+      "PTS",
+      "MÁXIMO ANOTADOR"
+    ],
+    rebounds:[
+      "REBOTES",
+      "REB",
+      "MÁXIMO REBOTERO"
+    ],
+    assists:[
+      "ASISTENCIAS",
+      "AST",
+      "MÁXIMO ASISTENTE"
+    ],
+    motm:[
+      "MVP",
+      "MVP",
+      "MÁS MVP"
+    ]
+  };
+
+  let h=`
+
+    <div class="tabs filterTabs">
+
+      ${
+        Object.entries(c)
+        .map(
+          ([k,v])=>`
+
+            <button
+              class="nav ${k===m?"active":""}"
+              onclick="setRanking('${k}')"
+            >
+              ${v[0]}
+            </button>
+
+          `
+        )
+        .join("")
+      }
+
+    </div>
+
+    <div class="group">
+
+      <h3>
+        TOP 15 — ${c[m][0]}
+      </h3>
+
+      <div class="tableWrap">
+
+        <table class="table">
+
+          <tr>
+            <th>#</th>
+            <th>Jugador</th>
+            <th>Equipo</th>
+            <th>${c[m][1]}</th>
+          </tr>
+
+  `;
+
+  [...ps]
+  .sort(
+    (a,z)=>
+      (+z[1][m]||0)-
+      (+a[1][m]||0)
+  )
+  .slice(0,15)
+  .forEach(([id,p],i)=>{
+
+    const t=data.teams?.[p.team];
+
+    h+=`
+
+      <tr>
+
+        <td class="pos">
+          ${i+1}
+        </td>
+
+        <td>
+
+          ${esc(p.name)}
+
+          ${
+            i===0
+            ?`
+              <div class="muted">
+                <i data-lucide="medal" class="lucide-icon" aria-hidden="true"></i> ${c[m][2]}
+              </div>
+            `
+            :""
+          }
+
+        </td>
+
+        <td>
+          ${t
+            ?esc(t.name)
+            :"Por definir"
+          }
+        </td>
+
+        <td class="pos">
+          ${+p[m]||0}
+        </td>
+
+      </tr>
+
+    `;
+
+  });
+
+  h+=`
+
+        </table>
+
+      </div>
+
+    </div>
+
+  `;
+
+  b.innerHTML=h;
+}
 
 
 /* =====================================================
@@ -3555,7 +4264,7 @@ function renderFixture(){
 
           ${
             m.court
-            ?" · "+(String(m.court)==="1"?"CANCHA 1":String(m.court)==="2"?"CANCHA 2":esc(m.court))
+            ?" · "+esc(m.court)
             :""
           }
 
@@ -3808,30 +4517,10 @@ function renderPlayoffs(){
 
   const p=data.playoffs||{};
 
-  const bracketExists=
-    ["qf1","qf2","qf3","qf4","sf1","sf2","final"]
-    .some(key=>{
-      const m=p[key];
-      return !!m && (
-        !!m.home ||
-        !!m.away ||
-        !!m.homeId ||
-        !!m.awayId ||
-        isScoreSet(m.homeScore) ||
-        isScoreSet(m.awayScore)
-      );
-    });
+  if(!Object.keys(p).length){
 
-  if(!bracketExists){
-
-    b.innerHTML=`
-      <div class="empty">
-        <div style="font-size:18px;font-weight:900;color:var(--lime);margin-bottom:8px">
-          PRÓXIMAMENTE
-        </div>
-        Se definirá al finalizar la fase de grupos.
-      </div>
-    `;
+    b.innerHTML=
+      '<div class="empty">Los playoffs todavía no fueron generados.</div>';
 
     return;
   }
@@ -4075,6 +4764,7 @@ document
 
 function refreshTimeSensitiveContent(){
 
+  renderRegistrationHero();
   renderLiveCenter();
   renderTournamentStatus();
   renderNextMatches();
@@ -4133,12 +4823,15 @@ function render(){
   ).textContent=
     "● Datos actualizados en tiempo real";
 
+  renderRegistrationHero();
   renderPlayers();
+  renderStats();
   renderFixture();
   renderResults();
   renderTables();
   renderPlayoffs();
   renderHomePlayerOfRound();
+  renderHomePlayerToWatch();
   renderLiveCenter();
   renderNextMatches();
   renderRecentResults();
@@ -4200,6 +4893,11 @@ ref.on("value",s=>{
       ?data.playerOfRound
       :"";
 
+  data.playerToWatch=
+    typeof data.playerToWatch==="string"
+      ?data.playerToWatch
+      :"";
+
   render();
 
 });
@@ -4227,6 +4925,127 @@ liveRef2.on("value",s=>{
   renderTournamentStatus();
 
 });
+
+
+/* =====================================================
+   CUENTA REGRESIVA
+===================================================== */
+
+function updateCountdown(){
+
+  const eventDate=
+    new Date(
+      "2026-11-07T00:00:00-03:00"
+    ).getTime();
+
+  const now=Date.now();
+
+  let remaining=
+    eventDate-now;
+
+  if(remaining<0){
+    remaining=0;
+  }
+
+  const totalSeconds=
+    Math.floor(
+      remaining/1000
+    );
+
+  const days=
+    Math.floor(
+      totalSeconds/86400
+    );
+
+  const hours=
+    Math.floor(
+      (totalSeconds%86400)/3600
+    );
+
+  const minutes=
+    Math.floor(
+      (totalSeconds%3600)/60
+    );
+
+  const seconds=
+    totalSeconds%60;
+
+  const daysEl=
+    document.getElementById(
+      "countdownDays"
+    );
+
+  const hoursEl=
+    document.getElementById(
+      "countdownHours"
+    );
+
+  const minutesEl=
+    document.getElementById(
+      "countdownMinutes"
+    );
+
+  const secondsEl=
+    document.getElementById(
+      "countdownSeconds"
+    );
+
+  const title=
+    document.getElementById(
+      "countdownTitle"
+    );
+
+  if(
+    !daysEl ||
+    !hoursEl ||
+    !minutesEl ||
+    !secondsEl
+  ){
+    return;
+  }
+
+  daysEl.textContent=
+    String(days).padStart(2,"0");
+
+  hoursEl.textContent=
+    String(hours).padStart(2,"0");
+
+  minutesEl.textContent=
+    String(minutes).padStart(2,"0");
+
+  secondsEl.textContent=
+    String(seconds).padStart(2,"0");
+
+  if(title){
+
+    if(
+      Date.now()>=eventDate
+    ){
+
+      title.innerHTML=
+        '<i data-lucide="circle-dot" class="lucide-icon" aria-hidden="true"></i> EL EVENTO YA COMENZÓ';
+
+    }else{
+
+      title.textContent=
+        "FALTAN PARA EL EVENTO";
+
+    }
+
+  }
+
+}
+
+
+/*
+  Actualiza el contador cada segundo.
+*/
+updateCountdown();
+
+setInterval(
+  updateCountdown,
+  1000
+);
 
 
 /*
@@ -4323,6 +5142,5 @@ if("serviceWorker" in navigator){
 
 </body>
 </html>
-
 
 <script>refreshLucideIcons();</script>
