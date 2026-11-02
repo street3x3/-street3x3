@@ -29,36 +29,28 @@ html,body{
   height:100vh;
   min-height:600px;
   display:grid;
-  grid-template-rows:34% 66%;
+  grid-template-rows:30% 70%;
   background:var(--black);
 }
 
 .header{
   display:flex;
-  flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:0;
+  padding-top:5px;
 }
 
 .header img{
-  width:min(42vw,500px);
-  height:min(32vh,290px);
+  width:min(58vw,680px);
+  height:min(29vh,340px);
   object-fit:contain;
-}
-
-.court{
-  color:var(--lime);
-  font-size:clamp(20px,2.2vw,36px);
-  font-weight:1000;
-  letter-spacing:5px;
-  margin-top:0;
 }
 
 .main{
   display:grid;
   grid-template-columns:38% 24% 38%;
   align-items:center;
+  transform:translateY(-3vh);
 }
 
 .team{
@@ -136,6 +128,7 @@ html,body{
   flex-direction:column;
   align-items:center;
   justify-content:center;
+  gap:22px;
 }
 
 .clock{
@@ -146,6 +139,13 @@ html,body{
   letter-spacing:2px;
 }
 
+.court{
+  color:var(--lime);
+  font-size:clamp(22px,2.5vw,40px);
+  font-weight:1000;
+  letter-spacing:6px;
+}
+
 @media(max-width:800px){
 
   .screen{
@@ -154,23 +154,20 @@ html,body{
   }
 
   .header img{
-    width:190px;
-    height:17vh;
-  }
-
-  .court{
-    font-size:clamp(17px,4vw,25px);
-    letter-spacing:3px;
+    width:min(65vw,300px);
+    height:23vh;
   }
 
   .main{
     grid-template-columns:1fr 1fr;
     grid-template-rows:45% 55%;
+    transform:translateY(-1vh);
   }
 
   .center{
     grid-column:1/3;
     grid-row:2;
+    gap:12px;
   }
 
   .team-name{
@@ -196,6 +193,11 @@ html,body{
   .clock{
     font-size:clamp(55px,14vw,90px);
   }
+
+  .court{
+    font-size:clamp(18px,5vw,27px);
+    letter-spacing:4px;
+  }
 }
 </style>
 
@@ -204,7 +206,7 @@ html,body{
 
 <script>
 const firebaseConfig={
-apiKey:"AIzaSyA0IEk-UXbRP3ZxAKtj8xiQZIYQH3L2roI",
+apiKey:"AIzaSyA0IEk-UXbRP3ZxAKtj8xiQZIYQ3H1L2roI",
 authDomain:"street-3x3.firebaseapp.com",
 databaseURL:"https://street-3x3-default-rtdb.firebaseio.com",
 projectId:"street-3x3",
@@ -282,7 +284,6 @@ setInterval(draw,250);
 
   <div class="header">
     <img src="../logo.png" alt="Street 3x3">
-    <div class="court">CANCHA 1</div>
   </div>
 
   <div class="main">
@@ -295,6 +296,7 @@ setInterval(draw,250);
 
     <div class="center">
       <div class="clock" id="clock">10:00</div>
+      <div class="court">CANCHA 1</div>
     </div>
 
     <div class="team">
