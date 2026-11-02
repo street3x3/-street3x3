@@ -39,7 +39,7 @@ button:hover{border-color:var(--l);color:var(--l)}.primary{background:var(--l);c
 <h1>Control · Cancha 2</h1>
 <p class="muted">Elegí un partido del fixture. Los equipos salen automáticamente de los equipos inscriptos.</p>
 <div class="row" style="justify-content:flex-start">
-<select id="matchSelect"><option value="">Seleccionar partido</option></select>
+<select id="matchSelect" onchange="selectedMatchId=this.value"><option value="">Seleccionar partido</option></select>
 <button class="primary" onclick="loadSelectedMatch()">CARGAR PARTIDO</button>
 </div>
 <div id="scheduled" class="muted" style="margin-top:10px"></div>
@@ -75,15 +75,21 @@ const db=firebase.database();
 const ref=db.ref("match2");
 const tournamentRef=db.ref("tournament");
 let data={teams:{},matches:{}};
+let selectedMatchId="";
+let applyingAdminCorrection=false;
+let lastAdminToken={};
 let state={matchId:"",home:0,away:0,homeF:0,awayF:0,homeName:"LOCAL",awayName:"VISITANTE",remaining:600,running:false,endAt:null,finished:false,phase:"normal"};
 
 tournamentRef.on("value",s=>{
   data=s.val()||{};data.teams=data.teams||{};data.matches=data.matches||{};
-  renderMatchOptions();syncAdminCorrection();
+  renderMatchOptions();
+  syncAdminCorrection();
 });
 ref.on("value",s=>{
   state=s.val()||{matchId:"",home:0,away:0,homeF:0,awayF:0,homeName:"LOCAL",awayName:"VISITANTE",remaining:600,running:false,endAt:null,finished:false,phase:"normal"};
-  draw();renderMatchOptions();
+  draw();
+  if(!selectedMatchId) selectedMatchId=state.matchId||"";
+  renderMatchOptions();
 });
 function team(id){return data.teams?.[id]?.name||"Por definir";}
 function hasScore(value){return value!==null&&value!==undefined&&value!==""&&Number.isFinite(Number(value));}
@@ -114,14 +120,26 @@ function draw(){
   badge.className="status "+(state.running?"live":"");
 }
 function renderMatchOptions(){
-  const select=document.getElementById("matchSelect");if(!select)return;
-  const current=state.matchId||"",previous=select.value;
-  const entries=Object.entries(data.matches||{}).filter(([id,m])=>String(m.court)==="2"&&m.home&&m.away)
-    .sort((a,b)=>((a[1].date||"9999-99-99")+" "+(a[1].time||"99:99")).localeCompare((b[1].date||"9999-99-99")+" "+(b[1].time||"99:99")));
+  const select=document.getElementById("matchSelect");
+  if(!select)return;
+  const previous=selectedMatchId || select.value || "";
+  const entries=Object.entries(data.matches||{})
+    .filter(([id,m])=>String(m.court)==="2"&&m.home&&m.away)
+    .sort((a,b)=>{
+      const da=(a[1].date||"9999-99-99")+" "+(a[1].time||"99:99");
+      const db=(b[1].date||"9999-99-99")+" "+(b[1].time||"99:99");
+      return da.localeCompare(db);
+    });
   select.innerHTML='<option value="">Seleccionar partido</option>';
-  entries.forEach(([id,m])=>{const option=document.createElement("option");option.value=id;option.textContent=(m.date||"Sin fecha")+" · "+(m.time||"Sin hora")+" · "+team(m.home)+" vs "+team(m.away)+(hasFixtureResult(m)||m.finished===true?" · FINALIZADO":"");select.appendChild(option);});
-  select.value=current&&entries.some(([id])=>id===current)?current:(entries.some(([id])=>id===previous)?previous:"");
-  const m=current?data.matches[current]:null;
+  entries.forEach(([id,m])=>{
+    const option=document.createElement("option");
+    option.value=id;
+    option.textContent=(m.date||"Sin fecha")+" · "+(m.time||"Sin hora")+" · "+team(m.home)+" vs "+team(m.away)+(hasFixtureResult(m)||m.finished===true?" · FINALIZADO":"");
+    select.appendChild(option);
+  });
+  select.value=entries.some(([id])=>id===previous)?previous:"";
+  selectedMatchId=select.value;
+  const m=state.matchId?data.matches[state.matchId]:null;
   document.getElementById("scheduled").textContent=m?"Programado: "+(m.date||"")+" · "+(m.time||"")+" · Cancha 2":"";
 }
 function snapshotFromFixture(id,m){
@@ -131,19 +149,27 @@ function snapshotFromFixture(id,m){
   return {matchId:id,home:0,away:0,homeF:0,awayF:0,homeName:team(m.home).toUpperCase(),awayName:team(m.away).toUpperCase(),remaining:600,running:false,endAt:null,finished:false,phase:"normal"};
 }
 function loadSelectedMatch(){
-  const id=document.getElementById("matchSelect").value;if(!id)return alert("Seleccioná un partido.");
-  const m=data.matches[id];if(!m)return;
+  const select=document.getElementById("matchSelect");
+  const id=select.value;
+  if(!id)return alert("Seleccioná un partido.");
+  const m=data.matches[id];
+  if(!m)return alert("No se encontró el partido en el fixture.");
   if(String(m.court)!=="2")return alert("Este partido no pertenece a la Cancha 2.");
-  if(state.matchId===id){draw();return;}
-  if(state.running){if(!confirm("Hay un reloj en marcha. ¿Querés detenerlo y cambiar de partido?"))return;
-    const oldId=state.matchId;state={...state,remaining:remaining(),running:false,endAt:null};
-    if(oldId&&data.matches[oldId])tournamentRef.child("matches").child(oldId).child("liveState").set(state);
+  if(state.matchId===id){selectedMatchId=id;draw();return;}
+  if(state.running){
+    if(!confirm("Hay un reloj en marcha. ¿Querés detenerlo y cambiar de partido?"))return;
+    const oldState={...state,remaining:remaining(),running:false,endAt:null};
+    if(oldState.matchId)tournamentRef.child("matches").child(oldState.matchId).child("liveState").set(oldState);
+  }else if(state.matchId){
+    tournamentRef.child("matches").child(state.matchId).child("liveState").set({...state,remaining:remaining(),running:false,endAt:null});
   }
+  selectedMatchId=id;
   ref.set(snapshotFromFixture(id,m));
 }
 function save(x){
-  if(!state.matchId)return;state={...state,...x};ref.update(x);
-  tournamentRef.child("matches").child(state.matchId).child("liveState").set(state);
+  if(!state.matchId)return;
+  state={...state,...x};
+  ref.update(x);
 }
 function score(t,n){
   if(!state.matchId)return alert("Primero cargá un partido.");
@@ -157,23 +183,27 @@ function foul(t,n){
 }
 function clockToggle(){
   if(!state.matchId)return alert("Primero cargá un partido.");
-  if(state.finished)return alert("Este partido ya está finalizado. Para volver a jugarlo, usá REINICIAR.");
+  if(state.finished)return alert("Este partido está finalizado. Para volver a jugarlo, usá REINICIAR.");
   if(state.phase==="sudden")return;
-  const t=remaining();if(state.running)save({remaining:t,running:false,endAt:null});
+  const t=remaining();
+  if(state.running)save({remaining:t,running:false,endAt:null});
   else if(t>0)save({remaining:t,running:true,endAt:Date.now()+t*1000});
 }
 function startOvertime(){
-  if(!state.matchId||state.finished)return;if(state.phase!=="normal"||remaining()!==0)return;
+  if(!state.matchId||state.finished)return;
+  if(state.phase!=="normal"||remaining()!==0)return;
   if(Number(state.home)!==Number(state.away))return alert("El tiempo extra solo corresponde si el partido terminó empatado.");
   save({phase:"overtime",remaining:120,running:false,endAt:null,finished:false});
 }
 function startSuddenDeath(){
-  if(!state.matchId||state.finished)return;if(state.phase!=="overtime"||remaining()!==0)return;
+  if(!state.matchId||state.finished)return;
+  if(state.phase!=="overtime"||remaining()!==0)return;
   if(Number(state.home)!==Number(state.away))return alert("No hay muerte súbita porque ya hay un ganador.");
   save({phase:"sudden",remaining:0,running:false,endAt:null,finished:false});
 }
 function finishMatch(){
-  if(!state.matchId)return;if(!confirm("¿Finalizar este partido y guardar el resultado en el fixture?"))return;
+  if(!state.matchId)return;
+  if(!confirm("¿Finalizar este partido y guardar el resultado en el fixture?"))return;
   const finalHome=Number(state.home)||0,finalAway=Number(state.away)||0;
   const finalState={...state,remaining:0,running:false,endAt:null,finished:true,home:finalHome,away:finalAway};
   state=finalState;ref.set(finalState);
@@ -181,7 +211,8 @@ function finishMatch(){
   renderMatchOptions();draw();
 }
 function resetGame(){
-  if(!state.matchId)return;if(!confirm("¿Reiniciar el marcador de este partido? Se borrarán sus puntos, faltas y resultado guardado."))return;
+  if(!state.matchId)return;
+  if(!confirm("¿Reiniciar el marcador de este partido? Se borrarán sus puntos, faltas y resultado guardado."))return;
   const id=state.matchId;
   const resetState={matchId:id,home:0,away:0,homeF:0,awayF:0,homeName:state.homeName||"LOCAL",awayName:state.awayName||"VISITANTE",remaining:600,running:false,endAt:null,finished:false,phase:"normal"};
   state=resetState;ref.set(resetState);
@@ -189,14 +220,33 @@ function resetGame(){
   renderMatchOptions();draw();
 }
 function syncAdminCorrection(){
-  const id=state.matchId;if(!id)return;const m=data.matches?.[id];
-  if(!m||!(m.adminResultOverride===true||m.resultSource==="admin"))return;
-  const final=hasFixtureResult(m),home=final?Number(m.homeScore):0,away=final?Number(m.awayScore):0;
-  if(Number(state.home)===home&&Number(state.away)===away&&state.finished===final)return;
+  if(applyingAdminCorrection)return;
+  const id=state.matchId;
+  if(!id)return;
+  const m=data.matches?.[id];
+  if(!m || !(m.adminResultOverride===true || m.resultSource==="admin"))return;
+  const token=[id,m.resultUpdatedAt??"",m.homeScore??"",m.awayScore??"",m.status??""].join("|");
+  if(lastAdminToken[id]===token)return;
+  const final=hasFixtureResult(m);
+  const home=final?Number(m.homeScore):0;
+  const away=final?Number(m.awayScore):0;
+  if(Number(state.home)===home && Number(state.away)===away && state.finished===final){
+    lastAdminToken[id]=token;
+    return;
+  }
+  lastAdminToken[id]=token;
   const corrected={...state,home,away,remaining:final?0:600,running:false,endAt:null,finished:final,phase:"normal"};
-  state=corrected;ref.set(corrected);
+  applyingAdminCorrection=true;
+  state=corrected;
+  ref.set(corrected).finally(()=>{applyingAdminCorrection=false;});
 }
-setInterval(()=>{if(state.running&&remaining()===0)save({remaining:0,running:false,endAt:null});draw();},250);
+setInterval(()=>{
+  if(state.running&&remaining()===0){
+    state={...state,remaining:0,running:false,endAt:null};
+    ref.update({remaining:0,running:false,endAt:null});
+  }
+  draw();
+},250);
 </script>
 </body>
 </html>
