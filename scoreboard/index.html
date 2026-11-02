@@ -29,7 +29,7 @@ html,body{
   height:100vh;
   min-height:600px;
   display:grid;
-  grid-template-rows:30% 70%;
+  grid-template-rows:40% 60%;
   background:var(--black);
 }
 
@@ -37,12 +37,11 @@ html,body{
   display:flex;
   align-items:center;
   justify-content:center;
-  padding-top:5px;
 }
 
 .header img{
-  width:min(58vw,680px);
-  height:min(29vh,340px);
+  width:min(65vw,650px);
+  height:38vh;
   object-fit:contain;
 }
 
@@ -50,7 +49,6 @@ html,body{
   display:grid;
   grid-template-columns:38% 24% 38%;
   align-items:center;
-  transform:translateY(-3vh);
 }
 
 .team{
@@ -60,12 +58,13 @@ html,body{
   flex-direction:column;
   align-items:center;
   justify-content:center;
+  transform:translateY(-4vh);
 }
 
 .team-name{
-  font-size:clamp(34px,4.4vw,82px);
+  font-size:clamp(44px,5.2vw,100px);
   font-weight:1000;
-  letter-spacing:1px;
+  letter-spacing:2px;
   text-transform:uppercase;
   white-space:nowrap;
   max-width:95%;
@@ -74,12 +73,12 @@ html,body{
 }
 
 .score{
-  font-size:clamp(130px,17vw,300px);
+  font-size:clamp(160px,19vw,350px);
   line-height:.78;
   font-weight:1000;
   color:var(--lime);
   font-variant-numeric:tabular-nums;
-  margin-top:25px;
+  margin-top:20px;
 }
 
 /* FALTAS: diseño original, sin modificaciones */
@@ -129,10 +128,11 @@ html,body{
   align-items:center;
   justify-content:center;
   gap:22px;
+  transform:translateY(-4vh);
 }
 
 .clock{
-  font-size:clamp(70px,9vw,170px);
+  font-size:clamp(80px,9.5vw,180px);
   font-weight:1000;
   line-height:1;
   font-variant-numeric:tabular-nums;
@@ -150,32 +150,36 @@ html,body{
 
   .screen{
     min-height:0;
-    grid-template-rows:25% 75%;
+    grid-template-rows:28% 72%;
   }
 
   .header img{
     width:min(65vw,300px);
-    height:23vh;
+    height:26vh;
   }
 
   .main{
     grid-template-columns:1fr 1fr;
     grid-template-rows:45% 55%;
-    transform:translateY(-1vh);
+  }
+
+  .team{
+    transform:translateY(-2vh);
   }
 
   .center{
     grid-column:1/3;
     grid-row:2;
     gap:12px;
+    transform:none;
   }
 
   .team-name{
-    font-size:clamp(22px,6vw,48px);
+    font-size:clamp(26px,7vw,54px);
   }
 
   .score{
-    font-size:clamp(85px,24vw,150px);
+    font-size:clamp(100px,27vw,170px);
     margin-top:14px;
   }
 
