@@ -385,6 +385,17 @@ td:nth-child(2){
  .mvp-step{width:32px;height:32px}
 }
 
+
+.mvp-actions-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
+.mvp-actions-label{font-size:10px;font-weight:800;letter-spacing:.06em;color:#bdbdbd;text-transform:uppercase}
+.participant-player-tools{display:flex;align-items:center;gap:12px}
+.delete-player-btn{border:1px solid #a8323a;background:transparent;color:#ff666d;border-radius:8px;padding:7px 10px;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap}
+.delete-player-btn:hover{background:#3a1719}
+@media(max-width:650px){
+ .participant-player-row{flex-wrap:wrap}
+ .participant-player-tools{width:100%;justify-content:space-between}
+}
+
 </style>
 </head>
 
@@ -1195,10 +1206,16 @@ return `
     <div class="participant-player-name">${escapeHtml(p.name||"Jugador")}</div>
     <div class="participant-player-number">${p.number!==undefined&&p.number!==""?"Camiseta #"+escapeHtml(String(p.number)):"Sin número asignado"}</div>
   </div>
-  <div class="mvp-control" aria-label="MVP de ${escapeHtml(p.name||"jugador")}">
-    <button class="mvp-step" title="Restar un MVP" aria-label="Restar un MVP" onclick="adjustPlayerMVP('${id}',-1)" ${mvp===0?"disabled":""}>−</button>
-    <span class="mvp-count">${mvp}</span>
-    <button class="mvp-step plus" title="Sumar un MVP" aria-label="Sumar un MVP" onclick="adjustPlayerMVP('${id}',1)">+</button>
+  <div class="participant-player-tools">
+    <div class="mvp-actions-wrap">
+      <span class="mvp-actions-label">Jugador del partido (MVP)</span>
+      <div class="mvp-control" aria-label="MVP de ${escapeHtml(p.name||"jugador")}">
+        <button class="mvp-step" title="Restar un MVP" aria-label="Restar un MVP" onclick="adjustPlayerMVP('${id}',-1)" ${mvp===0?"disabled":""}>−</button>
+        <span class="mvp-count">${mvp}</span>
+        <button class="mvp-step plus" title="Sumar un MVP" aria-label="Sumar un MVP" onclick="adjustPlayerMVP('${id}',1)">+</button>
+      </div>
+    </div>
+    <button class="delete-player-btn" onclick="deleteParticipant('${id}')">ELIMINAR JUGADOR</button>
   </div>
 </div>
 `;
