@@ -537,11 +537,28 @@ footer{
 
 .homeGrid{
   display:grid;
-  grid-template-columns:1fr 1fr;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-areas:
+    "live live"
+    "next leaders"
+    "status recent"
+    "stats stats"
+    "player player"
+    "champ champ";
   gap:18px;
   margin-top:18px;
-  align-items:start;
+  align-items:stretch;
 }
+
+#liveCenterContent{grid-area:live}
+#nextMatchesContent{grid-area:next}
+#groupLeadersContent{grid-area:leaders}
+#tournamentStatusContent{grid-area:status}
+#recentResultsContent{grid-area:recent}
+#topStatsContent{grid-area:stats}
+#homePlayerOfRound{grid-area:player}
+#championContent{grid-area:champ}
+#homePlayerOfRound:empty,#championContent:empty{display:none}
 
 .homeBlock{
   padding:22px;
@@ -875,14 +892,6 @@ footer{
     grid-template-columns:1fr 1fr;
   }
 
-  .homeGrid{
-    grid-template-columns:1fr;
-  }
-
-  .homeBlock.full{
-    grid-column:auto;
-  }
-
   .liveGrid{
     grid-template-columns:1fr;
   }
@@ -893,6 +902,19 @@ footer{
 }
 
 @media(max-width:650px){
+
+  .homeGrid{
+    grid-template-columns:1fr;
+    grid-template-areas:
+      "live"
+      "next"
+      "leaders"
+      "status"
+      "recent"
+      "stats"
+      "player"
+      "champ";
+  }
 
   .appGrid{
     grid-template-columns:1fr;
@@ -1034,16 +1056,16 @@ JUGADORES
 ESTADÍSTICAS
 </button>
 
+<button class="nav" data-tab="tablas">
+TABLAS
+</button>
+
 <button class="nav" data-tab="fixture">
 FIXTURE
 </button>
 
 <button class="nav" data-tab="resultados">
 RESULTADOS
-</button>
-
-<button class="nav" data-tab="tablas">
-TABLAS
 </button>
 
 <button class="nav" data-tab="playoffs">
@@ -1188,6 +1210,23 @@ Los líderes del torneo en cada categoría.
 </section>
 
 
+<section id="tablas" class="section">
+
+<div class="title">
+
+<h2>Tablas</h2>
+
+<p>
+Posiciones calculadas automáticamente.
+</p>
+
+</div>
+
+<div id="tablesContent"></div>
+
+</section>
+
+
 <section id="fixture" class="section">
 
 <div class="title">
@@ -1218,23 +1257,6 @@ Marcadores cargados por la organización.
 </div>
 
 <div id="resultsContent"></div>
-
-</section>
-
-
-<section id="tablas" class="section">
-
-<div class="title">
-
-<h2>Tablas</h2>
-
-<p>
-Posiciones calculadas automáticamente.
-</p>
-
-</div>
-
-<div id="tablesContent"></div>
 
 </section>
 
@@ -3265,19 +3287,16 @@ function renderPlayers(){
             ${esc(p.name)}
           </div>
 
-          <div class="muted">
+          <div style="font-size:16px;font-weight:900;color:var(--lime);margin-top:7px">
             ${t
               ?esc(t.name)
               :"Equipo por definir"
             }
           </div>
 
-          <div style="margin-top:12px">
-
-            <span class="badge">
-              VER PROMEDIOS
-            </span>
-
+          <div class="muted" style="margin-top:12px;font-size:12px">
+            <i data-lucide="medal" class="lucide-icon" aria-hidden="true"></i>
+            Jugador del partido: <strong style="color:#fff">${Number(p.motm)||0} ${Number(p.motm)===1?"vez":"veces"}</strong>
           </div>
 
         </div>
@@ -3363,46 +3382,14 @@ function openPlayerModal(id){
       }
     </p>
 
-    <h3 style="margin-top:28px">
-      PROMEDIOS
-    </h3>
-
-    <div class="avgGrid">
-
-      <div class="avgBox">
-        PPG
-        <b>
-          ${g
-            ?(+p.points/g).toFixed(1)
-            :"0.0"
-          }
-        </b>
+    <div style="margin-top:26px;padding:18px;background:#1a1e1a;border:1px solid var(--line);border-radius:12px">
+      <div style="color:var(--lime);font-size:12px;font-weight:900;letter-spacing:1px">
+        <i data-lucide="medal" class="lucide-icon" aria-hidden="true"></i> JUGADOR DEL PARTIDO
       </div>
-
-      <div class="avgBox">
-        RPG
-        <b>
-          ${g
-            ?(+p.rebounds/g).toFixed(1)
-            :"0.0"
-          }
-        </b>
+      <div style="font-size:30px;font-weight:900;margin-top:7px">
+        ${Number(p.motm)||0}
       </div>
-
-      <div class="avgBox">
-        APG
-        <b>
-          ${g
-            ?(+p.assists/g).toFixed(1)
-            :"0.0"
-          }
-        </b>
-      </div>
-
-    </div>
-
-    <div style="margin-top:18px;font-weight:900">
-      <i data-lucide="star" class="lucide-icon" aria-hidden="true"></i> MVP: ${+p.motm||0}
+      <div class="muted">${Number(p.motm)===1?"vez":"veces"}</div>
     </div>
 
     ${
@@ -3716,7 +3703,7 @@ function renderFixture(){
 
           ${
             m.court
-            ?" · "+esc(m.court)
+            ?" · "+(String(m.court)==="1"?"CANCHA 1":String(m.court)==="2"?"CANCHA 2":esc(m.court))
             :""
           }
 
