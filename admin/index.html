@@ -307,10 +307,6 @@ EQUIPOS
 PARTICIPANTES
 </button>
 
-  <button class="tab" onclick="showTab('estadisticas',this)">
-ESTADÍSTICAS
-</button>
-
   <button class="tab" onclick="showTab('jornada',this)">
 JORNADA
 </button>
@@ -354,21 +350,20 @@ MARCADORES
 
 <input id="teamName" placeholder="Nombre del equipo">
 
-<select id="teamGroup">
-
-<option value="A">Grupo A</option>
-<option value="B">Grupo B</option>
-<option value="C">Grupo C</option>
-<option value="D">Grupo D</option>
-
-</select>
-
 <button class="primary" onclick="addTeam()">
 AGREGAR EQUIPO
 </button>
 
 </div>
 
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 18px">
+<button class="primary" onclick="drawGroups()">🎲 REALIZAR SORTEO ALEATORIO</button>
+<button class="danger" onclick="resetTournament()">↻ REINICIAR TORNEO / PRUEBA</button>
+</div>
+<p style="color:#aaa;font-size:13px">
+Cargá los 16 equipos sin asignar grupos. El sorteo los distribuirá aleatoriamente en 4 grupos de 4.
+El botón de reinicio borra todos los datos del torneo para empezar una prueba desde cero.
+</p>
 <div id="teamList" class="team-list"></div>
 <br>
 
@@ -431,7 +426,7 @@ class="team-list">
 <h2>Estadísticas de jugadores</h2>
 
 <p>
-Cargá las estadísticas acumuladas de cada jugador. Los datos se reflejan automáticamente en la página pública.
+Consultá y editá los puntos y la cantidad de veces que cada jugador fue elegido jugador del partido (MVP).
 </p>
 
 <div id="statsList"></div>
@@ -726,10 +721,21 @@ button.classList.add("active");
 function addTeam(){
 
 const name=document.getElementById("teamName").value.trim();
-const group=document.getElementById("teamGroup").value;
 
 if(!name){
 alert("Escribí el nombre del equipo.");
+return;
+}
+
+const teams=Object.values(data.teams||{});
+
+if(teams.length>=16){
+alert("Ya cargaste los 16 equipos del torneo.");
+return;
+}
+
+if(teams.some(t=>String(t.name||"").trim().toLowerCase()===name.toLowerCase())){
+alert("Ese equipo ya está cargado.");
 return;
 }
 
@@ -737,14 +743,101 @@ const id="team_"+Date.now();
 
 data.teams[id]={
 name:name,
-group:group
+group:""
+};
+
+save();
+updateParticipantTeams();
+renderTeams();
+document.getElementById("teamName").value="";
+
+}
+
+
+function drawGroups(){
+
+const entries=Object.entries(data.teams||{});
+
+if(entries.length!==16){
+alert("Para realizar el sorteo necesitás cargar exactamente 16 equipos. Actualmente hay "+entries.length+".");
+return;
+}
+
+const hasMatches=Object.keys(data.matches||{}).length>0;
+const alreadyDrawn=entries.some(([id,t])=>["A","B","C","D"].includes(t.group));
+
+let warning="Se sortearán los 16 equipos en 4 grupos de 4.";
+if(alreadyDrawn || hasMatches){
+warning+=" Si volvés a sortear, cambiarán los grupos y se borrarán el fixture, los resultados y los playoffs actuales.";
+}
+
+if(!confirm(warning+" ¿Continuar?"))return;
+
+const shuffled=[...entries];
+
+for(let i=shuffled.length-1;i>0;i--){
+const j=Math.floor(Math.random()*(i+1));
+[shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];
+}
+
+const groups=["A","B","C","D"];
+
+shuffled.forEach(([id,team],index)=>{
+data.teams[id]={...team,group:groups[Math.floor(index/4)]};
+});
+
+data.matches={};
+data.playoffs={};
+
+save();
+renderTeams();
+updateParticipantTeams();
+renderFixture();
+renderResults();
+renderTables();
+renderPlayoffs();
+
+alert("¡Sorteo realizado! Quedaron 4 equipos en cada grupo.");
+
+}
+
+
+function resetTournament(){
+
+const confirmation=prompt(
+"ESTA ACCIÓN BORRARÁ TODOS LOS DATOS DEL TORNEO: equipos, jugadores, fixture, resultados, playoffs y destacados. Para confirmar, escribí REINICIAR."
+);
+
+if(confirmation!=="REINICIAR"){
+alert("Reinicio cancelado. No se modificó ningún dato.");
+return;
+}
+
+data={
+teams:{},
+matches:{},
+playoffs:{},
+participants:{},
+playerOfRound:"",
+playerToWatch:""
 };
 
 save();
 
+renderTeams();
 updateParticipantTeams();
+renderParticipants();
+renderStats();
+updatePlayerOfRoundSelect();
+updatePlayerToWatchSelect();
+renderFixture();
+renderResults();
+renderTables();
+renderPlayoffs();
 
 document.getElementById("teamName").value="";
+
+alert("Torneo reiniciado. Ya podés cargar los equipos de prueba desde cero.");
 
 }
 
@@ -761,38 +854,70 @@ save();
 function renderTeams(){
 
 const container=document.getElementById("teamList");
+if(!container)return;
 
 container.innerHTML="";
 
+const entries=Object.entries(data.teams||{});
 const groups=["A","B","C","D"];
 
 groups.forEach(group=>{
 
-Object.entries(data.teams||{})
-.filter(([id,t])=>t.group===group)
-.forEach(([id,t])=>{
+const members=entries.filter(([id,t])=>t.group===group);
+if(!members.length)return;
+
+const heading=document.createElement("h3");
+heading.className="group-title";
+heading.textContent="GRUPO "+group+" ("+members.length+"/4)";
+container.appendChild(heading);
+
+members.forEach(([id,t])=>{
 
 const div=document.createElement("div");
-
 div.className="team";
-
 div.innerHTML=`
 <strong>${escapeHtml(t.name)}</strong>
 <small>Grupo ${group}</small>
 <br><br>
-<button class="danger"
-onclick="deleteTeam('${id}')">
-ELIMINAR
-</button>
+<button class="danger" onclick="deleteTeam('${id}')">ELIMINAR</button>
 `;
-
 container.appendChild(div);
 
 });
 
 });
 
+const pending=entries.filter(([id,t])=>!groups.includes(t.group));
+
+if(pending.length){
+
+const heading=document.createElement("h3");
+heading.className="group-title";
+heading.textContent="EQUIPOS CARGADOS · PENDIENTES DE SORTEO ("+pending.length+"/16)";
+container.appendChild(heading);
+
+pending.forEach(([id,t])=>{
+
+const div=document.createElement("div");
+div.className="team";
+div.innerHTML=`
+<strong>${escapeHtml(t.name)}</strong>
+<small>Sin grupo asignado</small>
+<br><br>
+<button class="danger" onclick="deleteTeam('${id}')">ELIMINAR</button>
+`;
+container.appendChild(div);
+
+});
+
 }
+
+if(!entries.length){
+container.innerHTML="<p>Todavía no hay equipos cargados.</p>";
+}
+
+}
+
   function updateParticipantTeams(){
 
 const select=document.getElementById("participantTeam");
@@ -806,7 +931,7 @@ Object.entries(data.teams || {}).forEach(([id,team])=>{
 const option=document.createElement("option");
 
 option.value=id;
-option.textContent=team.name+" — Grupo "+team.group;
+option.textContent=team.name+(team.group?" — Grupo "+team.group:" — Sin sortear");
 
 select.appendChild(option);
 
@@ -850,10 +975,7 @@ name:name,
 team:team,
 number:number,
 
-games:0,
 points:0,
-rebounds:0,
-assists:0,
 motm:0
 
 };
@@ -921,15 +1043,7 @@ ${p.number ? " · #"+escapeHtml(p.number) : ""}
 
 <br><br>
 
-<div>
-PTS: ${p.points||0}
-&nbsp; | &nbsp;
-REB: ${p.rebounds||0}
-&nbsp; | &nbsp;
-AST: ${p.assists||0}
-&nbsp; | &nbsp;
-MOTM: ${p.motm||0}
-</div>
+<div>PTS: ${p.points||0} · JUGADOR DEL PARTIDO: ${p.motm||0}</div>
 
 <br>
 
@@ -959,49 +1073,29 @@ function editParticipantStats(id){
 ensureParticipants();
 
 const p=data.participants[id];
-
 if(!p)return;
 
-const games=prompt(
-"Partidos jugados de "+p.name,
-p.games||0
-);
-
-if(games===null)return;
-
-const points=prompt(
-"Puntos totales de "+p.name,
-p.points||0
-);
-
+const points=prompt("Puntos totales de "+p.name,p.points||0);
 if(points===null)return;
 
-const rebounds=prompt(
-"Rebotes totales de "+p.name,
-p.rebounds||0
-);
+const value=Number(points);
 
-if(rebounds===null)return;
+if(!Number.isFinite(value)||value<0){
+alert("Los puntos deben ser un número igual o mayor a 0.");
+return;
+}
 
-const assists=prompt(
-"Asistencias totales de "+p.name,
-p.assists||0
-);
-
-if(assists===null)return;
-
-const motm=prompt(
-"MVP / MOTM de "+p.name,
-p.motm||0
-);
-
+const motm=prompt("Veces elegido jugador del partido (MVP) para "+p.name,p.motm||0);
 if(motm===null)return;
 
-p.games=Math.max(0,Math.floor(Number(games)||0));
-p.points=Math.max(0,Number(points)||0);
-p.rebounds=Math.max(0,Number(rebounds)||0);
-p.assists=Math.max(0,Number(assists)||0);
-p.motm=Math.max(0,Math.floor(Number(motm)||0));
+const motmValue=Number(motm);
+if(!Number.isFinite(motmValue)||motmValue<0){
+alert("La cantidad de veces como jugador del partido debe ser un número igual o mayor a 0.");
+return;
+}
+
+p.points=value;
+p.motm=Math.floor(motmValue);
 
 save();
 renderParticipants();
@@ -1032,14 +1126,8 @@ let html=`
 <tr>
 <th>Jugador</th>
 <th>Equipo</th>
-<th>PJ</th>
 <th>PTS</th>
-<th>REB</th>
-<th>AST</th>
-<th>MVP</th>
-<th>PPG</th>
-<th>RPG</th>
-<th>APG</th>
+<th>Jugador del partido</th>
 <th>Acción</th>
 </tr>
 `;
@@ -1049,27 +1137,14 @@ participants
 .forEach(([id,p])=>{
 
 const team=data.teams?.[p.team];
-const games=Number(p.games)||0;
 const points=Number(p.points)||0;
-const rebounds=Number(p.rebounds)||0;
-const assists=Number(p.assists)||0;
-
-const ppg=games?(points/games).toFixed(1):"0.0";
-const rpg=games?(rebounds/games).toFixed(1):"0.0";
-const apg=games?(assists/games).toFixed(1):"0.0";
 
 html+=`
 <tr>
 <td>${escapeHtml(p.name)}</td>
 <td>${team?escapeHtml(team.name):"Equipo no encontrado"}</td>
-<td>${games}</td>
 <td>${points}</td>
-<td>${rebounds}</td>
-<td>${assists}</td>
 <td>${Number(p.motm)||0}</td>
-<td>${ppg}</td>
-<td>${rpg}</td>
-<td>${apg}</td>
 <td>
 <button class="primary" onclick="editParticipantStats('${id}')">
 EDITAR
@@ -1193,6 +1268,16 @@ if(Object.keys(data.matches||{}).length &&
 
 const groups=["A","B","C","D"];
 const matches={};
+
+const teamCount=Object.keys(data.teams||{}).length;
+const validGroups=groups.every(group=>
+Object.values(data.teams||{}).filter(t=>t.group===group).length===4
+);
+
+if(teamCount!==16 || !validGroups){
+alert("Primero cargá exactamente 16 equipos y realizá el sorteo aleatorio (4 por grupo).");
+return;
+}
 
 groups.forEach(group=>{
 
