@@ -489,7 +489,7 @@ GUARDAR JUGADOR DE LA FECHA
 
 <div class="team-form">
 <button class="primary" onclick="generateFixture()">
-GENERAR 24 PARTIDOS
+GENERAR FIXTURE AUTOMÁTICO
 </button>
 
 <button onclick="addManualMatch()">
@@ -498,16 +498,11 @@ GENERAR 24 PARTIDOS
 </div>
 
 <p>
-El fixture es totalmente editable. Podés decidir libremente fecha, hora y cancha.
-Las Canchas 1 y 2 pueden jugar simultáneamente.
+El fixture se programa automáticamente para el sábado 7 de noviembre de 2026.
+Los partidos comienzan cada 15 minutos, desde las 10:00, en dos canchas simultáneas.
+Cancha 1 alterna los grupos A y C; Cancha 2 alterna los grupos B y D.
+Cada grupo vuelve a jugar cada 30 minutos. Todos los partidos siguen siendo editables.
 </p>
-
-<div class="panel" style="background:#101210">
-<strong>Cómo organizarlo</strong>
-<p style="color:#aaa">
-Poné la misma fecha y hora en dos partidos y asignales Cancha 1 y Cancha 2 para que se jueguen a la vez.
-</p>
-</div>
 
 <div id="fixtureList"></div>
 
@@ -1268,6 +1263,9 @@ if(Object.keys(data.matches||{}).length &&
 
 const groups=["A","B","C","D"];
 const matches={};
+const tournamentDate="2026-11-07";
+const startMinutes=10*60;
+const slotMinutes=15;
 
 const teamCount=Object.keys(data.teams||{}).length;
 const validGroups=groups.every(group=>
@@ -1279,44 +1277,69 @@ alert("Primero cargá exactamente 16 equipos y realizá el sorteo aleatorio (4 p
 return;
 }
 
-groups.forEach(group=>{
+// Orden de cruces pensado para que ningún equipo juegue dos partidos seguidos.
+const pairings=[
+[0,1],
+[2,3],
+[0,2],
+[1,3],
+[0,3],
+[1,2]
+];
 
+const groupMatches={};
+
+groups.forEach(group=>{
 const teams=Object.entries(data.teams||{})
 .filter(([id,t])=>t.group===group)
 .map(([id,t])=>({id,...t}));
 
-if(teams.length!==4) return;
+groupMatches[group]=pairings.map((pair,index)=>({
+group:group,
+home:teams[pair[0]].id,
+away:teams[pair[1]].id,
+index:index
+}));
+});
 
-let counter=0;
+// 12 turnos de 15 minutos. A/B juegan en turnos pares;
+// C/D juegan en turnos impares. Así cada grupo juega cada 30 minutos.
+let order=1;
+for(let slot=0;slot<12;slot++){
+const group1=slot%2===0?"A":"C";
+const group2=slot%2===0?"B":"D";
+const groupMatchIndex=Math.floor(slot/2);
+const totalMinutes=startMinutes+(slot*slotMinutes);
+const hours=String(Math.floor(totalMinutes/60)).padStart(2,"0");
+const minutes=String(totalMinutes%60).padStart(2,"0");
+const time=hours+":"+minutes;
 
-for(let i=0;i<4;i++){
-for(let j=i+1;j<4;j++){
-
-const id="match_"+group+"_"+counter++;
-
+[
+{group:group1,court:"1"},
+{group:group2,court:"2"}
+].forEach(({group,court})=>{
+const pairing=groupMatches[group][groupMatchIndex];
+const id="match_"+group+"_"+pairing.index;
 matches[id]={
 id:id,
 group:group,
-home:teams[i].id,
-away:teams[j].id,
+home:pairing.home,
+away:pairing.away,
 homeScore:null,
 awayScore:null,
-court:"",
-date:"",
-time:"",
+court:court,
+date:tournamentDate,
+time:time,
 status:"Programado",
-order:Object.keys(matches).length+1
+order:order++
 };
-
-}
-}
-
 });
+}
 
 data.matches=matches;
 save();
-alert("Fixture generado. Ahora asigná fecha, hora y cancha a cada partido.");
-
+renderFixture();
+alert("Fixture automático generado: 24 partidos, sábado 7 de noviembre, desde las 10:00 hasta las 12:45. El último turno termina aproximadamente a las 12:55.");
 }
 
 function addManualMatch(){
