@@ -424,6 +424,39 @@ footer{
   font-size:12px;
 }
 
+
+/* =========================
+   ASISTENTE STREET 3x3
+========================= */
+.botLauncher{position:fixed;right:22px;bottom:22px;z-index:110;display:flex;align-items:center;gap:10px;border:1px solid var(--lime);border-radius:999px;padding:13px 18px;background:var(--lime);color:#080a08;font-weight:1000;box-shadow:0 8px 30px #0009;cursor:pointer;letter-spacing:.25px}
+.botLauncher:after{content:"";position:absolute;right:18px;bottom:-6px;width:12px;height:12px;background:var(--lime);border-right:1px solid var(--lime);border-bottom:1px solid var(--lime);transform:rotate(45deg)}
+.botLauncher .botIcon{width:25px;height:25px;border-radius:50%;display:grid;place-items:center;background:#080a08;color:var(--lime);font-size:15px}
+.botPanel{position:fixed;right:22px;bottom:82px;z-index:110;width:min(390px,calc(100vw - 28px));height:min(560px,calc(100vh - 120px));display:flex;flex-direction:column;overflow:hidden;background:#101410;border:1px solid var(--lime);border-radius:18px;box-shadow:0 18px 60px #000c}
+.botPanel[hidden]{display:none!important}
+.botHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 16px;background:#171d12;border-bottom:1px solid var(--line)}
+.botHeader strong{display:block;font-size:14px;letter-spacing:.3px}
+.botHeader small{display:block;color:var(--muted);font-size:11px;margin-top:4px}
+.botClose{border:1px solid #46503b;background:#101410;color:#fff;width:32px;height:32px;border-radius:9px;font-size:20px;cursor:pointer}
+.botMessages{flex:1;overflow:auto;padding:15px;display:flex;flex-direction:column;gap:11px}
+.botMessage{max-width:92%;padding:11px 13px;border-radius:13px;font-size:13px;line-height:1.45;overflow-wrap:anywhere}
+.botMessage.bot{align-self:flex-start;background:#202720;border:1px solid #343d34}
+.botMessage.user{align-self:flex-end;background:var(--lime);color:#080a08;font-weight:700}
+.botMessage .botResultTitle{font-weight:1000;font-size:14px;margin-bottom:5px}
+.botMessage .botMuted{color:var(--muted);font-size:11px}
+.botChoices{display:flex;flex-direction:column;gap:7px;margin-top:9px}
+.botChoice{width:100%;text-align:left;padding:9px 10px;border-radius:9px;border:1px solid #4a5545;background:#151c14;color:#fff;cursor:pointer}
+.botChoice:hover{border-color:var(--lime);color:var(--lime)}
+.botMatch{margin-top:9px;padding:10px;border:1px solid #3a4338;border-radius:10px;background:#151b15}
+.botMatch strong{display:block;font-size:13px}
+.botMatch .botMatchMeta{margin-top:5px;color:#b6c0b3;font-size:11px;line-height:1.5}
+.botMatch .botScore{color:var(--lime);font-weight:1000}
+.botComposer{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:#141914}
+.botInput{flex:1;min-width:0;border:1px solid #414a40;border-radius:10px;background:#090d09;color:#fff;padding:12px;font-size:13px;outline:none}
+.botInput:focus{border-color:var(--lime)}
+.botSend{border:0;border-radius:10px;padding:0 15px;background:var(--lime);color:#080a08;font-weight:1000;cursor:pointer}
+.botHint{font-size:10px;color:var(--muted);padding:0 14px 10px;background:#141914}
+@media(max-width:560px){.botLauncher{right:14px;bottom:14px;padding:11px 14px}.botPanel{right:8px;bottom:72px;width:calc(100vw - 16px);height:min(570px,calc(100dvh - 92px))}}
+
 /* =========================
    JUGADORES
 ========================= */
@@ -537,7 +570,13 @@ footer{
 ========================= */
 
 
-#homePlayerOfRound:empty{display:none;}
+/* Los módulos vacíos no reservan una celda: el resto se reacomoda solo. */
+.homeGrid > div:empty{
+  display:none !important;
+}
+.homeGrid > div:not(:empty){
+  min-width:0;
+}
 .homeGrid{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
@@ -1335,6 +1374,31 @@ STREET 3x3
 
 </footer>
 
+
+
+<!-- ASISTENTE DE CONSULTAS STREET 3x3 -->
+<button class="botLauncher" id="botLauncher" type="button" onclick="toggleStreetBot()" aria-label="Consultar cuándo juega mi equipo">
+  <span class="botIcon">✦</span>
+  <span>¿CUÁNDO JUEGO?</span>
+</button>
+<section class="botPanel" id="streetBotPanel" aria-label="Asistente Street 3x3" hidden>
+  <div class="botHeader">
+    <div><strong>ASISTENTE STREET 3x3</strong><small>Fixture y horarios oficiales</small></div>
+    <button class="botClose" type="button" onclick="toggleStreetBot(false)" aria-label="Cerrar asistente">×</button>
+  </div>
+  <div class="botMessages" id="streetBotMessages" aria-live="polite">
+    <div class="botMessage bot">
+      ¡Hola! 🏀 Soy el asistente de Street 3x3.<br><br>
+      Para consultar qué partido te toca, escribí tu <strong>nombre y apellido</strong> o el <strong>nombre de tu equipo</strong>.<br><br>
+      Si hay dos jugadores con el mismo nombre, te voy a pedir que elijas el equipo correcto.
+    </div>
+  </div>
+  <div class="botComposer">
+    <input class="botInput" id="streetBotInput" type="text" maxlength="80" placeholder="Nombre y apellido o equipo" autocomplete="off" onkeydown="if(event.key==='Enter')sendStreetBotMessage()">
+    <button class="botSend" type="button" onclick="sendStreetBotMessage()">ENVIAR</button>
+  </div>
+  <div class="botHint">Consultas basadas en el fixture publicado por la organización.</div>
+</section>
 
 <!-- =========================
      APP MODAL
@@ -3875,6 +3939,133 @@ function refreshTimeSensitiveContent(){
 
 }
 
+
+
+/* =====================================================
+   ASISTENTE STREET 3x3 · CONSULTA DE PARTIDOS
+   Solo lectura: utiliza los datos ya cargados desde Firebase.
+===================================================== */
+function toggleStreetBot(force){
+  const panel=document.getElementById("streetBotPanel");
+  const input=document.getElementById("streetBotInput");
+  if(!panel)return;
+  const open=typeof force==="boolean"?force:panel.hidden;
+  panel.hidden=!open;
+  if(open&&input)input.focus();
+}
+function botNormalize(value){
+  return String(value??"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();
+}
+function botAddMessage(content,type="bot",isHtml=false){
+  const box=document.getElementById("streetBotMessages");
+  if(!box)return;
+  const node=document.createElement("div");
+  node.className="botMessage "+type;
+  if(isHtml)node.innerHTML=content;else node.textContent=content;
+  box.appendChild(node);
+  box.scrollTop=box.scrollHeight;
+  return node;
+}
+function sendStreetBotMessage(){
+  const input=document.getElementById("streetBotInput");
+  if(!input)return;
+  const query=input.value.trim();
+  if(!query)return;
+  botAddMessage(esc(query),"user",true);
+  input.value="";
+  botProcessSearch(query);
+}
+function botTeamIdFromValue(value){
+  if(value===undefined||value===null||value==="")return "";
+  if(typeof value==="object")value=value.id??value.teamId??value.team_id??value.name??value.teamName??"";
+  const raw=String(value);
+  if(data.teams?.[raw])return raw;
+  const normalized=botNormalize(raw);
+  const found=Object.entries(data.teams||{}).find(([id,t])=>botNormalize(t?.name)===normalized);
+  return found?found[0]:"";
+}
+function botMatchSideTeamId(match,side){
+  const home=side==="home";
+  const values=home
+    ?[match?.home,match?.homeId,match?.homeTeamId,match?.home_team_id,match?.team1,match?.team1Id,match?.teamA,match?.teamAId,match?.local,match?.localId,match?.homeTeam,match?.home_team,match?.homeName,match?.localName]
+    :[match?.away,match?.awayId,match?.awayTeamId,match?.away_team_id,match?.team2,match?.team2Id,match?.teamB,match?.teamBId,match?.visitante,match?.visitanteId,match?.awayTeam,match?.away_team,match?.awayName,match?.visitanteName];
+  for(const value of values){const id=botTeamIdFromValue(value);if(id)return id;}
+  return "";
+}
+function botProcessSearch(query){
+  const q=botNormalize(query);
+  if(q.length<2){botAddMessage("Escribí al menos dos letras para buscar tu nombre o equipo.");return;}
+  const players=Object.entries(data.participants||{});
+  const teams=Object.entries(data.teams||{});
+  const exactPlayers=players.filter(([id,p])=>botNormalize(p?.name)===q);
+  const exactTeams=teams.filter(([id,t])=>botNormalize(t?.name)===q);
+  const playerMatches=exactPlayers.length?exactPlayers:players.filter(([id,p])=>botNormalize(p?.name).includes(q));
+  const teamMatches=exactTeams.length?exactTeams:teams.filter(([id,t])=>botNormalize(t?.name).includes(q));
+  if(playerMatches.length===1&&(!teamMatches.length||exactPlayers.length)){botShowPlayer(playerMatches[0][0]);return;}
+  if(teamMatches.length===1&&!playerMatches.length){botShowTeam(teamMatches[0][0]);return;}
+  if(playerMatches.length===1&&teamMatches.length===1){botShowPlayer(playerMatches[0][0]);return;}
+  if(playerMatches.length||teamMatches.length){
+    const node=botAddMessage("","bot",true);
+    const duplicateExactName=exactPlayers.length>1;
+    let h=duplicateExactName
+      ?'<div class="botResultTitle">Hay más de un jugador con ese nombre</div><div class="botMuted">Para no mostrarte el fixture de otra persona, elegí el equipo al que pertenecés:</div><div class="botChoices">'
+      :'<div class="botResultTitle">Encontré varias coincidencias</div><div class="botMuted">Elegí tu jugador o equipo:</div><div class="botChoices">';
+    playerMatches.slice(0,8).forEach(([id,p])=>{
+      const team=data.teams?.[p?.team];
+      h+='<button class="botChoice" type="button" onclick="botShowPlayer(\''+esc(id)+'\')">👤 '+esc(p?.name||"Jugador")+(team?' · '+esc(team.name):'')+'</button>';
+    });
+    teamMatches.slice(0,8).forEach(([id,t])=>{
+      h+='<button class="botChoice" type="button" onclick="botShowTeam(\''+esc(id)+'\')">🏀 '+esc(t?.name||"Equipo")+'</button>';
+    });
+    h+='</div>';
+    node.innerHTML=h;
+    return;
+  }
+  botAddMessage('No encontré "'+query.replace(/[<>]/g,"")+'". Probá escribiendo tu nombre y apellido completo o el nombre de tu equipo. No importa si usás mayúsculas o minúsculas.');
+}
+function botShowPlayer(playerId){
+  const player=data.participants?.[playerId];
+  if(!player){botAddMessage("No pude encontrar ese jugador. Probá buscarlo nuevamente.");return;}
+  const teamId=botTeamIdFromValue(player.team);
+  if(!teamId){botAddMessage("Encontré a "+String(player.name||"este jugador")+", pero todavía no tiene un equipo asignado en el sistema.");return;}
+  botShowTeam(teamId,player.name);
+}
+function botShowTeam(teamId,playerName){
+  const team=data.teams?.[teamId];
+  if(!team){botAddMessage("No pude identificar ese equipo. Probá escribir el nombre nuevamente.");return;}
+  const all=[
+    ...Object.entries(data.matches||{}).map(([id,m])=>({id,match:m,stage:m?.group?"GRUPO "+m.group:(m?.round||"FASE DE GRUPOS")})),
+    ...playoffMatches().map((m,i)=>({id:m?.id||"playoff_"+i,match:m,stage:m?.round||m?.stage||"PLAYOFFS"}))
+  ];
+  const found=all.filter(({match})=>botMatchSideTeamId(match,"home")===teamId||botMatchSideTeamId(match,"away")===teamId);
+  found.sort((a,b)=>{
+    const da=getMatchDateTime(a.match),dbt=getMatchDateTime(b.match);
+    if(da&&dbt)return da-dbt;
+    if(da)return -1;
+    if(dbt)return 1;
+    return(Number(a.match?.order)||0)-(Number(b.match?.order)||0);
+  });
+  let h='<div class="botResultTitle">🏀 '+esc(team.name)+'</div>';
+  if(playerName)h+='<div class="botMuted">Consulta de '+esc(playerName)+'</div>';
+  h+='<div class="botMuted">GRUPO '+esc(team.group||"A confirmar")+' · '+found.length+' partido(s) encontrado(s)</div>';
+  if(!found.length){
+    h+='<div class="botMatch"><strong>Todavía no hay partidos cargados</strong><div class="botMatchMeta">Cuando la organización publique el fixture, vas a poder consultarlo acá.</div></div>';
+  }else{
+    found.forEach(({match,stage})=>{
+      const isHome=botMatchSideTeamId(match,"home")===teamId;
+      const rival=matchTeamName(match,isHome?"away":"home");
+      const date=formatMatchDate(match.date);
+      const time=match.time?String(match.time):"Horario a confirmar";
+      const court=match.court?("Cancha "+String(match.court).replace(/^cancha\s*/i,"")):"Cancha a confirmar";
+      const finished=isMatchFinished(match);
+      const score=finished?'<div class="botMatchMeta botScore">Resultado: '+(isHome?esc(match.homeScore):esc(match.awayScore))+' - '+(isHome?esc(match.awayScore):esc(match.homeScore))+'</div>':"";
+      const status=finished?"FINALIZADO":(String(match.status||"").toLowerCase().includes("juego")?"EN JUEGO":"PROGRAMADO");
+      h+='<div class="botMatch"><strong>'+esc(stage)+' · '+status+'</strong><div class="botMatchMeta">vs. <b>'+esc(rival)+'</b><br>📅 '+esc(date)+' · 🕒 '+esc(time)+'<br>📍 '+esc(court)+'</div>'+score+'</div>';
+    });
+  }
+  h+='<div class="botMuted" style="margin-top:9px">La información se actualiza automáticamente con el fixture oficial.</div>';
+  botAddMessage(h,"bot",true);
+}
 
 /* =====================================================
    RENDER GENERAL
