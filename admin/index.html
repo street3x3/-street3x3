@@ -358,6 +358,33 @@ td:nth-child(2){
   .team-group-grid{grid-template-columns:1fr}
 }
 
+
+/* Participantes: agrupación por grupo y equipo + controles rápidos de MVP */
+.participant-groups{display:flex;flex-direction:column;gap:20px;margin-top:18px}
+.participant-group{background:#111;border:1px solid #353535;border-left:4px solid var(--lime);border-radius:14px;padding:18px}
+.participant-group-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 14px}
+.participant-group-title h3{margin:0;color:var(--lime);font-size:20px}
+.participant-team{background:#191919;border:1px solid #363636;border-radius:12px;margin-top:12px;overflow:hidden}
+.participant-team-head{padding:12px 15px;background:#222;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.participant-team-head strong{font-size:16px}
+.participant-team-head small{color:#aaa}
+.participant-player-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 15px;border-top:1px solid #303030}
+.participant-player-info{min-width:0}
+.participant-player-name{font-weight:700;overflow-wrap:anywhere}
+.participant-player-number{font-size:12px;color:#aaa;margin-top:3px}
+.mvp-control{display:flex;align-items:center;gap:9px;flex-shrink:0}
+.mvp-count{min-width:26px;text-align:center;font-size:18px;font-weight:800;font-variant-numeric:tabular-nums}
+.mvp-step{width:34px;height:34px;border-radius:9px;border:1px solid #555;background:#262626;color:#fff;font-size:20px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.mvp-step.plus{background:var(--lime);color:#080808;border-color:var(--lime)}
+.mvp-step:disabled{opacity:.3;cursor:not-allowed}
+.participant-empty{color:#999;padding:12px 15px;font-size:13px}
+@media(max-width:600px){
+ .participant-group{padding:12px}
+ .participant-player-row{align-items:flex-start}
+ .mvp-control{gap:6px}
+ .mvp-step{width:32px;height:32px}
+}
+
 </style>
 </head>
 
@@ -1119,98 +1146,121 @@ renderParticipants();
 }
 
 
+function adjustPlayerMVP(id,delta){
+
+ensureParticipants();
+
+const player=data.participants[id];
+if(!player)return;
+
+const current=Math.max(0,Number(player.motm)||0);
+const next=current+delta;
+
+if(next<0)return;
+
+player.motm=next;
+delete player.points;
+
+save();
+renderParticipants();
+renderStats();
+
+}
+
 function renderParticipants(){
 
 ensureParticipants();
 
 const container=document.getElementById("participantList");
-
 if(!container)return;
 
-container.innerHTML="";
+container.className="participant-groups";
 
-const participants=Object.entries(data.participants);
-
+const participants=Object.entries(data.participants||{});
 if(!participants.length){
-
-container.innerHTML="<p>No hay participantes cargados.</p>";
-
+container.innerHTML='<div class="participant-empty">Todavía no hay participantes cargados.</div>';
 return;
-
 }
 
-participants.forEach(([id,p])=>{
+const groups=["A","B","C","D"];
+const teams=Object.entries(data.teams||{});
+const assigned=new Set();
+let output="";
 
-const team=data.teams[p.team];
-
-const div=document.createElement("div");
-
-div.className="team";
-
-div.innerHTML=`
-
-<strong>${escapeHtml(p.name)}</strong>
-
-<small>
-${team ? escapeHtml(team.name) : "Equipo no encontrado"}
-${p.number ? " · #"+escapeHtml(p.number) : ""}
-</small>
-
-<br><br>
-
-<div>JUGADOR DEL PARTIDO (MVP): ${Number(p.motm)||0}</div>
-
-<br>
-
-<button
-class="primary"
-onclick="editParticipantStats('${id}')">
-EDITAR ESTADÍSTICAS
-</button>
-
-<button
-class="danger"
-onclick="deleteParticipant('${id}')">
-ELIMINAR
-</button>
-
+function playerRow(id,p){
+const mvp=Math.max(0,Number(p.motm)||0);
+return `
+<div class="participant-player-row">
+  <div class="participant-player-info">
+    <div class="participant-player-name">${escapeHtml(p.name||"Jugador")}</div>
+    <div class="participant-player-number">${p.number!==undefined&&p.number!==""?"Camiseta #"+escapeHtml(String(p.number)):"Sin número asignado"}</div>
+  </div>
+  <div class="mvp-control" aria-label="MVP de ${escapeHtml(p.name||"jugador")}">
+    <button class="mvp-step" title="Restar un MVP" aria-label="Restar un MVP" onclick="adjustPlayerMVP('${id}',-1)" ${mvp===0?"disabled":""}>−</button>
+    <span class="mvp-count">${mvp}</span>
+    <button class="mvp-step plus" title="Sumar un MVP" aria-label="Sumar un MVP" onclick="adjustPlayerMVP('${id}',1)">+</button>
+  </div>
+</div>
 `;
+}
 
-container.appendChild(div);
+groups.forEach(group=>{
+const groupTeams=teams
+.filter(([teamId,team])=>team.group===group)
+.sort((a,b)=>String(a[1].name||"").localeCompare(String(b[1].name||""),"es"));
 
+let teamMarkup="";
+
+groupTeams.forEach(([teamId,team])=>{
+const roster=participants
+.filter(([playerId,p])=>p.team===teamId)
+.sort((a,b)=>String(a[1].name||"").localeCompare(String(b[1].name||""),"es"));
+
+roster.forEach(([playerId])=>assigned.add(playerId));
+
+teamMarkup+=`
+<section class="participant-team">
+  <div class="participant-team-head">
+    <strong>${escapeHtml(team.name||"Equipo")}</strong>
+    <small>${roster.length} jugador${roster.length===1?"":"es"}</small>
+  </div>
+  ${roster.length?roster.map(([id,p])=>playerRow(id,p)).join(""):'<div class="participant-empty">Todavía no hay jugadores cargados en este equipo.</div>'}
+</section>
+`;
 });
 
+const groupPlayers=participants.filter(([id,p])=>{
+const team=data.teams?.[p.team];
+return team&&team.group===group;
+}).length;
+
+output+=`
+<section class="participant-group">
+  <div class="participant-group-title">
+    <h3>GRUPO ${group}</h3>
+    <span class="team-group-count">${groupPlayers} jugador${groupPlayers===1?"":"es"}</span>
+  </div>
+  ${teamMarkup||'<div class="participant-empty">Todavía no hay equipos asignados a este grupo.</div>'}
+</section>
+`;
+});
+
+const unassigned=participants.filter(([id,p])=>!assigned.has(id));
+if(unassigned.length){
+output+=`
+<section class="participant-group">
+  <div class="participant-group-title"><h3>SIN GRUPO / EQUIPO</h3></div>
+  ${unassigned.map(([id,p])=>`
+    <section class="participant-team">
+      <div class="participant-team-head"><strong>${escapeHtml(data.teams?.[p.team]?.name||"Equipo no encontrado")}</strong></div>
+      ${playerRow(id,p)}
+    </section>
+  `).join("")}
+</section>
+`;
 }
 
-
-function editParticipantStats(id){
-
-ensureParticipants();
-
-const p=data.participants[id];
-if(!p)return;
-
-const motm=prompt(
-"Veces elegido jugador del partido (MVP) para "+p.name,
-Number(p.motm)||0
-);
-if(motm===null)return;
-
-const motmValue=Number(motm);
-if(!Number.isFinite(motmValue)||motmValue<0||!Number.isInteger(motmValue)){
-alert("La cantidad de veces como jugador del partido debe ser un número entero igual o mayor a 0.");
-return;
-}
-
-p.motm=motmValue;
-
-// Se eliminan los puntos individuales; los puntos de las tablas de equipos
-// siguen calculándose a partir de los resultados de los partidos.
-delete p.points;
-
-save();
-renderParticipants();
-renderStats();
+container.innerHTML=output;
 
 }
 
