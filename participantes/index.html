@@ -425,93 +425,6 @@ footer{
 }
 
 /* =========================
-   INSCRIPCIONES DESTACADAS
-========================= */
-
-.registrationHero{
-  margin-bottom:18px;
-}
-
-.registrationCard{
-  position:relative;
-  overflow:hidden;
-  background:
-    radial-gradient(circle at 85% 15%,rgba(182,255,0,.22),transparent 35%),
-    linear-gradient(135deg,#171c13,#0c0f0c);
-  border:1px solid var(--lime);
-  border-radius:20px;
-  padding:30px;
-  box-shadow:0 0 35px rgba(182,255,0,.10);
-}
-
-.registrationCard:before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:linear-gradient(
-    115deg,
-    transparent 0%,
-    rgba(182,255,0,.04) 45%,
-    transparent 70%
-  );
-  pointer-events:none;
-}
-
-.registrationTop{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-  margin-bottom:15px;
-}
-
-.registrationTitle{
-  font-size:clamp(32px,5vw,58px);
-  line-height:.92;
-  font-weight:1000;
-  letter-spacing:-3px;
-  margin:8px 0 14px;
-  position:relative;
-}
-
-.registrationTitle span{
-  color:var(--lime);
-}
-
-.registrationDate{
-  color:var(--muted);
-  font-size:12px;
-}
-
-.registrationBadge{
-  display:inline-block;
-  background:var(--lime);
-  color:#000;
-  padding:7px 11px;
-  border-radius:99px;
-  font-size:11px;
-  font-weight:1000;
-}
-
-.registrationButton{
-  display:inline-block;
-  margin-top:18px;
-  background:var(--lime);
-  color:#000;
-  text-decoration:none;
-  padding:12px 16px;
-  border-radius:10px;
-  font-size:12px;
-  font-weight:1000;
-  transition:.18s;
-}
-
-.registrationButton:hover{
-  transform:translateY(-2px);
-  box-shadow:0 8px 25px rgba(182,255,0,.18);
-}
-
-/* =========================
    JUGADORES
 ========================= */
 
@@ -851,68 +764,6 @@ footer{
 }
 
 /* =========================
-   CUENTA REGRESIVA
-========================= */
-
-.countdown{
-  margin-top:18px;
-  background:linear-gradient(145deg,#151915,#0f120f);
-  border:1px solid var(--lime);
-  border-radius:18px;
-  padding:22px;
-  text-align:center;
-}
-
-.countdown .kicker{
-  color:var(--lime);
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:2px;
-}
-
-.countdown h2{
-  margin:7px 0 4px;
-  font-size:24px;
-}
-
-.countdown .subtitle{
-  color:var(--muted);
-  font-size:12px;
-  margin-bottom:16px;
-}
-
-.countdownGrid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;
-  max-width:620px;
-  margin:auto;
-}
-
-.countdownBox{
-  background:#1a1e1a;
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:13px 8px;
-}
-
-.countdownBox b{
-  display:block;
-  color:var(--lime);
-  font-size:32px;
-  line-height:1;
-}
-
-.countdownBox span{
-  display:block;
-  color:var(--muted);
-  font-size:9px;
-  font-weight:900;
-  letter-spacing:1px;
-  margin-top:6px;
-}
-
-/* =========================
    APP
 ========================= */
 
@@ -1138,35 +989,6 @@ footer{
     grid-template-columns:1fr;
   }
 
-  .countdown{
-    padding:18px 12px;
-  }
-
-  .countdown h2{
-    font-size:21px;
-  }
-
-  .countdownGrid{
-    gap:6px;
-  }
-
-  .countdownBox{
-    padding:11px 5px;
-  }
-
-  .countdownBox b{
-    font-size:25px;
-  }
-
-  .registrationCard{
-    padding:22px 18px;
-  }
-
-  .registrationTitle{
-    font-size:38px;
-    letter-spacing:-2px;
-  }
-
   .registrationTop{
     align-items:flex-start;
   }
@@ -1231,13 +1053,6 @@ footer{
 
 
 <!-- =========================
-     INSCRIPCIONES ARRIBA
-========================= -->
-
-<div id="registrationHero" class="registrationHero"></div>
-
-
-<!-- =========================
      HERO PRINCIPAL
 ========================= -->
 
@@ -1256,7 +1071,7 @@ TODO EL TORNEO.
 </h1>
 
 <p>
-Resultados, posiciones, jugadores y estadísticas actualizadas en tiempo real.
+Fixture, resultados, posiciones y jugadores actualizados en tiempo real.
 </p>
 
 <div class="muted" id="status">
@@ -1299,67 +1114,22 @@ PARTIDOS
 
 
 <!-- =========================
-     CUENTA REGRESIVA
-========================= -->
-
-<div class="countdown">
-
-<div class="kicker">
-STREET 3x3 · CUENTA REGRESIVA
-</div>
-
-<h2 id="countdownTitle">
-FALTAN PARA EL EVENTO
-</h2>
-
-<div class="subtitle">
-7 DE NOVIEMBRE · FECHA DE INICIO
-</div>
-
-<div class="countdownGrid">
-
-<div class="countdownBox">
-<b id="countdownDays">00</b>
-<span>DÍAS</span>
-</div>
-
-<div class="countdownBox">
-<b id="countdownHours">00</b>
-<span>HORAS</span>
-</div>
-
-<div class="countdownBox">
-<b id="countdownMinutes">00</b>
-<span>MINUTOS</span>
-</div>
-
-<div class="countdownBox">
-<b id="countdownSeconds">00</b>
-<span>SEGUNDOS</span>
-</div>
-
-</div>
-
-</div>
-
-
-<!-- =========================
      CONTENIDO HOME
 ========================= -->
 
 <div class="homeGrid">
 
-<div id="homePlayerOfRound"></div>
-
 <div id="liveCenterContent"></div>
 
 <div id="nextMatchesContent"></div>
 
-<div id="recentResultsContent"></div>
-
 <div id="groupLeadersContent"></div>
 
+<div id="recentResultsContent"></div>
+
 <div id="tournamentStatusContent"></div>
+
+<div id="homePlayerOfRound"></div>
 
 <!-- CAMPEÓN:
      queda vacío antes del torneo
@@ -1516,7 +1286,7 @@ El camino hacia el campeonato.
         </div>
 
         <div class="sponsor">
-          <img src="bn-commerce.png" alt="B&N Commerce" loading="lazy">
+          <img src="bn-market.png" alt="B&N Commerce" loading="lazy">
         </div>
 
         <div class="sponsor">
@@ -2262,85 +2032,6 @@ function playoffWinner(m){
   return +m.homeScore>+m.awayScore
     ?m.home
     :m.away;
-}
-
-
-/* =====================================================
-   HERO DE INSCRIPCIÓN
-===================================================== */
-
-function renderRegistrationHero(){
-
-  const b=document.getElementById("registrationHero");
-
-  if(!b){
-    return;
-  }
-
-  const tournamentStart=
-    new Date("2026-11-07T00:00:00-03:00").getTime();
-
-  /*
-    Antes del torneo mostramos inscripción.
-  */
-
-  if(Date.now()<tournamentStart){
-
-    b.innerHTML=`
-
-      <div class="registrationCard">
-
-        <div class="registrationTop">
-
-          <div class="kicker">
-            <i data-lucide="circle-dot" class="lucide-icon" aria-hidden="true"></i> ¿VAS A SER PARTE?
-          </div>
-
-          <span class="registrationBadge">
-            STREET 3x3
-          </span>
-
-        </div>
-
-        <div class="registrationTitle">
-          NO VENGAS A MIRAR.<br>
-          <span>VENÍ A JUGAR.</span>
-        </div>
-
-        <div class="registrationDate">
-          Street 3x3 · 7 de noviembre
-        </div>
-
-        <div style="margin-top:14px">
-
-          <span class="registrationBadge">
-            INSCRIPCIONES ABIERTAS
-          </span>
-
-        </div>
-
-        <a
-          href="https://www.instagram.com/street3x3_2026/"
-          target="_blank"
-          rel="noopener"
-          class="registrationButton"
-        >
-          ANOTÁ A TU EQUIPO →
-        </a>
-
-      </div>
-
-    `;
-
-    return;
-  }
-
-  /*
-    Después del inicio ya no mostramos
-    la tarjeta de inscripción.
-  */
-
-  b.innerHTML="";
 }
 
 
@@ -4150,7 +3841,6 @@ document
 
 function refreshTimeSensitiveContent(){
 
-  renderRegistrationHero();
   renderLiveCenter();
   renderTournamentStatus();
   renderNextMatches();
@@ -4209,7 +3899,6 @@ function render(){
   ).textContent=
     "● Datos actualizados en tiempo real";
 
-  renderRegistrationHero();
   renderPlayers();
   renderFixture();
   renderResults();
@@ -4308,127 +3997,6 @@ liveRef2.on("value",s=>{
   renderTournamentStatus();
 
 });
-
-
-/* =====================================================
-   CUENTA REGRESIVA
-===================================================== */
-
-function updateCountdown(){
-
-  const eventDate=
-    new Date(
-      "2026-11-07T00:00:00-03:00"
-    ).getTime();
-
-  const now=Date.now();
-
-  let remaining=
-    eventDate-now;
-
-  if(remaining<0){
-    remaining=0;
-  }
-
-  const totalSeconds=
-    Math.floor(
-      remaining/1000
-    );
-
-  const days=
-    Math.floor(
-      totalSeconds/86400
-    );
-
-  const hours=
-    Math.floor(
-      (totalSeconds%86400)/3600
-    );
-
-  const minutes=
-    Math.floor(
-      (totalSeconds%3600)/60
-    );
-
-  const seconds=
-    totalSeconds%60;
-
-  const daysEl=
-    document.getElementById(
-      "countdownDays"
-    );
-
-  const hoursEl=
-    document.getElementById(
-      "countdownHours"
-    );
-
-  const minutesEl=
-    document.getElementById(
-      "countdownMinutes"
-    );
-
-  const secondsEl=
-    document.getElementById(
-      "countdownSeconds"
-    );
-
-  const title=
-    document.getElementById(
-      "countdownTitle"
-    );
-
-  if(
-    !daysEl ||
-    !hoursEl ||
-    !minutesEl ||
-    !secondsEl
-  ){
-    return;
-  }
-
-  daysEl.textContent=
-    String(days).padStart(2,"0");
-
-  hoursEl.textContent=
-    String(hours).padStart(2,"0");
-
-  minutesEl.textContent=
-    String(minutes).padStart(2,"0");
-
-  secondsEl.textContent=
-    String(seconds).padStart(2,"0");
-
-  if(title){
-
-    if(
-      Date.now()>=eventDate
-    ){
-
-      title.innerHTML=
-        '<i data-lucide="circle-dot" class="lucide-icon" aria-hidden="true"></i> EL EVENTO YA COMENZÓ';
-
-    }else{
-
-      title.textContent=
-        "FALTAN PARA EL EVENTO";
-
-    }
-
-  }
-
-}
-
-
-/*
-  Actualiza el contador cada segundo.
-*/
-updateCountdown();
-
-setInterval(
-  updateCountdown,
-  1000
-);
 
 
 /*
