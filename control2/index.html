@@ -152,49 +152,54 @@ function draw(){
   else badge.textContent=state.running?"🟡 EN VIVO":"⚪ PARTIDO CARGADO";
   badge.className="status "+(state.running?"live":"");
 }
+
 function renderMatchOptions(){
   const select=document.getElementById("matchSelect");
   if(!select)return;
   const previous=selectedMatchId || select.value || "";
-  const entries=Object.entries(data.matches||{})
+  const regular=Object.entries(data.matches||{})
     .filter(([id,m])=>String(m.court)==="2"&&m.home&&m.away)
-    .sort((a,b)=>{
-      const da=(a[1].date||"9999-99-99")+" "+(a[1].time||"99:99");
-      const db=(b[1].date||"9999-99-99")+" "+(b[1].time||"99:99");
-      return da.localeCompare(db);
-    });
+    .map(([id,m])=>({id,m,label:""}));
+  const playoffs=Object.entries(data.playoffs||{})
+    .filter(([id,m])=>String(m.court)==="2"&&m.home&&m.away)
+    .map(([id,m])=>({id:"playoff:"+id,m,label:fixtureLabel("playoff:"+id)}));
+  const entries=[...regular,...playoffs].sort((a,b)=>{
+    const da=(a.m.date||"9999-99-99")+" "+(a.m.time||"99:99");
+    const db=(b.m.date||"9999-99-99")+" "+(b.m.time||"99:99");
+    return da.localeCompare(db);
+  });
   select.innerHTML='<option value="">Seleccionar partido</option>';
-  entries.forEach(([id,m])=>{
+  entries.forEach(({id,m,label})=>{
     const option=document.createElement("option");
     option.value=id;
-    option.textContent=(m.date||"Sin fecha")+" · "+(m.time||"Sin hora")+" · "+team(m.home)+" vs "+team(m.away)+(hasFixtureResult(m)||m.finished===true?" · FINALIZADO":"");
+    option.textContent=(label?label+" · ":"")+(m.date||"Sin fecha")+" · "+(m.time||"Sin hora")+" · "+team(m.home)+" vs "+team(m.away)+(hasFixtureResult(m)||m.finished===true?" · FINALIZADO":"");
     select.appendChild(option);
   });
-  select.value=entries.some(([id])=>id===previous)?previous:"";
+  select.value=entries.some(entry=>entry.id===previous)?previous:"";
   selectedMatchId=select.value;
-  const m=state.matchId?data.matches[state.matchId]:null;
-  document.getElementById("scheduled").textContent=m?"Programado: "+(m.date||"")+" · "+(m.time||"")+" · Cancha 2":"";
+  const current=state.matchId?getFixture(state.matchId):null;
+  const label=state.matchId&&isPlayoffId(state.matchId)?fixtureLabel(state.matchId)+" · ":"";
+  document.getElementById("scheduled").textContent=current?label+"Programado: "+(current.date||"")+" · "+(current.time||"")+" · Cancha 2":"";
 }
+
 function snapshotFromFixture(id,m){
-  const final=hasFixtureResult(m),admin=m.adminResultOverride===true||m.resultSource==="admin";
+  const final=hasFixtureResult(m),admin=!isPlayoffId(id)&&(m.adminResultOverride===true||m.resultSource==="admin");
   if(admin||final)return {matchId:id,home:final?Number(m.homeScore):0,away:final?Number(m.awayScore):0,homeF:0,awayF:0,homeName:team(m.home).toUpperCase(),awayName:team(m.away).toUpperCase(),remaining:final?0:600,running:false,endAt:null,finished:final,phase:"normal"};
   if(m.liveState&&typeof m.liveState==="object")return {...m.liveState,matchId:id,homeName:team(m.home).toUpperCase(),awayName:team(m.away).toUpperCase(),running:false,endAt:null};
   return {matchId:id,home:0,away:0,homeF:0,awayF:0,homeName:team(m.home).toUpperCase(),awayName:team(m.away).toUpperCase(),remaining:600,running:false,endAt:null,finished:false,phase:"normal"};
 }
+
 function loadSelectedMatch(){
-  const select=document.getElementById("matchSelect");
-  const id=select.value;
+  const id=document.getElementById("matchSelect").value;
   if(!id)return alert("Seleccioná un partido.");
-  const m=data.matches[id];
+  const m=getFixture(id);
   if(!m)return alert("No se encontró el partido en el fixture.");
   if(String(m.court)!=="2")return alert("Este partido no pertenece a la Cancha 2.");
   if(state.matchId===id){selectedMatchId=id;draw();return;}
-  if(state.running){
-    if(!confirm("Hay un reloj en marcha. ¿Querés detenerlo y cambiar de partido?"))return;
+  if(state.running&&!confirm("Hay un reloj en marcha. ¿Querés detenerlo y cambiar de partido?"))return;
+  if(state.matchId){
     const oldState={...state,remaining:remaining(),running:false,endAt:null};
-    if(oldState.matchId)tournamentRef.child("matches").child(oldState.matchId).child("liveState").set(oldState);
-  }else if(state.matchId){
-    tournamentRef.child("matches").child(state.matchId).child("liveState").set({...state,remaining:remaining(),running:false,endAt:null});
+    fixtureRef(state.matchId).child("liveState").set(oldState);
   }
   selectedMatchId=id;
   ref.set(snapshotFromFixture(id,m));
@@ -234,28 +239,58 @@ function startSuddenDeath(){
   if(Number(state.home)!==Number(state.away))return alert("No hay muerte súbita porque ya hay un ganador.");
   save({phase:"sudden",remaining:0,running:false,endAt:null,finished:false});
 }
+
+
+function playoffProgressUpdates(id,winner,clear=false){
+  const key=String(id).replace("playoff:","");
+  const next={qf1:["sf1","home"],qf2:["sf1","away"],qf3:["sf2","home"],qf4:["sf2","away"],sf1:["final","home"],sf2:["final","away"]}[key];
+  if(!next)return {};
+  const [nextKey,slot]=next,base="tournament/playoffs/"+nextKey+"/",updates={};
+  updates[base+slot]=clear?null:winner;
+  if(clear){
+    updates[base+"homeScore"]=null;updates[base+"awayScore"]=null;
+    updates[base+"finished"]=false;updates[base+"status"]="Programado";updates[base+"liveState"]=null;
+  }
+  return updates;
+}
+
 function finishMatch(){
   if(!state.matchId)return;
+  const playoff=isPlayoffId(state.matchId),finalHome=Number(state.home)||0,finalAway=Number(state.away)||0;
+  if(playoff&&finalHome===finalAway)return alert("En playoffs no puede haber empate. Jugá el tiempo extra o la muerte súbita antes de finalizar.");
   if(!confirm("¿Finalizar este partido y guardar el resultado en el fixture?"))return;
-  const finalHome=Number(state.home)||0,finalAway=Number(state.away)||0;
-  const finalState={...state,remaining:0,running:false,endAt:null,finished:true,home:finalHome,away:finalAway};
+  const id=state.matchId,finalState={...state,remaining:0,running:false,endAt:null,finished:true,home:finalHome,away:finalAway};
   state=finalState;ref.set(finalState);
-  tournamentRef.child("matches").child(state.matchId).update({homeScore:finalHome,awayScore:finalAway,finished:true,status:"Finalizado",resultSource:"scoreboard",adminResultOverride:false,liveState:finalState});
-  renderMatchOptions();draw();
+  const prefix=playoff?"tournament/playoffs/"+String(id).replace("playoff:","")+"/":"tournament/matches/"+id+"/";
+  const updates={};
+  updates[prefix+"homeScore"]=finalHome;updates[prefix+"awayScore"]=finalAway;
+  updates[prefix+"finished"]=true;updates[prefix+"status"]="Finalizado";
+  updates[prefix+"resultSource"]="scoreboard";updates[prefix+"liveState"]=finalState;
+  if(playoff){
+    const fixture=getFixture(id),winner=finalHome>finalAway?fixture.home:fixture.away;
+    Object.assign(updates,playoffProgressUpdates(id,winner,false));
+  }else updates[prefix+"adminResultOverride"]=false;
+  db.ref().update(updates);renderMatchOptions();draw();
 }
+
 function resetGame(){
   if(!state.matchId)return;
   if(!confirm("¿Reiniciar el marcador de este partido? Se borrarán sus puntos, faltas y resultado guardado."))return;
-  const id=state.matchId;
+  const id=state.matchId,playoff=isPlayoffId(id);
   const resetState={matchId:id,home:0,away:0,homeF:0,awayF:0,homeName:state.homeName||"LOCAL",awayName:state.awayName||"VISITANTE",remaining:600,running:false,endAt:null,finished:false,phase:"normal"};
   state=resetState;ref.set(resetState);
-  tournamentRef.child("matches").child(id).update({homeScore:null,awayScore:null,finished:false,status:"Programado",resultSource:"scoreboard",adminResultOverride:false,liveState:resetState});
-  renderMatchOptions();draw();
+  const prefix=playoff?"tournament/playoffs/"+String(id).replace("playoff:","")+"/":"tournament/matches/"+id+"/";
+  const updates={};
+  updates[prefix+"homeScore"]=null;updates[prefix+"awayScore"]=null;updates[prefix+"finished"]=false;
+  updates[prefix+"status"]="Programado";updates[prefix+"resultSource"]="scoreboard";updates[prefix+"liveState"]=resetState;
+  if(playoff)Object.assign(updates,playoffProgressUpdates(id,null,true));
+  else updates[prefix+"adminResultOverride"]=false;
+  db.ref().update(updates);renderMatchOptions();draw();
 }
 function syncAdminCorrection(){
   if(applyingAdminCorrection)return;
   const id=state.matchId;
-  if(!id)return;
+  if(!id||isPlayoffId(id))return;
   const m=data.matches?.[id];
   if(!m || !(m.adminResultOverride===true || m.resultSource==="admin"))return;
   const token=[id,m.resultUpdatedAt??"",m.homeScore??"",m.awayScore??"",m.status??""].join("|");
